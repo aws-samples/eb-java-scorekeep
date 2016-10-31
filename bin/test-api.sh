@@ -1,5 +1,5 @@
 #!/bin/bash
-API=.us-east-1.elasticbeanstalk.com
+API=XXXXX.elasticbeanstalk.com/api
 
 # for (( c=1; c<=5; c++ ))
 for (( ; ; ))

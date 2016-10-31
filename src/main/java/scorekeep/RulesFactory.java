@@ -18,7 +18,7 @@ public class RulesFactory {
     String initialState = "each player has six dice";
     Rules testRules = new Rules(id, name, categories, users, teams, phases, moves, initialState);
 
-    allRules.put(testRules.getId(), testRules);
+    // allRules.put(testRules.getId(), testRules);
 
     String id2 = "102";
     String name2 = "Tic Tac Toe";
@@ -27,7 +27,7 @@ public class RulesFactory {
     Integer teams2 = 0;
     String[] phases2 = { "Move" };
     String[] moves2 = { "Roll" };
-    String initialState2 = "XNNNNNNNNN";
+    String initialState2 = "X         ";
     testRules = new Rules(id2, name2, categories2, users2, teams2, phases2, moves2, initialState2);
 
     allRules.put(testRules.getId(), testRules);

@@ -1,0 +1,20 @@
+<div id="game">
+  <div><h3>{{ game.name }}</h3></div>
+  <div class="gameboard">
+    <div class="row">
+      <div class="square" ng-click="move(1)">&nbsp;{{gamestate[1]}}</div>
+      <div class="square" ng-click="move(2)">&nbsp;{{gamestate[2]}}</div>
+      <div class="square" ng-click="move(3)">&nbsp;{{gamestate[3]}}</div>
+    </div>
+    <div class="row">
+      <div class="square" ng-click="move(4)">&nbsp;{{gamestate[4]}}</div>
+      <div class="square" ng-click="move(5)">&nbsp;{{gamestate[5]}}</div>
+      <div class="square" ng-click="move(6)">&nbsp;{{gamestate[6]}}</div>
+    </div>
+    <div class="row">
+      <div class="square" ng-click="move(7)">&nbsp;{{gamestate[7]}}</div>
+      <div class="square" ng-click="move(8)">&nbsp;{{gamestate[8]}}</div>
+      <div class="square" ng-click="move(9)">&nbsp;{{gamestate[9]}}</div>
+    </div>
+  </div>
+</div>

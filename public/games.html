@@ -1,0 +1,15 @@
+<h1>Games</h1>
+<div>
+  <div ng-repeat="game in games">
+    <div class="batsu" ng-click="deleteGame($index)">&times; </div>
+    <div class="id">{{ game.id }}</div>
+    <div class="description">{{ game.name }}</div>
+  </div>
+</div>
+<h2>Create a game</h2>
+<div>
+<form name="create-game">
+  Game name: <input name="name" ng-model="gamename" required>
+  <button ng-click="createGame()">Create</button>
+</form>
+</div>

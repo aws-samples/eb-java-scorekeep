@@ -24,15 +24,20 @@ public class MoveFactory {
     Game game = gameController.getGame(sessionId, gameId);
     ArrayList<String> states = game.getStates();
     State oldState = stateController.getState(sessionId, gameId, states.get(states.size() - 1));
+    Set<String> oldTurn = oldState.getTurn();
     // check turn 
-    //   if ( state.getTurn().contains(userId) )
+    // if ( oldTurn.contains(userId) {}
     // load game rules
     //   rules = rulesFactory.getRules(rulesId)
     // apply move
     //   String stateText = rules.move(oldState, move)
+    Set<String> newTurn = game.getUsers();
+    if (newTurn.size() != 1) {
+      newTurn.remove(userId);
+    }
     String newStateText = TicTacToe.move(oldState.getState(), moveText);
     // save new game state
-    State newState = new State(stateId, sessionId, gameId, newStateText);
+    State newState = new State(stateId, sessionId, gameId, newStateText, newTurn);
     // register state and move id to game
     gameController.setGameMove(sessionId, gameId, moveId);
     gameController.setGameState(sessionId, gameId, stateId);

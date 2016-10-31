@@ -22,7 +22,11 @@ public class SessionModel {
   private DynamoDBMapper mapper = new DynamoDBMapper(client);
 
   public void saveSession(Session session) {
-    mapper.save(session);
+    try {
+      mapper.save(session);
+    } catch (Exception e) {
+      throw e;
+    }
   }
 
   public Session loadSession(String sessionId) throws SessionNotFoundException {

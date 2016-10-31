@@ -13,6 +13,7 @@ public class SimpleCORSFilter extends CorsFilter {
   private static UrlBasedCorsConfigurationSource configurationSource() {
     CorsConfiguration config = new CorsConfiguration();
     config.setAllowCredentials(true);
+    // Modify allowed origins if you run the client at a different endpoint
     config.addAllowedOrigin("http://localhost:8080");
     config.addAllowedHeader("*");
     config.addAllowedMethod("*");

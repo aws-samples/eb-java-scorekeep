@@ -18,7 +18,7 @@ import java.security.SecureRandom;
 import java.math.BigInteger;
 
 @RestController
-@RequestMapping(value="/move/{sessionId}/{gameId}")
+@RequestMapping(value="/api/move/{sessionId}/{gameId}")
 public class MoveController {
   private SecureRandom random = new SecureRandom();
   private MoveFactory moveFactory = new MoveFactory();

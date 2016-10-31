@@ -18,7 +18,7 @@ import java.security.SecureRandom;
 import java.math.BigInteger;
 
 @RestController
-@RequestMapping(value="/state/{sessionId}/{gameId}")
+@RequestMapping(value="/api/state/{sessionId}/{gameId}")
 public class StateController {
   private SecureRandom random = new SecureRandom();
   private StateFactory stateFactory = new StateFactory();

@@ -1,0 +1,15 @@
+<h1>Users</h1>
+<div>
+  <div ng-repeat="user in users">
+    <div class="batsu" ng-click="deleteUser($index)">&times; </div>
+    <div class="id">{{ user.id }}</div>
+    <div class="description">{{ user.name }}</div>
+  </div>
+</div>
+<h2>Create a user</h2>
+<div>
+<form name="create-user">
+  User name: <input name="name" ng-model="username" required>
+  <button ng-click="createUser()">Create</button>
+</form>
+</div>

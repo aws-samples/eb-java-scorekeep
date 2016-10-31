@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
+import java.io.IOException;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,7 +17,7 @@ import java.security.SecureRandom;
 import java.math.BigInteger;
 
 @RestController
-@RequestMapping(value="/user")
+@RequestMapping(value="/api/user")
 public class UserController {
   private SecureRandom random = new SecureRandom();
   private UserFactory factory = new UserFactory();
@@ -24,8 +25,13 @@ public class UserController {
 
   /* POST /user */
   @RequestMapping(method=RequestMethod.POST)
-  public User newUser() {
-    User user = factory.newUser();
+  public User newUser(@RequestBody(required=false) User userbody) throws IOException {
+    User user;
+    if ( userbody == null || userbody.getName() == null ){
+      user = factory.newUser();
+    } else {
+      user = factory.newUser(userbody.getName());
+    }
     return user;
   }
   /* PUT /user/USER */

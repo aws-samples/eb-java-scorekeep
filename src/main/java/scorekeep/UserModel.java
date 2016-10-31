@@ -21,7 +21,11 @@ public class UserModel {
   private DynamoDBMapper mapper = new DynamoDBMapper(client);
 
   public void saveUser(User user) {
-    mapper.save(user);
+    try {
+      mapper.save(user);
+    } catch (Exception e) {
+      throw e;
+    }
   }
 
   public User loadUser(String userId) throws UserNotFoundException {

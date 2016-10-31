@@ -1,0 +1,33 @@
+<div id="session">
+  <div class="session-header">{{ session.name }}</div>
+  <div id="user"><h6>{{ user.name}}</h6></div>
+  <div>
+    <div class="session-game" ng-repeat="game in games">
+      <div class="batsu" ng-click="deleteGame($index)">&times; </div>
+      <div class="game-name">{{ game.name }}</div>
+      <div class="startgame-button" ng-click="startGame($index)">Play</div>
+      <div class="game-description">
+        ID: {{ game.id }} <br/>
+        Rules: {{ game.rules }}<br/>
+        Users: {{ game.users }}<br/>
+        Start Time: {{ game.startTime }}<br/>
+        End Time: {{ game.endTime }} <br/>
+        Moves: {{ game.moves }} <br/>
+        States: {{ game.states }}<br/>
+        <div class="button" ng-click="endGame($index)">End game</div>
+      </div>
+    </div>
+  </div>
+  <div class="sub-header">Create a game</div>
+  <div>
+  <form name="create-game">
+    <div><input name="name" ng-model="gamename" placeholder="game name" required><br/></div>
+    <div id="rules-select">Rules:
+      <select name="rules" ng-model="gamerules">
+        <option ng-repeat="rules in allrules" value="{{ rules.id }}">{{rules.name}}</option>
+      </select>
+    </div>
+    <div id="create" class="button" ng-click="createGame(gamename, gamerules)">Create</div>
+  </form>
+  </div>
+</div>

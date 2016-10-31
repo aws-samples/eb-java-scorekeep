@@ -21,7 +21,7 @@ import java.security.SecureRandom;
 import java.math.BigInteger;
 
 @RestController
-@RequestMapping(value="/game/{sessionId}")
+@RequestMapping(value="/api/game/{sessionId}")
 /** Routes for game CRUD 
     Use GameFactory methods to create new games and load existing games
     Use Game class methods to set fields on Game objects
@@ -87,7 +87,7 @@ public class GameController {
     String initialState = rulesFactory.getRules(rulesId).getInitialState();
     logger.info("initialState: " + initialState);
     // create new state with initial state
-    State state = stateFactory.newState(sessionId, gameId, initialState);
+    State state = stateFactory.newState(sessionId, gameId, initialState, game.getUsers());
     game.setState(state.getId());
     model.saveGame(game);
   }

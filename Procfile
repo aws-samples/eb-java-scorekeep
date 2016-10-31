@@ -1,1 +1,1 @@
-web: java -Dserver.port=5000 -jar build/libs/scorekeep-api-0.1.0.jar
+web: java -Dserver.port=5000 -jar build/libs/scorekeep-api-1.0.0.jar

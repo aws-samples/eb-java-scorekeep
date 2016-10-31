@@ -9,9 +9,9 @@ public class TicTacToe {
 
   public static String move(String oldState, String moveText) {
     // 0: user, 1-9: board 
-    String old = "XNNNNNNNNN";
+    // String old = "XNNNNNNNNN";
     // 0: turn, 1: space
-    String mov = "X3";
+    // String mov = "X3";
     char[] oldchar = oldState.toCharArray();
     char[] movchar = moveText.toCharArray();
     if ( movchar[0] == oldchar[0] ) {

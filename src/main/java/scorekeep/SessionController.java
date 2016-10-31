@@ -16,7 +16,7 @@ import java.security.SecureRandom;
 import java.math.BigInteger;
 
 @RestController
-@RequestMapping(value="/session")
+@RequestMapping(value="/api/session")
 public class SessionController {
   private SecureRandom random = new SecureRandom();
   private SessionFactory sessionFactory = new SessionFactory();

@@ -1,0 +1,13 @@
+<div id="main">
+  <div id="main-user">
+    <div class="main-header">Username</div>
+    <div id="usernamef" class="field"><input name="user" ng-model="username"></div>
+  </div>
+  <div id="main-session">
+    <div class="main-header">Session</div>
+    <div id="sessionnamef" class="field"><input name="name" ng-model="sessionname"></div>
+    <div id="create" class="button" ng-click="createSession(sessionname, username)">Create</div>
+    <div id="sessionid" class="field"><input name="sessionid" ng-model="sessionid" placeholder="session ID"></div>
+    <div id="join" class="button" ng-click="joinSession(sessionid, username)">Join</div>
+  </div>
+</div>

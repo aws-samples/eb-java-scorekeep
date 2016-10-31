@@ -10,7 +10,8 @@ import java.util.Set;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
@@ -29,7 +30,9 @@ import java.lang.Throwable;
 **/
 public class StateModel {
   /** AWS SDK credentials. */
-  private AmazonDynamoDBClient client = new AmazonDynamoDBClient().withRegion(Constants.REGION);
+  private AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
+        .withRegion(Constants.REGION)
+        .build();
   private DynamoDBMapper mapper = new DynamoDBMapper(client);
   private SessionModel sessionModel = new SessionModel();
   private GameModel gameModel = new GameModel();
@@ -38,13 +41,17 @@ public class StateModel {
     // check session
     String sessionId = state.getSession();
     String gameId = state.getGame();
-    if (sessionModel.loadSession(sessionId) == null ) {
-      throw new SessionNotFoundException(sessionId);
+    try {
+      if (sessionModel.loadSession(sessionId) == null ) {
+        throw new SessionNotFoundException(sessionId);
+      }
+      if (gameModel.loadGame(gameId) == null ) {
+        throw new GameNotFoundException(gameId);
+      }
+      mapper.save(state);
+    } catch (Exception e) {
+      throw e;
     }
-    if (gameModel.loadGame(gameId) == null ) {
-      throw new GameNotFoundException(gameId);
-    }
-    mapper.save(state);
   }
 
   public State loadState(String stateId) throws StateNotFoundException {

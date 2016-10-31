@@ -1,0 +1,19 @@
+<h1>Sessions</h1>
+<div>
+  <div ng-repeat="session in sessions">
+    <div class="batsu" ng-click="deleteSession($index)">&times; </div>
+    <div class="id">{{ session.id }}</div>
+    <div class="description">
+      {{ session.name }} created by {{ session.owner }}<br/>
+      Users: <span ng-repeat="user in session.users">{{ user }} </span>
+    </div>
+  </div>
+</div>
+<h2>Create a session</h2>
+<div>
+<form name="create-session">
+  Session name: <input name="name" ng-model="name" required>
+  Your name: <input name="owner" ng-model="username" required>
+  <button ng-click="createSession()">Create</button>
+</form>
+</div>

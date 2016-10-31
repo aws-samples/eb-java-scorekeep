@@ -1,0 +1,130 @@
+/* Main page */
+#main, #session {
+  text-align: center;
+  width: 300px;
+  padding: 10px;
+  margin: 10px;
+  position: absolute;
+  left: 10px;
+}
+#game {
+  text-align: center;
+  width: 350px;
+  padding: 10px;
+  margin: 10px;
+  position: absolute;
+  left: 10px;
+}
+.session-game {
+  text-align: left;
+  padding: 15px;
+}
+#main-user {
+  height: 120px;
+  padding: 15px;
+}
+.main-header {
+  font-size: 20px;
+  text-align: left;
+  padding-left: 20px;
+}
+.sub-header {
+  font-size: 16px;
+  text-align: left;
+  padding: 10px;
+}
+#main-session {
+  height: 230px;
+  padding: 15px;
+}
+.field {
+  padding: 10px;
+}
+.button {
+  padding: 3px;
+  background-color: #f39c12;
+  width: 100px;
+  margin-left: 128px;
+  margin-top: 10px;
+  border-radius: 2px;
+}
+.button:hover {
+  background-color: #FF4136;
+}
+.button:active {
+  background-color: #85144b;
+}
+input {
+  width: 90%;
+  height: 30px;
+  border: 1px solid #f39c12;
+  border-radius: 2px;
+  padding-left: 10px;
+}
+
+/* session */
+.session-header {
+  font-size: 20px;
+  text-align: left;
+}
+#user {
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding-top: 15px;
+}
+#rules-select {
+  display: inline-block;
+  position: relative;
+  left: 0;
+  padding: 15px;
+}
+.id, .batsu, .game-name {
+  display: inline-block;
+  vertical-align: text-top;
+}
+.startgame-button {
+  float: right;
+  padding: 5px;
+  background-color: #f1c40f;
+  width: 50px;
+  text-align: center;
+  border-radius: 2px;
+}
+.batsu {
+  width: 15px;
+  height: 15px;
+}
+.id {
+  width: 75px;
+  font-family: monospace;
+}
+.game-description {
+  padding-left: 15px;
+  display: none;
+}
+.gameboard {
+  margin: 15px;
+}
+.row {
+  height: 100px;
+}
+.square {
+  width: 100px;
+  height: 100px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  margin: -3px;
+  background-color: #FF851B;
+  font-size: 40px;
+  border: 1px solid #d35400;
+  border-radius: 1px;
+  color: #871d08;
+}
+.square:hover {
+  background-color: #FF4136;
+}
+.square:active {
+  background-color: #85144b;
+}

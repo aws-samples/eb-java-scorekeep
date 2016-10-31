@@ -10,7 +10,8 @@ import java.util.Set;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
@@ -25,7 +26,9 @@ import java.lang.Throwable;
 
 public class MoveModel {
   /** AWS SDK credentials. */
-  private AmazonDynamoDBClient client = new AmazonDynamoDBClient().withRegion(Constants.REGION);
+  private AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
+        .withRegion(Constants.REGION)
+        .build();
   private DynamoDBMapper mapper = new DynamoDBMapper(client);
   private SessionModel sessionModel = new SessionModel();
   private GameModel gameModel = new GameModel();
@@ -34,13 +37,17 @@ public class MoveModel {
     // check session
     String sessionId = move.getSession();
     String gameId = move.getGame();
-    if (sessionModel.loadSession(sessionId) == null ) {
-      throw new SessionNotFoundException(sessionId);
+    try {
+      if (sessionModel.loadSession(sessionId) == null ) {
+        throw new SessionNotFoundException(sessionId);
+      }
+      if (gameModel.loadGame(gameId) == null ) {
+        throw new GameNotFoundException(gameId);
+      }
+      mapper.save(move);
+    } catch (Exception e) {
+      throw e;
     }
-    if (gameModel.loadGame(gameId) == null ) {
-      throw new GameNotFoundException(gameId);
-    }
-    mapper.save(move);
   }
 
   public Move loadMove(String moveId) throws MoveNotFoundException {
@@ -65,11 +72,11 @@ public class MoveModel {
     ean.put("#key1", "game");
 
     DynamoDBQueryExpression<Move> queryExpression = new DynamoDBQueryExpression<Move>()
-        .withIndexName("game-index")
-        .withExpressionAttributeValues(eav)
-        .withExpressionAttributeNames(ean)
-        .withKeyConditionExpression("#key1 = :val1")
-        .withConsistentRead(false);
+    .withIndexName("game-index")
+    .withExpressionAttributeValues(eav)
+    .withExpressionAttributeNames(ean)
+    .withKeyConditionExpression("#key1 = :val1")
+    .withConsistentRead(false);
 
     List<Move> gameMoves = mapper.query(Move.class, queryExpression);
     return gameMoves;

@@ -13,7 +13,7 @@ import java.security.SecureRandom;
 import java.math.BigInteger;
 
 @RestController
-@RequestMapping(value="/rules")
+@RequestMapping(value="/api/rules")
 public class RulesController {
   private SecureRandom random = new SecureRandom();
   private RulesFactory rulesFactory = new RulesFactory();

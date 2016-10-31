@@ -16,15 +16,17 @@ public class State {
   private String game;
   private String session;
   private String state;
+  private Set<String> turn;
 
   public State() {
   }
 
-  public State(String id, String session, String game, String state) {
+  public State(String id, String session, String game, String state, Set<String> turn) {
     this.id = id;
     this.session = session;
     this.game = game;
     this.state = state;
+    this.turn = turn;
   }
 
   @DynamoDBHashKey(attributeName="id")
@@ -59,5 +61,11 @@ public class State {
     this.state = stateId;
   }
 
-
+  @DynamoDBAttribute(attributeName="turn")
+  public Set<String> getTurn() {
+    return turn;
+  }
+  public void setTurn(Set<String> turn) {
+    this.turn = turn;
+  }
 }

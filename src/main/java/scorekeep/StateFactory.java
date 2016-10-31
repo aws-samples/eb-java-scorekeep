@@ -12,9 +12,9 @@ public class StateFactory {
   public StateFactory(){
   }
 
-  public State newState(String sessionId, String gameId, String stateText) throws SessionNotFoundException, GameNotFoundException {
+  public State newState(String sessionId, String gameId, String stateText, Set<String> turn) throws SessionNotFoundException, GameNotFoundException {
     String id = new BigInteger(40, random).toString(32).toUpperCase();
-    State state = new State(id, sessionId, gameId, stateText);
+    State state = new State(id, sessionId, gameId, stateText, turn);
     model.saveState(state);
     return state;
   }
