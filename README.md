@@ -1,2 +1,3 @@
-# eb-java-scorekeep
-Sample Java JSON web API in Spring that provides an HTTP interface for create and managing game sessions and users.
+Create a Java 8 SE environment in Elastic Beanstalk
+Add DynamoDB permissions to your instance profile (aws-elasticbeanstalk-ec2-role): [IAM console](https://console.aws.amazon.com/iam/home#roles)
+Deploy the application to your environment.

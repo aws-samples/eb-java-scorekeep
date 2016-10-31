@@ -1,0 +1,43 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.4.0.RELEASE")
+        classpath("io.spring.gradle:dependency-management-plugin:0.5.4.RELEASE")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'spring-boot'
+apply plugin: 'io.spring.dependency-management'
+
+jar {
+    baseName = 'scorekeep-api'
+    version =  '0.1.0'
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter-web")
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+    compile('com.amazonaws:aws-java-sdk-dynamodb')
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom('com.amazonaws:aws-java-sdk-bom:1.11.25')
+    }
+}
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.3'
+}
