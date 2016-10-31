@@ -28,14 +28,15 @@ targetCompatibility = 1.8
 
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
-    testCompile('org.springframework.boot:spring-boot-starter-test')
-    compile('com.amazonaws:aws-java-sdk-dynamodb')
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+    testCompile("org.springframework.boot:spring-boot-starter-test")
+    compile("com.amazonaws:aws-java-sdk-dynamodb")
+    testCompile("junit:junit:4.11")
+    compile("com.fasterxml.jackson.core:jackson-databind:2.8.4")
 }
 
 dependencyManagement {
     imports {
-        mavenBom('com.amazonaws:aws-java-sdk-bom:1.11.25')
+        mavenBom("com.amazonaws:aws-java-sdk-bom:1.11.39")
     }
 }
 task wrapper(type: Wrapper) {
