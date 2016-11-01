@@ -1,5 +1,6 @@
 #!/bin/bash
-API=XXXXX.elasticbeanstalk.com/api
+# Replace the API domain name with your environment's domain to run the script against the application running in Elastic Beanstalk
+API=localhost:5000/api
 
 # for (( c=1; c<=5; c++ ))
 for (( ; ; ))
