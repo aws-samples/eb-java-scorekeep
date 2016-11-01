@@ -81,9 +81,9 @@ When you run the frontend locally, it needs to know the full URL of the API in o
 
 1. Open [eb-java-scorekeep/public/app/scorekeep.js](https://github.com/awslabs/eb-java-scorekeep/blob/master/public/app/scorekeep.js).
 2. Set the value of the api module to the full URL of the API.
-  *. Use the domain name of your environment to test changes to the frontend without running the backend locally
+   *. Use the domain name of your environment to test changes to the frontend without running the backend locally
         module.value('api', 'http://scorekeep.XXXXXXXX.elasticbeanstalk.com/api/');
-  *. Use localhost:5000 to test both frontend and backend changes when running both locally.
+   *. Use localhost:5000 to test both frontend and backend changes when running both locally.
         module.value('api', 'http://localhost:5000/api/');
 3. Refresh the app in your browser to load the updated script.
 
