@@ -23,11 +23,12 @@ When the Scorekeep API runs in AWS Elastic Beanstalk, it uses the permissions of
 ## Deploy the application
 Deploy the source bundle that you created in the previous section to your environment.
 
-1. Open the [Elastic Beanstalk Management Console](console.aws.amazon.com/elasticbeanstalk/home).
-2. Click your environment's name to open the Dashboard.
-3. Click **Upload and Deploy**.
-4. Upload **scorekeep-v1.zip** and click **Deploy**.
-5. Open the environment URL. 
+1. Download the source bundle: [eb-java-scorekeep-v1.zip](https://github.com/awslabs/eb-java-scorekeep/releases/download/v1.1/eb-java-scorekeep-v1.zip)
+2. Open the [Elastic Beanstalk Management Console](console.aws.amazon.com/elasticbeanstalk/home).
+3. Click your environment's name to open the Dashboard.
+4. Click **Upload and Deploy**.
+5. Upload **eb-java-scorekeep-v1.zip** and click **Deploy**.
+6. Open the environment URL. 
 
 ![Scorekeep front page](/img/scorekeep-frontpage.png)
 
@@ -80,9 +81,9 @@ When you run the frontend locally, it needs to know the full URL of the API in o
 
 1. Open [eb-java-scorekeep/public/app/scorekeep.js](https://github.com/awslabs/eb-java-scorekeep/blob/master/public/app/scorekeep.js).
 2. Set the value of the api module to the full URL of the API.
-  a. Use the domain name of your environment to test changes to the frontend without running the backend locally
+  *. Use the domain name of your environment to test changes to the frontend without running the backend locally
         module.value('api', 'http://scorekeep.XXXXXXXX.elasticbeanstalk.com/api/');
-  b. Use localhost:5000 to test both frontend and backend changes when running both locally.
+  *. Use localhost:5000 to test both frontend and backend changes when running both locally.
         module.value('api', 'http://localhost:5000/api/');
 3. Refresh the app in your browser to load the updated script.
 
