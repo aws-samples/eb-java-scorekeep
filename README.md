@@ -3,6 +3,8 @@ Scorekeep is a RESTful web API implemented in Java that uses Spring to provide a
 
 The project shows the use of Spring, Angular, nginx, the AWS SDK for Java, DynamoDB, Gradle, CORS, and Elastic Beanstalk features that let you run both components on the same EC2 instance, create required DynamoDB tables as part of the Elastic Beanstalk environment, and build the API from source on-instance during deployment.
 
+Use the procedures in the following sections to run the project on AWS Elastic Beanstalk and configure it for local testing and development. 
+
 ## Create an AWS Elastic Beanstalk environment
 Create a Java 8 SE environment in Elastic Beanstalk to host the application.
 
@@ -11,22 +13,12 @@ Create a Java 8 SE environment in Elastic Beanstalk to host the application.
 3. When your environment is ready, the console redirects you to the environment Dashboard.
 4. Click the URL at the top of the page to open the site.
 
-## Configure the application and create a source bundle
-The application includes a frontend web app and a backend web API. In order for the frontend to send requests to the backend, it needs to know the URL of your environment.
+## Give the application permission to use DynamoDB
+When the Scorekeep API runs in AWS Elastic Beanstalk, it uses the permissions of its EC2 instance to call AWS. Elastic Beanstalk provides a default instance profile that you can extend to grant the application the permissions it needs to read from and write to resource tables in DynamoDB.
 
-1. Clone this repository.
-2. Open [eb-java-scorekeep/public/app/scorekeep.js](https://github.com/awslabs/eb-java-scorekeep/blob/master/public/app/scorekeep.js).
-3. Replace the placeholder value with the domain name of your environment.
-
-        module.value('api', 'http://scorekeep.XXXXXXXX.elasticbeanstalk.com/api/');
-
-4. Save the file and commit your changes.
-
-        eb-java-scorekeep$ git commit -am "Update API domain"
-
-5. Create an archive of the updated source code.
-
-        eb-java-scorekeep$ git archive -o scorekeep-v1.zip HEAD
+1. Open the Elastic Beanstalk instance profile in the DynamoDB console: [aws-elasticbeanstalk-ec2-role](https://console.aws.amazon.com/iam/home#roles/aws-elasticbeanstalk-ec2-role)
+2. Click **Attach Policy**.
+3. Select [AmazonDynamoDBFullAccess](https://console.aws.amazon.com/iam/home#policies/arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess) and click **Attach Policy**.
 
 ## Deploy the application
 Deploy the source bundle that you created in the previous section to your environment.
@@ -39,9 +31,10 @@ Deploy the source bundle that you created in the previous section to your enviro
 
 ![Scorekeep front page](/img/scorekeep-frontpage.png)
 
-Click through the app to explore its functionality
+Click through the app to explore its functionality. Use the network console in your browser to see the HTTP requests that it sends to the API to read and write users, sessions, games, moves and game state to DynamoDB via the API.
 
 # How it works
+The project includes two independent components, an HTML and JavaScript frontend in Angular 1.5 and a Java backend that uses Spring to provide a public API.
 
 ## Frontend
 The frontend is an Angular 1.5 web app that uses `$resource` objects to perform CRUD operations on resources defined by the API. Users first encounter the [main view](https://github.com/awslabs/eb-java-scorekeep/blob/master/public/main.html) and [controller](https://github.com/awslabs/eb-java-scorekeep/blob/master/public/app/mainController.js) and progress through session and game views at routes that include the IDs of resources that the user creates.
@@ -57,6 +50,7 @@ The [Buildfile](https://github.com/awslabs/eb-java-scorekeep/blob/master/Buildfi
 
 # Local testing
 You can run both the API and frontend locally with Gradle and the Spring Boot CLI.
+Clone this repository or extract the contents of the source bundle that you downloaded earlier to get started.
 
 ## API
 Use [Gradle](https://gradle.org/) to build the API and run it locally on port 5000.
@@ -64,21 +58,36 @@ Use [Gradle](https://gradle.org/) to build the API and run it locally on port 50
 eb-java-scorekeep$ gradle bootrun
 ```
 
-**Note:** The API requires DynamoDB tables to exist in AWS to run locally. These tables are created when you launch the application in Elastic Beanstalk.
+The API need's credentials in order to communicate with Amazon DynamoDB. Follow the instructions in the AWS SDK for Java developer guide to provide access keys in a local file or with environment variables: [Set up AWS Credentials for Development](http://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/setup-credentials.html)
+
+**Note:** The API requires DynamoDB tables to exist in AWS to run locally. These tables are created by [this configuration file](https://github.com/awslabs/eb-java-scorekeep/blob/master/.ebextensions/dynamodb-tables.config) when you launch the application in Elastic Beanstalk.
 
 Use the test script to verify that the API works.
 ```
 eb-java-scorekeep$ ./bin/test-api.sh
 ```
 
-## Frontend
-Use the [Spring Boot CLI](http://docs.spring.io/spring-boot/docs/current/reference/html/getting-started-installing-spring-boot.html) to run the frontend at [localhost:8080](http://localhost:8080)
+## Run the frontend and configure it for local testing
+Use the [Spring Boot CLI](http://docs.spring.io/spring-boot/docs/current/reference/html/getting-started-installing-spring-boot.html) to run the frontend on port 8080
 ```
 eb-java-scorekeep$ spring run app.groovy
 ```
+Open the app in a browser: [localhost:8080](http://localhost:8080)
 
-## CORS
-The API includes a [CORS (cross-origin resource sharing) filter](https://github.com/awslabs/eb-java-scorekeep/blob/master/src/main/java/scorekeep/SimpleCORSFilter.java) that allows traffic from localhost:8080.
+It's not working. The app is trying to call paths relative to it's own root, localhost:8080, but the API is running on localhost:5000 or in Elastic Beanstalk. To fix this, configure the app with the full URL of the API.
+
+When you run the frontend locally, it needs to know the full URL of the API in order to send requests to the backend.
+
+1. Open [eb-java-scorekeep/public/app/scorekeep.js](https://github.com/awslabs/eb-java-scorekeep/blob/master/public/app/scorekeep.js).
+2. Set the value of the api module to the full URL of the API.
+  a. Use the domain name of your environment to test changes to the frontend without running the backend locally
+        module.value('api', 'http://scorekeep.XXXXXXXX.elasticbeanstalk.com/api/');
+  b. Use localhost:5000 to test both frontend and backend changes when running both locally.
+        module.value('api', 'http://localhost:5000/api/');
+3. Refresh the app in your browser to load the updated script.
+
+## Configure the API for CORS
+The API includes a CORS (cross-origin resource sharing) filter that allows traffic from localhost:8080.
 ```java
   private static UrlBasedCorsConfigurationSource configurationSource() {
     CorsConfiguration config = new CorsConfiguration();
@@ -94,6 +103,20 @@ The API includes a [CORS (cross-origin resource sharing) filter](https://github.
 ```
 This lets requests originating from a frontend hosted locally on port 8080 to send requests to the API hosted on a different local port (i.e. localhost:5000) or on Elastic Beanstalk. This lets you work on the frontend locally and see changes immediately without needing to deploy the source to your environment.
 
-When you run both the API and frontend in Elastic Beanstalk, CORS is not required because the scripts that contact the API and the API itself are hosted on the same domain. If you want to run the frontend on a different port locally, or even host it on a completely different domain, add an allowed origin to the filter to whitelist it in the API.
+When you run both the API and frontend in the same Elastic Beanstalk environment, CORS is not required because the scripts that contact the API and the API itself are hosted on the same domain. If you want to run the frontend on a different port locally, or even host it on a completely different domain, add an allowed origin to the filter to whitelist it in the API.
 
+1. Open [src/main/java/scorekeepSimpleCORSFilter.java](https://github.com/awslabs/eb-java-scorekeep/blob/master/src/main/java/scorekeep/SimpleCORSFilter.java)
+2. Add an allowed origin with the URL serving the frontend.
 
+        config.addAllowedOrigin("http://localhost:8080");
+        config.addAllowedOrigin("http://scorekeep.XXXXXXXX.elasticbeanstalk.com");
+
+3. Save the files and commit your changes.
+
+        eb-java-scorekeep$ git commit -am "Update API domain"
+
+4. Create an archive of the updated source code.
+
+        eb-java-scorekeep$ git archive -o scorekeep-v1.zip HEAD
+
+5. Open your environment's Dashboard in the [Elastic Beanstalk Management Console](console.aws.amazon.com/elasticbeanstalk/home) and deploy the updated code.
