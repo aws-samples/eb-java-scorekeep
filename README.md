@@ -60,11 +60,14 @@ You can run both the API and frontend locally with Gradle and the Spring Boot CL
 Clone this repository or extract the contents of the source bundle that you downloaded earlier to get started.
 
 ## Run the Scorekeep API with Gradle
-Use [Gradle](https://gradle.org/) to build the API and run it locally on port 5000.
-
-    ~/eb-java-scorekeep$ gradle bootrun
-
 The API requires DynamoDB tables to exist in AWS to run locally. These tables are created by [this configuration file](https://github.com/awslabs/eb-java-scorekeep/blob/master/.ebextensions/dynamodb-tables.config) when you launch the application in Elastic Beanstalk. If you terminate the environment, the tables are deleted. To create the tables without a running environment, you can use the configuration file as a template to [create a CloudFormation stack](console.aws.amazon.com/cloudformation/home).
+
+The application reads an environment variable named AWS_REGION to determine which region to connect to for calls to DynamoDB. In Elastic Beanstalk, this variable is set in a [configuration file](https://github.com/awslabs/eb-java-scorekeep/blob/master/.ebextensions/env.config) that reads the current region from CloudFormation and creates an Elastic Beanstalk environment property.
+
+Set the environment variable and then use [Gradle](https://gradle.org/) to build the API and run it locally on port 5000.
+
+    ~/eb-java-scorekeep$ export AWS_REGION=us-west-2
+    ~/eb-java-scorekeep$ gradle bootrun
 
 The application needs AWS credentials in order to communicate with Amazon DynamoDB. In AWS Elastic Beanstalk, Scorekeep gets credentials from the instance profile, the IAM role that is attached to the EC2 instance that runs the code. When you run the application locally, the AWS SDK for Java can retrieve credentials from files in ~/.aws/ or environment variables.
 
