@@ -16,7 +16,7 @@ Create a Java 8 SE environment in Elastic Beanstalk to host the application.
 ## Give the application permission to use DynamoDB
 When the Scorekeep API runs in AWS Elastic Beanstalk, it uses the permissions of its EC2 instance to call AWS. Elastic Beanstalk provides a default instance profile that you can extend to grant the application the permissions it needs to read from and write to resource tables in DynamoDB.
 
-1. Open the Elastic Beanstalk instance profile in the DynamoDB console: [aws-elasticbeanstalk-ec2-role](https://console.aws.amazon.com/iam/home#roles/aws-elasticbeanstalk-ec2-role)
+1. Open the Elastic Beanstalk instance profile in the IAM console: [aws-elasticbeanstalk-ec2-role](https://console.aws.amazon.com/iam/home#roles/aws-elasticbeanstalk-ec2-role)
 2. Click **Attach Policy**.
 3. Select [AmazonDynamoDBFullAccess](https://console.aws.amazon.com/iam/home#policies/arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess) and click **Attach Policy**.
 
