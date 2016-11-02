@@ -9,6 +9,7 @@ Use the procedures in the following sections to run the project on AWS Elastic B
 Create a Java 8 SE environment in Elastic Beanstalk to host the application.
 
 *To create an Elastic Beanstalk environment running the Java 8 SE platform*
+
 1. Open the AWS Elastic Beanstalk Management Console with this preconfigured link: [console.aws.amazon.com/elasticbeanstalk/#/newApplication?applicationName=scorekeep...](https://console.aws.amazon.com/elasticbeanstalk/#/newApplication?applicationName=scorekeep&solutionStackName=Java)
 2. Click **Create application** to create an application with an environment running the Java 8 SE platform. 
 3. When your environment is ready, the console redirects you to the environment Dashboard.
@@ -18,6 +19,7 @@ Create a Java 8 SE environment in Elastic Beanstalk to host the application.
 When the Scorekeep API runs in AWS Elastic Beanstalk, it uses the permissions of its EC2 instance to call AWS. Elastic Beanstalk provides a default instance profile that you can extend to grant the application the permissions it needs to read from and write to resource tables in DynamoDB.
 
 *To add DynamoDB permissions to the instances in your Elastic Beanstalk environment*
+
 1. Open the Elastic Beanstalk instance profile in the IAM console: [aws-elasticbeanstalk-ec2-role](https://console.aws.amazon.com/iam/home#roles/aws-elasticbeanstalk-ec2-role)
 2. Click **Attach Policy**.
 3. Select [AmazonDynamoDBFullAccess](https://console.aws.amazon.com/iam/home#policies/arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess) and click **Attach Policy**.
@@ -26,6 +28,7 @@ When the Scorekeep API runs in AWS Elastic Beanstalk, it uses the permissions of
 Deploy the source code for the project to your Elastic Beanstalk environment.
 
 *To deploy the source code*
+
 1. Download the source bundle: [eb-java-scorekeep-v1.zip](https://github.com/awslabs/eb-java-scorekeep/releases/download/v1.1/eb-java-scorekeep-v1.zip)
 2. Open the [Elastic Beanstalk Management Console](console.aws.amazon.com/elasticbeanstalk/home).
 3. Click your environment's name to open the Dashboard.
@@ -83,6 +86,7 @@ Open the app in a browser: [localhost:8080](http://localhost:8080)
 The app loads but can't hit the API, because it's trying to call paths relative to it's own root, `localhost:8080`, but the API is running on `localhost:5000` (or in Elastic Beanstalk). To fix this, configure the app with the full URL of the API.
 
 *To configure the web app with an absolute path to the API*
+
 1. Open [eb-java-scorekeep/public/app/scorekeep.js](https://github.com/awslabs/eb-java-scorekeep/blob/master/public/app/scorekeep.js).
 2. Set the value of the api module to the full URL of the API.
    * Use the domain name of your environment to test changes to the frontend without running the backend locally
@@ -117,6 +121,7 @@ This lets requests originating from a frontend hosted locally on port 8080 to se
 When you run both the API and frontend in the same Elastic Beanstalk environment, CORS is not required because the scripts that contact the API and the API itself are hosted on the same domain. If you want to run the frontend on a different port locally, or even host it on a completely different domain, add an allowed origin to the filter to whitelist it in the API.
 
 *To extend the CORS configuration to allow cross-origin requests from specific domains*
+
 1. Open [src/main/java/scorekeepSimpleCORSFilter.java](https://github.com/awslabs/eb-java-scorekeep/blob/master/src/main/java/scorekeep/SimpleCORSFilter.java)
 2. Add an allowed origin with the URL serving the frontend.
 
