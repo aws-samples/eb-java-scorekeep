@@ -1,6 +1,6 @@
 var module = angular.module('scorekeep');
 module.controller('GameController', Game);
-function Game($scope, $http, $routeParams, SessionService, UserService, GameService, GameCollection, RulesService, StateService, api) {
+function Game($scope, $http, $interval, $routeParams, SessionService, UserService, GameService, GameCollection, RulesService, StateService, api) {
   $scope.game = new GameService;
   $scope.state = new StateService; // game state object
   $scope.gamestate = []; // game state as Array
@@ -19,6 +19,9 @@ function Game($scope, $http, $routeParams, SessionService, UserService, GameServ
     });
   }
   $scope.playgame();
+  $scope.interval = $interval(function(){
+    $scope.playgame();
+  }, 5000);
 
   $scope.move = function(cellid){
     console.log("MOVE on cell " + cellid);
@@ -53,4 +56,5 @@ function Game($scope, $http, $routeParams, SessionService, UserService, GameServ
       $scope.gamestate = $scope.state.state.split('');
     });
   }
+
 }
