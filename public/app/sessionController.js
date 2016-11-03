@@ -14,7 +14,12 @@ function Session($scope, $http, $location, $interval, $routeParams, SessionServi
       // identify new games
       gameids = []
       for (var i = 0; i < $scope.games.length; i++) {
-        gameids.push($scope.games[i].id);
+        // if the game has been removed from the session
+        if ( !$scope.session.games.includes($scope.games[i].id) ) {
+          $scope.games.splice(i, 1);
+        } else {
+          gameids.push($scope.games[i].id);
+        }
       }
       for (var i = 0; i < $scope.session.games.length; i++) {
         if ( !gameids.includes($scope.session.games[i]) ) {
