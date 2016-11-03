@@ -91,6 +91,12 @@ input {
   text-align: center;
   border-radius: 2px;
 }
+.startgame-button:hover {
+  background-color: #FF851B;
+}
+.startgame-button:active {
+  background-color: #FF4136;
+}
 .batsu {
   width: 15px;
   height: 15px;
