@@ -1,10 +1,35 @@
 var module = angular.module('scorekeep');
 module.controller('SessionController', Session);
-function Session($scope, $http, $location, $routeParams, SessionService, RulesService, GameCollection, UserService, GameService, api) {
+function Session($scope, $http, $location, $interval, $routeParams, SessionService, RulesService, GameCollection, UserService, GameService, api) {
   $scope.games = GameService.query({ sessionid: $routeParams.sessionid });
-  $scope.session = SessionService.get({ id: $routeParams.sessionid });
+  $scope.session = new SessionService;
   $scope.user = UserService.get({ id: $routeParams.userid });
   $scope.allrules = RulesService.query();
+
+  $scope.loadSession = function() {
+    GetSession = $scope.games.$promise.then(function(result) {
+      return $scope.session.$get({ id: $routeParams.sessionid });
+    });
+    GetSession.then(function() {
+      // identify new games
+      gameids = []
+      for (var i = 0; i < $scope.games.length; i++) {
+        gameids.push($scope.games[i].id);
+      }
+      for (var i = 0; i < $scope.session.games.length; i++) {
+        if ( !gameids.includes($scope.session.games[i]) ) {
+          console.log("new game id: " + $scope.session.games[i]);
+          game = new GameService;
+          game.$get({ id: $scope.session.games[i], sessionid: $routeParams.sessionid });
+          $scope.games.push(game);
+        }
+      }
+    })
+  }
+  $scope.loadSession();
+  $scope.interval = $interval(function(){
+    $scope.loadSession();
+  }, 5000);
 
   $scope.createGame = function (gamename, gamerules) {
     var sessionid = $routeParams.sessionid;
