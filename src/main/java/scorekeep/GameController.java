@@ -58,8 +58,8 @@ public class GameController {
   }
   /*  DELETE /game/SESSION/GAME */
   @RequestMapping(value="/{gameId}",method=RequestMethod.DELETE)
-  public void deleteGame(@PathVariable String gameId) throws GameNotFoundException {
-    model.deleteGame(gameId);
+  public void deleteGame(@PathVariable String sessionId, @PathVariable String gameId) throws GameNotFoundException {
+    model.deleteGame(sessionId, gameId);
   }
   /*  GET /game/SESSION/GAME/name */
   @RequestMapping(value="/{gameId}/name", method=RequestMethod.GET)

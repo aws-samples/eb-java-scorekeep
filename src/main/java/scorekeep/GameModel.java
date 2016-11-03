@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.HashSet;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
@@ -74,11 +75,17 @@ public class GameModel {
     return sessionGames;
   }
 
-  public void deleteGame(String gameId) throws GameNotFoundException {
+  public void deleteGame(String sessionId, String gameId) throws GameNotFoundException {
     Game game = mapper.load(Game.class, gameId);
     if ( game == null ) {
       throw new GameNotFoundException(gameId);
     }
     mapper.delete(game);
+    //delete game from session
+    Session session = mapper.load(Session.class, sessionId);
+    Set<String> sessionGames = session.getGames();
+    sessionGames.remove(gameId);
+    session.setGames(sessionGames);
+    mapper.save(session);
   }
 }
