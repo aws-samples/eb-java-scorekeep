@@ -85,7 +85,11 @@ public class GameModel {
     Session session = mapper.load(Session.class, sessionId);
     Set<String> sessionGames = session.getGames();
     sessionGames.remove(gameId);
-    session.setGames(sessionGames);
+    if (sessionGames.size() == 0) {
+      session.clearGames();
+    } else {
+      session.setGames(sessionGames);
+    }
     mapper.save(session);
   }
 }

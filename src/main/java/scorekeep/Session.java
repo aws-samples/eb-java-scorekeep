@@ -63,6 +63,9 @@ public class Session {
   public void setGames(Set<String> games) {
     this.games = games;
   }
+  public void clearGames() {
+    this.games = null;
+  }
   public void setGame(String game) {
     if ( games == null ) {
       games = new HashSet<String>();

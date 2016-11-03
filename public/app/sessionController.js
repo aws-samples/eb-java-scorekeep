@@ -13,6 +13,9 @@ function Session($scope, $http, $location, $interval, $routeParams, SessionServi
     GetSession.then(function() {
       // identify new games
       gameids = []
+      if ( $scope.games == null ) {
+        $scope.games = [];
+      }
       for (var i = 0; i < $scope.games.length; i++) {
         // if the game has been removed from the session
         if ( !$scope.session.games.includes($scope.games[i].id) ) {
@@ -20,6 +23,9 @@ function Session($scope, $http, $location, $interval, $routeParams, SessionServi
         } else {
           gameids.push($scope.games[i].id);
         }
+      }
+      if ( $scope.session.games == null ) {
+        $scope.session.games = [];
       }
       for (var i = 0; i < $scope.session.games.length; i++) {
         if ( !gameids.includes($scope.session.games[i]) ) {
