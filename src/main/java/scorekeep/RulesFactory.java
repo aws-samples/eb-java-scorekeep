@@ -8,29 +8,17 @@ public class RulesFactory {
   private final HashMap<String, Rules> allRules = new HashMap<String, Rules>(1);
 
   public RulesFactory(){
-    String id = "101";
-    String name = "Liars Dice";
-    String[] categories = { "dice", "deception" };
-    Integer[] users = { 2, 3, 4, 5, 6 };
+    String id = "TICTACTOE";
+    String name = "Tic Tac Toe";
+    String[] categories = { "head to head", "quick" };
+    Integer[] users = { 2 };
     Integer teams = 0;
-    String[] phases = { "Move", "Challenge" };
-    String[] moves = { "Roll", "Challenge" };
-    String initialState = "each player has six dice";
-    Rules testRules = new Rules(id, name, categories, users, teams, phases, moves, initialState);
+    String[] phases = { "Move" };
+    String[] moves = { "Roll" };
+    String initialState = "X         ";
+    Rules tictactoe = new Rules(id, name, categories, users, teams, phases, moves, initialState);
 
-    // allRules.put(testRules.getId(), testRules);
-
-    String id2 = "102";
-    String name2 = "Tic Tac Toe";
-    String[] categories2 = { "head to head", "quick" };
-    Integer[] users2 = { 2 };
-    Integer teams2 = 0;
-    String[] phases2 = { "Move" };
-    String[] moves2 = { "Roll" };
-    String initialState2 = "X         ";
-    testRules = new Rules(id2, name2, categories2, users2, teams2, phases2, moves2, initialState2);
-
-    allRules.put(testRules.getId(), testRules);
+    allRules.put(tictactoe.getId(), tictactoe);
   }
 
   public Rules getRules(String id) {
