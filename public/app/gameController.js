@@ -12,10 +12,7 @@ function Game($scope, $http, $interval, $routeParams, SessionService, UserServic
       return $scope.state.$get({ sessionid: $routeParams.sessionid, gameid: $routeParams.gameid, id: currentstate});
     })
     GetState.then(function(result){
-      console.log(result);
       $scope.gamestate = $scope.state.state.split('');
-      console.log("state string: '" + $scope.state.state + "'");
-      console.log("state array: " + $scope.gamestate);
     });
   }
   $scope.playgame();
@@ -24,10 +21,7 @@ function Game($scope, $http, $interval, $routeParams, SessionService, UserServic
   }, 5000);
 
   $scope.move = function(cellid){
-    console.log("MOVE on cell " + cellid);
     $scope.gamestate = $scope.state.state.split('');
-    console.log("state id: " + $scope.state.id);
-    console.log("state string: '" + $scope.state.state + "'");
     move = ""
     if ( $scope.gamestate[cellid] != " " ) {
       return;
@@ -36,14 +30,11 @@ function Game($scope, $http, $interval, $routeParams, SessionService, UserServic
       $scope.gamestate[cellid] = "X";
       $scope.gamestate[0] = "O";
       move = "X" + cellid;
-      console.log(move);
     } else {
       $scope.gamestate[cellid] = "O";
       $scope.gamestate[0] = "X";
       move = "O" + cellid;
-      console.log(move);
     }
-    console.log("new state string: '" + $scope.gamestate.join('') + "'");
     PostMove = $http.post(api + 'move/' + $routeParams.sessionid + "/" + $routeParams.gameid + "/" + $routeParams.userid, move);
     GetGame = PostMove.then(function(){
       return $scope.game.$get({ sessionid: $routeParams.sessionid, id: $routeParams.gameid });
