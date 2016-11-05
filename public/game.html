@@ -1,5 +1,6 @@
 <div id="game">
-  <div><h3>{{ game.name }}</h3></div>
+  <div id="user"><h6>{{ user.name}}</h6></div>
+  <div class="sub-header">{{game.name}}</div>
   <div class="gameboard">
     <div class="row">
       <div class="square" ng-click="move(1)">&nbsp;{{gamestate[1]}}</div>

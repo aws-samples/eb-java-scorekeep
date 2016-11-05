@@ -5,6 +5,7 @@ function Game($q, $scope, $http, $interval, $routeParams, SessionService, UserSe
   $scope.state = new StateService; // game state object
   $scope.gamestate = []; // game state as Array
   $scope.moving = 0;
+  $scope.user = UserService.get({ id: $routeParams.userid });
 
   $scope.playgame = function(){
     return $q(function(resolve, reject) {
