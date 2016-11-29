@@ -1,13 +1,70 @@
 package scorekeep;
-import org.springframework.context.annotation.Configuration;
+
+import com.amazonaws.xray.AWSXRay;
+import com.amazonaws.xray.AWSXRayRecorderBuilder;
+import com.amazonaws.xray.javax.servlet.AWSXRayServletFilter;
+import com.amazonaws.xray.plugins.EC2Plugin;
+import com.amazonaws.xray.strategy.sampling.DefaultSamplingStrategy;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+
 import javax.servlet.Filter;
+import javax.sql.DataSource;
+import java.net.URL;
+
 
 @Configuration
+@EnableAutoConfiguration
+@EnableJpaRepositories("scorekeep")
 public class WebConfig {
+  private static final Log logger = LogFactory.getLog(WebConfig.class);
+
+  @Bean
+  public Filter TracingFilter() {
+    return new AWSXRayServletFilter();
+  }
 
   @Bean
   public Filter SimpleCORSFilter() {
     return new SimpleCORSFilter();
+  }
+
+  @Bean
+  @Primary
+  @ConfigurationProperties(prefix = "spring.datasource")
+  public DataSource dataSource() {
+    if (Application.Profile.PGSQL.toString().equals(Application.getProfile())) {
+      logger.info("Initializing PostgreSQL datasource");
+      return DataSourceBuilder.create()
+              .driverClassName("org.postgresql.Driver")
+              .url("jdbc:postgresql://" + System.getenv("RDS_HOSTNAME") + ":" + System.getenv("RDS_PORT") + "/ebdb")
+              .username(System.getenv("RDS_USERNAME"))
+              .password(System.getenv("RDS_PASSWORD"))
+              .build();
+    } else {
+      logger.info("Initializing MySQL datasource");
+      return DataSourceBuilder.create().url("jdbc:h2:mem:ebdb").build();
+    }
+  }
+
+  @Bean
+  public GameHistoryModel gameHistoryModel() {
+    return new GameHistoryModel();
+  }
+
+  static {
+    AWSXRayRecorderBuilder builder = AWSXRayRecorderBuilder.standard().withPlugin(new EC2Plugin());
+
+    URL ruleFile = WebConfig.class.getResource("/sampling-rules.json");
+    builder.withSamplingStrategy(new DefaultSamplingStrategy(ruleFile));
+
+    AWSXRay.setGlobalRecorder(builder.build());
   }
 }

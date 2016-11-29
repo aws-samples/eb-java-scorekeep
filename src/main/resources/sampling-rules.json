@@ -1,0 +1,28 @@
+{
+  "rules": {
+    "user": {
+      "id": 1,
+      "service_name": "*",
+      "http_method": "POST",
+      "url_path": "/api/user",
+      "fixed_target": 10,
+      "rate": 1.0
+    },
+    "move": {
+      "id": 2,
+      "service_name": "*",
+      "http_method": "*",
+      "url_path": "/api/move/*",
+      "fixed_target": 1,
+      "rate": 0.05
+    },
+    "base": {
+      "id": 3,
+      "service_name": "*",
+      "http_method": "*",
+      "url_path": "*",
+      "fixed_target": 10,
+      "rate": 0.25
+    }
+  }
+}

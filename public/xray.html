@@ -1,0 +1,55 @@
+<div class="jumbotron">
+    <div class="container">
+        <h1 class="display-3">AWS X-Ray Demo</h1>
+        <p class="lead">Descriptive text</p>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-10 offset-md-1">
+                    <button type="button" class="btn btn-outline-primary btn-lg btn-block" ng-click="toggleDdbDemo()">{{ getDdbDemoPrompt() }}</button>
+                    <p class="text-xs-center"><a href="https://console.aws.amazon.com/xray/home">View Traces</a></p>
+                    <hr>
+                    <p ng-bind-html="getDdbOutput()"></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-10 offset-md-1">
+                    <button type="button" class="btn btn-outline-primary btn-lg btn-block" ng-click="toggleRdsDemo()">{{ getRdsDemoPrompt() }}</button>
+                    <p class="text-xs-center"><a href="https://console.aws.amazon.com/xray/home#/traces?filter=http.url%20CONTAINS%20%22history%22">View Traces</a></p>
+                    <hr>
+                    <p ng-bind-html="getRdsOutput()"></p>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Winner</th>
+                            <th>Loser</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="game in gameHistory">
+                            <td>{{game.id}}</td>
+                            <td>{{game.winningPlayer}}</td>
+                            <td>{{game.losingPlayer}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<nav class="navbar navbar-fixed-bottom navbar-light bg-faded">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 offset-md-4">
+                <a class="navbar-brand" href="https://console.aws.amazon.com/xray/home">Go to AWS X-Ray Console</a>
+            </div>
+        </div>
+    </div>
+</nav>

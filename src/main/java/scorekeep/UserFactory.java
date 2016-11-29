@@ -1,19 +1,19 @@
 package scorekeep;
-import java.util.*;
-import java.security.SecureRandom;
-import java.math.BigInteger;
-import java.lang.Exception;
-import java.io.InputStream;
-import java.io.IOException;
 
+import com.amazonaws.xray.proxies.apache.http.HttpClientBuilder;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.util.EntityUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigInteger;
+import java.security.SecureRandom;
+import java.util.List;
+import java.util.Map;
 
 public class UserFactory {
   private SecureRandom random = new SecureRandom();
