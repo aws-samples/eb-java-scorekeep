@@ -9,7 +9,7 @@ import java.util.List;
 
 public class GameHistoryModel {
 
-    @Autowired
+    @Autowired(required = false)
     private GameHistoryRepository repository;
 
     public List<GameHistory> get() {

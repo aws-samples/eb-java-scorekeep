@@ -1,14 +1,17 @@
 package scorekeep;
 
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.AbstractEnvironment;
 
-@SpringBootApplication
+@Configuration
+@ComponentScan
 public class Application {
 
     enum Profile {
-        MYSQL("mysql"),
+        NODB("nodb"),
         PGSQL("pgsql");
 
         private final String name;
@@ -28,11 +31,23 @@ public class Application {
         SpringApplication.run(Application.class, args);
     }
 
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources(Application.class);
+    }
+
     public static String getProfile() {
-        if (null != System.getenv("RDS_HOSTNAME") && null != System.getenv("RDS_USERNAME") && null != System.getenv("RDS_PASSWORD") && null != System.getenv("RDS_PORT")) {
+        if (isRdsEnabled()) {
             return Profile.PGSQL.toString();
         } else {
-            return Profile.MYSQL.toString();
+            return Profile.NODB.toString();
         }
+    }
+
+    public static boolean isRdsEnabled() {
+        // Only enabled if the relevant environment variables are set
+        return (null != System.getenv("RDS_HOSTNAME")
+                && null != System.getenv("RDS_USERNAME")
+                && null != System.getenv("RDS_PASSWORD")
+                && null != System.getenv("RDS_PORT"));
     }
 }

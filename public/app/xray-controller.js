@@ -11,6 +11,19 @@ function XRayController($scope, $http, $location, SessionCollection, UserCollect
   var shouldRunRdsDemo = false;
   $scope.gameHistory = [];
 
+  $scope.isRdsConfigured = false;
+  var isRdsConfigured = function() {
+    GameHistoryModel.get().then(
+        function(success) {
+            $scope.isRdsConfigured = true;
+        },
+        function(error) {
+            $scope.isRdsConfigured = false;
+        }
+    );
+  };
+  isRdsConfigured();
+
   var runDdbDemo = function() {
     ddbRunning = true;
     var user1, user2, session, game;

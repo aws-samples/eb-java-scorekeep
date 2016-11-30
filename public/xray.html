@@ -1,7 +1,7 @@
 <div class="jumbotron">
     <div class="container">
         <h1 class="display-3">AWS X-Ray Demo</h1>
-        <p class="lead">Descriptive text</p>
+        <p class="lead"></p>
     </div>
 </div>
 <div class="container">
@@ -18,7 +18,7 @@
         </div>
         <div class="col-md-6">
             <div class="row">
-                <div class="col-md-10 offset-md-1">
+                <div class="col-md-10 offset-md-1" ng-show="isRdsConfigured">
                     <button type="button" class="btn btn-outline-primary btn-lg btn-block" ng-click="toggleRdsDemo()">{{ getRdsDemoPrompt() }}</button>
                     <p class="text-xs-center"><a href="https://console.aws.amazon.com/xray/home#/traces?filter=http.url%20CONTAINS%20%22history%22">View Traces</a></p>
                     <hr>
@@ -39,6 +39,9 @@
                         </tr>
                         </tbody>
                     </table>
+                </div>
+                <div class="col-md-10 offset-md-1" ng-hide="isRdsConfigured">
+                    <p>Use AWS Elastic Beanstalk to attach a database instance to this environment for the RDS demo.</p>
                 </div>
             </div>
         </div>
