@@ -36,7 +36,7 @@ Deploy the source code for the project to your Elastic Beanstalk environment.
 5. Upload **eb-java-scorekeep-v1.zip** and click **Deploy**.
 6. Open the environment URL. 
 
-![Scorekeep front page](/img/scorekeep-frontpage.png)
+![Scorekeep flow](/img/scorekeep-flow.png)
 
 Click through the app to explore its functionality. Use the network console in your browser to see the HTTP requests that it sends to the API to read and write users, sessions, games, moves and game state to DynamoDB via the API.
 
