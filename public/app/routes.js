@@ -5,6 +5,10 @@ module.config(function($routeProvider) {
     templateUrl : "main.html",
     controller : "MainController"
   })
+  .when("/demo", {
+    templateUrl: "demo.html",
+    controller: "DemoController"
+  })
   .when("/sessions", {
     templateUrl : "sessions.html",
     controller : "SessionsController"

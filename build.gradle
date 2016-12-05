@@ -28,8 +28,10 @@ targetCompatibility = 1.8
 
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.springframework.boot:spring-boot-starter-data-jpa")
     testCompile("org.springframework.boot:spring-boot-starter-test")
     compile("com.amazonaws:aws-java-sdk-dynamodb")
+    compile("org.postgresql:postgresql:9.4.1211.jre7")
     testCompile("junit:junit:4.11")
     compile("com.fasterxml.jackson.core:jackson-databind:2.8.4")
 }
