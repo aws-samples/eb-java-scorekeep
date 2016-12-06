@@ -28,3 +28,7 @@ module.factory('StateService', function($resource, api) {
   return $resource(api + 'state/:sessionid/:gameid/:id', { sessionid: '@_sessionid', gameid: '@_gameid', id: '@_id' }, {
   });
 });
+module.factory('GameHistoryService', function($resource, api) {
+    return $resource(api + 'history', {}, {
+    });
+});
