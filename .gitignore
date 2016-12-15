@@ -7,4 +7,5 @@ build/*
 !.elasticbeanstalk/*.global.yml
 *.zip
 *.sh
+!bin/*.sh
 lib

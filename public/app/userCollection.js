@@ -6,7 +6,7 @@ module.service('UserCollection', function(UserService, api) {
       return UserService.get({ id: userid })
     }
     var user = new UserService();
-    if ( username == "random") {
+    if ( username === "random") {
       return user.$save();
     } else {
       user.name = username;

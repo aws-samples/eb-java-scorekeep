@@ -1,8 +1,10 @@
 package scorekeep;
-import java.util.*;
-import java.security.SecureRandom;
+
 import java.math.BigInteger;
-import java.lang.Exception;
+import java.security.SecureRandom;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 
 public class MoveFactory {
   private SecureRandom random = new SecureRandom();
@@ -22,7 +24,7 @@ public class MoveFactory {
     Move move = new Move(moveId, sessionId, gameId, userId, moveText);
     // load game state
     Game game = gameController.getGame(sessionId, gameId);
-    ArrayList<String> states = game.getStates();
+    List<String> states = game.getStates();
     State oldState = stateController.getState(sessionId, gameId, states.get(states.size() - 1));
     Set<String> oldTurn = oldState.getTurn();
     // check turn 
