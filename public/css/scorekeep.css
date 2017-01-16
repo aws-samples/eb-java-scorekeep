@@ -242,3 +242,11 @@ input {
 .square:active {
   background-color: #85144b;
 }
+
+.error {
+  padding: 25px;
+}
+
+form, h1, h2 {
+  font-family: helvetica;
+ }

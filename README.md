@@ -1,3 +1,82 @@
+# Cognito Branch
+This branch adds a demo page, controller, and changes to the main web app that show how to use Amazon Cognito to store user data and authenticate users from the browser. Cognito lets you add authentication and secure data storage to a web app without any changes to your backend code.
+
+For Scorekeep, Cognito integration lets users save their user ID, username and password in AWS. When a user logs in to the web app, it authenticates them to Cognito and retrieves their user ID, allowing them to use the same account accross sessions.
+
+## Configuring a Cognito User Pool
+Before you use the branch, create a User Pool in Amazon Cognito and configure the web app with its id, app key and region.
+
+Create a user pool in the [Amazon Cognito console](https://console.aws.amazon.com/cognito/users/).
+
+1. Choose **Create a User Pool**.
+2. For **Pool name**, enter *Cognito*.
+3. Choose **Review defaults**.
+4. Configure the user pool as follows.
+
+##### User pool configuration
+ - required attributes: none
+ - alias attributes: none
+ - custom attributes:
+   - name: userid
+     type: string
+ - min password length: 6
+ - password policy: no requirements
+ - apps:
+   - name: Scorekeep
+     generate client secret: false
+     write permissions: custom:userid
+
+Copy the **Pool Id** from the **Pool details** page and add it to the `scorekeep` module in `public/app/scorekeep.js`. On the **Apps** tab, copy the **App client id** and add that to the module as well. Update the region to match the region in which you created the user pool.
+
+`public/app/scorekeep.js`
+```
+ /* Cognito User pool */
+ module.value('cognitoUserPoolId', 'us-east-1_AbCd12345');
+ module.value('cognitoClientId', 'abcdef123456ghijklmnopqr7');
+ module.value('cognitoRegion', 'us-east-1');
+```
+
+## Create a Lambda Function
+By default, users must confirm their email address after account creation to sign in with Cognito. To avoid this for developement and test environments, create a Lambda function that confirms new users on your behalf.
+
+Create a function in the [Lambda console](https://console.aws.amazon.com/lambda/home#/create).
+
+1. Choose **Blank Function**.
+2. Configure the function as follows:
+
+##### Lambda function configuration
+ - Triggers: none
+ - Name: confirmUser
+ - Description: Confirm new Cognito users automatically
+ - Runtime: Node.js 4.3
+ - Code (change the `userPoolId` inline):
+```
+exports.handler = function(event, context) {
+    // Enter your user pool id here
+    if(event.userPoolId === "us-east-1_AbCd12345") {
+        event.response.autoConfirmUser = true;
+    }
+    // Return result to Cognito
+    context.done(null, event);
+};
+```
+ - Handler: `index.handler`
+ - Role: `lambda-scorekeep` (Create custom role)
+
+## Add the Lambda function to your User Pool
+To invoke the Lambda function during the sign up process, add it to the user pool as a **Pre sign-up trigger**. 
+
+Configure a trigger for your user pool in the [Amazon Cognito console](https://console.aws.amazon.com/cognito/users/).
+
+1. Choose **Triggers**.
+2. For **Pre sign-up**, choose the **confirmUser** function that you created. If it doesn't appear, refresh the page.
+3. Choose **Save changes**.
+
+## Test Cognito Integration
+Commit your changes and deploy the branch to your Elastic Beanstalk environment. Open the web app in a browser and choose **Powered by Amazon Cognito** in the upper right corner to view the demo page. Follow the instructions shown to test the code and learn how it works.
+
+If you don't have an Elastic Beanstalk environment, follow the instructions below.
+
 # Scorekeep
 Scorekeep is a RESTful web API implemented in Java that uses Spring to provide an HTTP interface for creating and managing game sessions and users. This project includes the scorekeep API and a frontend web app that consumes it. The frontend and API can run on the same server and domain or separately, with the API running in Elastic Beanstalk and the frontend served statically by a CDN.
 

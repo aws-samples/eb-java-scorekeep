@@ -24,6 +24,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.7/js/tether.js"></script>
     <script src="https://code.jquery.com/jquery-3.1.1.js" integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA=" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>
+    <!-- <script src="https://sdk.amazonaws.com/js/aws-sdk-2.6.10.min.js"></script> -->
+    <script src="/lib/jsbn.js"></script>
+    <script src="/lib/jsbn2.js"></script>
+    <script src="/lib/sjcl.js"></script>
+    <script src="/lib/aws-cognito-sdk.min.js"></script>
+    <script src="/lib/amazon-cognito-identity.min.js"></script>
+    <script src="/lib/aws-sdk-2.6.10.min.js"></script>
+
+    <script src="app/cognitoController.js"></script>
       <script>
     function showhide(div) {
      if ( document.getElementById(div).style.display == 'block') {
@@ -45,7 +54,7 @@
               <h3 class="masthead-brand">Scorekeep</h3>
               <nav class="nav nav-masthead">
                 <a class="nav-link" href='#/' onclick="showhide('instructions');return false;">Instructions</a>
-                <a class="nav-link" target="blank" href="https://aws.amazon.com/elasticbeanstalk/">Powered by AWS Elastic Beanstalk</a>
+                <a class="nav-link" target="blank" href="#/cognito">Powered by Amazon Cognito</a>
               </nav>
             </div>
           </div>
