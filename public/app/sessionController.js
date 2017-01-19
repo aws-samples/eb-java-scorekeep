@@ -41,7 +41,6 @@ function Session($scope, $http, $location, $interval, $routeParams, SessionServi
   $scope.interval = $interval(function(){
     $scope.loadSession();
   }, 5000);
-
   $scope.createGame = function (gamename, gamerules) {
     var sessionid = $routeParams.sessionid;
 
@@ -95,4 +94,8 @@ function Session($scope, $http, $location, $interval, $routeParams, SessionServi
       $location.path('/');
     });
   };
+  $scope.$on('$destroy',function(){
+    if($scope.interval)
+        $interval.cancel($scope.interval);
+  });
 }
