@@ -12,6 +12,12 @@ body {
   text-align: center;
 }
 
+a, a:active, a:focus, a:hover {
+  color: #000;
+  outline: none;
+  text-decoration: none;
+}
+
 /* Extra markup and styles for table-esque vertical and horizontal centering */
 .site-wrapper {
   display: table;
