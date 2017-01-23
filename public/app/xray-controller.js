@@ -2,8 +2,8 @@ var module = angular.module('scorekeep');
 
 module.controller('XRayController', XRayController);
 function XRayController($scope, $http, $location, SessionCollection, UserCollection, GameCollection, GameHistoryModel, api, $sce) {
-  var ddbOutput = "Click the button above to generate traces to AWS DynamoDB.";
-  var rdsDefaultOutput = "Click the button above to populate the table and generate traces to AWS RDS.";
+  var ddbOutput = "Simulate game sessions to generate trace data for AWS X-Ray.";
+  var rdsDefaultOutput = "Generate session records and store them in a PostgreSQL database in Amazon RDS.";
   var rdsRunningOutput = "Populating table...";
   var ddbRunning = false;
   var rdsRunning = false;
@@ -147,21 +147,21 @@ function XRayController($scope, $http, $location, SessionCollection, UserCollect
 
   $scope.getDdbDemoPrompt = function() {
     if (shouldRunDdbDemo) {
-        return "Stop AWS DynamoDB Demo";
+        return "Stop";
     } else if (ddbRunning) {
-        return "Finishing AWS DynamoDB Demo";
+        return "Finishing game";
     } else {
-        return "Start AWS DynamoDB Demo";
+        return "Generate traffic";
     }
   };
 
   $scope.getRdsDemoPrompt = function() {
     if (shouldRunRdsDemo) {
-        return "Stop AWS RDS Demo";
+        return "Stop";
     } else if (rdsRunning) {
-        return "Finishing AWS RDS Demo";
+        return "Finishing game";
     } else {
-        return "Start AWS RDS Demo";
+        return "Generate DB queries";
     }
   };
 
