@@ -29,7 +29,7 @@ public class RdsWebConfig {
 
     @Bean
     public Filter TracingFilter() {
-        return new AWSXRayServletFilter();
+        return new AWSXRayServletFilter("Scorekeep");
     }
 
     @Bean
