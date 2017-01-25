@@ -12,12 +12,13 @@ import org.springframework.context.annotation.Configuration;
 import javax.servlet.Filter;
 import java.net.URL;
 
+
 @Configuration
 public class WebConfig {
 
   @Bean
   public Filter TracingFilter() {
-    return new AWSXRayServletFilter();
+    return new AWSXRayServletFilter("Scorekeep");
   }
 
   @Bean

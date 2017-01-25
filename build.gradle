@@ -35,13 +35,12 @@ dependencies {
     compile("com.amazonaws:aws-xray-recorder-sdk-aws-sdk-instrumentor")
     testCompile("junit:junit:4.11")
     compile("com.fasterxml.jackson.core:jackson-databind:2.8.4")
-    compile("commons-validator:commons-validator:1.5.1")
 }
 
 dependencyManagement {
     imports {
         mavenBom("com.amazonaws:aws-java-sdk-bom:1.11.67")
-        mavenBom("com.amazonaws:aws-xray-recorder-sdk-bom:1.0.0-beta")
+        mavenBom("com.amazonaws:aws-xray-recorder-sdk-bom:1.0.2-beta")
     }
 }
 task wrapper(type: Wrapper) {
