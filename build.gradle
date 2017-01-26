@@ -44,7 +44,7 @@ dependencies {
 dependencyManagement {
     imports {
         mavenBom("com.amazonaws:aws-java-sdk-bom:1.11.67")
-        mavenBom("com.amazonaws:aws-xray-recorder-sdk-bom:1.0.2-beta")
+        mavenBom("com.amazonaws:aws-xray-recorder-sdk-bom:1.0.3-beta")
     }
 }
 task wrapper(type: Wrapper) {
