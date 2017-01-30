@@ -5,7 +5,7 @@
     <div class="section-header">Trace game sessions</div>
     <p>Create users and a session, and then create and play a game of tic-tac-toe with those users. Each call to Scorekeep is traced with AWS X-Ray, which generates a service map from the data.</p>
     <button type="button" ng-click="toggleDdbDemo()">{{ getDdbDemoPrompt() }}</button>
-    <p class="text-xs-center"><a href="https://console.aws.amazon.com/xray/home">View traces in AWS X-Ray</a></p>
+    <p class="text-xs-center"><a href="https://console.aws.amazon.com/xray/home#/service-map" target="blank">View service map AWS X-Ray</a></p>
     <hr>
     <p ng-bind-html="getDdbOutput()"></p>
   </div>
