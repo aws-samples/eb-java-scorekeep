@@ -38,7 +38,7 @@ dependencies {
 
 dependencyManagement {
     imports {
-        mavenBom("com.amazonaws:aws-java-sdk-bom:1.11.39")
+        mavenBom("com.amazonaws:aws-java-sdk-bom:1.11.67")
     }
 }
 task wrapper(type: Wrapper) {
