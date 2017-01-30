@@ -1,43 +1,42 @@
-<div class="container">
-    <div class="row">
-        <div class="col-md-6">
-            <div class="row">
-                <div class="col-md-10 offset-md-1">
-                    <button type="button" class="btn btn-outline-primary btn-lg btn-block" ng-click="toggleDdbDemo()">{{ getDdbDemoPrompt() }}</button>
-                    <p class="text-xs-center"><a href="https://console.aws.amazon.com/xray/home">View traces in AWS X-Ray</a></p>
-                    <hr>
-                    <p ng-bind-html="getDdbOutput()"></p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="row">
-                <div class="col-md-10 offset-md-1" ng-show="isRdsConfigured">
-                    <button type="button" class="btn btn-outline-primary btn-lg btn-block" ng-click="toggleRdsDemo()">{{ getRdsDemoPrompt() }}</button>
-                    <p class="text-xs-center"><a href="https://console.aws.amazon.com/xray/home#/traces?filter=http.url%20CONTAINS%20%22history%22">View traces in AWS X-Ray</a></p>
-                    <hr>
-                    <p ng-bind-html="getRdsOutput()"></p>
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Winner</th>
-                            <th>Loser</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr ng-repeat="game in gameHistory">
-                            <td>{{game.id}}</td>
-                            <td>{{game.winningPlayer}}</td>
-                            <td>{{game.losingPlayer}}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="col-md-10 offset-md-1" ng-hide="isRdsConfigured">
-                    <p>Use AWS Elastic Beanstalk to attach a database instance to this environment for the RDS demo.</p>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="page" id="xray">
+  <div class="page-header">AWS X-Ray integration</div>
+  <p>This branch is integrated with the AWS X-Ray SDK for Java to record information about requests from this web app to the Scorekeep API, and calls that the API makes to Amazon DynamoDB and other downstream services</p>
+  <div class "section" id="xray-ddb">
+    <div class="section-header">Trace game sessions</div>
+    <p>Create users and a session, and then create and play a game of tic-tac-toe with those users. Each call to Scorekeep is traced with AWS X-Ray, which generates a service map from the data.</p>
+    <button type="button" ng-click="toggleDdbDemo()">{{ getDdbDemoPrompt() }}</button>
+    <p class="text-xs-center"><a href="https://console.aws.amazon.com/xray/home">View traces in AWS X-Ray</a></p>
+    <hr>
+    <p ng-bind-html="getDdbOutput()"></p>
+  </div>
+  <div class "section" id="xray-rds" ng-show="isRdsConfigured">
+    <div class="section-header">Trace SQL queries</div>
+    <p>Simulate game sessions, and store the results in a PostgreSQL Amazon RDS database attached to the AWS Elastic Beanstalk running Scorekeep. This demo uses an instrumented JDBC data source to send details about the SQL queries to X-Ray.</p>
+    <p>For more information about Scorekeep's SQL integration, see the <a href="https://github.com/awslabs/eb-java-scorekeep/tree/sql"><code>sql</code></a> branch of this project.</p>
+    <button type="button" ng-click="toggleRdsDemo()">{{ getRdsDemoPrompt() }}</button>
+    <p class="text-xs-center"><a href="https://console.aws.amazon.com/xray/home#/traces?filter=http.url%20CONTAINS%20%22history%22">View traces in AWS X-Ray</a></p>
+    <hr>
+    <p ng-bind-html="getRdsOutput()"></p>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Winner</th>
+            <th>Loser</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="game in gameHistory">
+            <td>{{game.id}}</td>
+            <td>{{game.winningPlayer}}</td>
+            <td>{{game.losingPlayer}}</td>
+        </tr>
+        </tbody>
+    </table>
+  </div>
+  <div class "section" id="xray-nords" ng-hide="isRdsConfigured">
+    <div class="section-header">Generate SQL queries</div>
+    <p>Scorekeep can use Amazon RDS to store game records in a PostgreSQL database. Amazon RDS integration is described in the <a href="https://github.com/awslabs/eb-java-scorekeep/tree/sql"><code>rds</code></a> branch of this project.</p>
+    <p>If you add a PostgreSQL database to an AWS Elastic Beanstalk environment running Scorekeep, you can use this section to test the database connection and trace SQL queries with X-Ray.</p>
+  </div>
 </div>
