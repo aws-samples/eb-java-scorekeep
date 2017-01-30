@@ -14,7 +14,7 @@
     <p>Simulate game sessions, and store the results in a PostgreSQL Amazon RDS database attached to the AWS Elastic Beanstalk running Scorekeep. This demo uses an instrumented JDBC data source to send details about the SQL queries to X-Ray.</p>
     <p>For more information about Scorekeep's SQL integration, see the <a href="https://github.com/awslabs/eb-java-scorekeep/tree/sql"><code>sql</code></a> branch of this project.</p>
     <button type="button" ng-click="toggleRdsDemo()">{{ getRdsDemoPrompt() }}</button>
-    <p class="text-xs-center"><a href="https://console.aws.amazon.com/xray/home#/traces?filter=http.url%20CONTAINS%20%22history%22">View traces in AWS X-Ray</a></p>
+    <p class="text-xs-center"><a href="https://console.aws.amazon.com/xray/home#/traces?filter=http.url%20CONTAINS%20%22history%22" target="blank">View traces in AWS X-Ray</a></p>
     <hr>
     <p ng-bind-html="getRdsOutput()"></p>
     <table class="table">
@@ -36,7 +36,7 @@
   </div>
   <div class "section" id="xray-nords" ng-hide="isRdsConfigured">
     <div class="section-header">Generate SQL queries</div>
-    <p>Scorekeep can use Amazon RDS to store game records in a PostgreSQL database. Amazon RDS integration is described in the <a href="https://github.com/awslabs/eb-java-scorekeep/tree/sql"><code>rds</code></a> branch of this project.</p>
+    <p>Scorekeep can use Amazon RDS to store game records in a PostgreSQL database. Amazon RDS integration is described in the <a href="https://github.com/awslabs/eb-java-scorekeep/tree/sql" target="blank"><code>rds</code></a> branch of this project.</p>
     <p>If you add a PostgreSQL database to an AWS Elastic Beanstalk environment running Scorekeep, you can use this section to test the database connection and trace SQL queries with X-Ray.</p>
   </div>
 </div>
