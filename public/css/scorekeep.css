@@ -29,7 +29,18 @@ body {
   text-align: center;
 }
 
-a, a:active, a:focus, a:hover {
+a {
+  font-weight: bold;
+  color: #FF851B;
+  outline: none;
+  text-decoration: none;
+}
+
+a:active, a:hover, a:focus {
+  color: #D26506;
+}
+
+#scorekeep-anchor {
   color: #000;
   outline: none;
   text-decoration: none;
@@ -72,8 +83,6 @@ a, a:active, a:focus, a:hover {
 
 .nav-masthead .nav-link {
   padding: .25rem 0;
-  font-weight: bold;
-  color: #FF851B;
 }
 
 .nav-masthead .nav-link + .nav-link {
