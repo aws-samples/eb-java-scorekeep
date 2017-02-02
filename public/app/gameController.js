@@ -34,7 +34,7 @@ function Game($q, $scope, $http, $interval, $routeParams, SessionService, UserSe
   }, 5000);
 
   $scope.move = function(cellid){
-    if ( $scope.moving == 1 ) {
+    if ( $scope.moving == 1 || $scope.winner != '' ) {
       return;
     }
     $scope.moving = 1;
