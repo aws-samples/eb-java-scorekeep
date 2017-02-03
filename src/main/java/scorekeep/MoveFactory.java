@@ -5,8 +5,14 @@ import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.lang.Class;
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MoveFactory {
+  private static final Logger logger = LoggerFactory.getLogger("scorekeep.MoveFactory");
   private SecureRandom random = new SecureRandom();
   private final HashMap<String, Move> allMoves = new HashMap<String, Move>(1);
   private MoveModel moveModel = new MoveModel();
@@ -18,10 +24,11 @@ public class MoveFactory {
   public MoveFactory(){
   }
 
-  public Move newMove(String sessionId, String gameId, String userId, String moveText) throws SessionNotFoundException, GameNotFoundException, StateNotFoundException {
+  public Move newMove(String sessionId, String gameId, String userId, String moveText) throws SessionNotFoundException, GameNotFoundException, StateNotFoundException, RulesException {
     String moveId = new BigInteger(40, random).toString(32).toUpperCase();
     String stateId = new BigInteger(40, random).toString(32).toUpperCase();
     Move move = new Move(moveId, sessionId, gameId, userId, moveText);
+    String newStateText = "";
     // load game state
     Game game = gameController.getGame(sessionId, gameId);
     List<String> states = game.getStates();
@@ -37,7 +44,14 @@ public class MoveFactory {
     if (newTurn.size() != 1) {
       newTurn.remove(userId);
     }
-    String newStateText = TicTacToe.move(oldState.getState(), moveText);
+    try {
+      Class<?> rules = Class.forName("scorekeep." + game.getRules());
+      Method moveMethod = rules.getMethod("move", String.class, String.class);
+      newStateText = (String) moveMethod.invoke(null, oldState.getState(), moveText);
+    } catch ( ClassNotFoundException e ) { throw new RulesException(game.getRules()); }
+    catch ( NoSuchMethodException f ) { throw new RulesException(game.getRules()); }
+    catch ( IllegalAccessException g ) { throw new RulesException(game.getRules()); }
+    catch ( InvocationTargetException h ) { throw new RulesException(game.getRules()); }
     // save new game state
     State newState = new State(stateId, sessionId, gameId, newStateText, newTurn);
     // register state and move id to game
