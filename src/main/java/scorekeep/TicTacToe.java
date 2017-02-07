@@ -1,6 +1,7 @@
 package scorekeep;
 
 import java.lang.Character;
+import java.lang.Math;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +26,44 @@ public class TicTacToe {
       logger.error("Not your turn");
     }
     // new = "ONNXNNNNNN" 
+    // check for victory
+    // - convert state to integer
+    int stateInt = toInt(oldchar, movchar[0]);
+    logger.info("state int: " + stateInt);
+    // - compare
+    boolean win = checkWin(stateInt);
+    if ( win ) {
+      if ( movchar[0] == 'X') {
+        oldchar[0] = 'A';
+      } else {
+        oldchar[0] = 'B';
+      }
+    }
     String newState = new String(oldchar);
     return newState;
+  }
+
+  public static int toInt(char[] state, char turn) {
+    int out = 0;
+    int len = state.length;
+    for ( int i = 1; i <= len; i++ ){
+      if ( state[len-i] == turn) {
+        out += java.lang.Math.pow( 2, i-1 );
+      }
+    }
+    return out;
+  }
+
+  public static boolean checkWin(int state) {
+    int[] winningStates = {7,56,73,84,146,273,292,448};
+    for ( int i = 0; i < 8; i++ ){
+      int combinedState = winningStates[i] & state;
+      if ( combinedState == winningStates[i]) {
+        logger.info("winning state: " + state);
+        logger.info("matches: " + winningStates[i]);
+        return true;
+      }
+    }
+    return false;
   }
 }

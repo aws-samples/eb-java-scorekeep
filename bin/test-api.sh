@@ -14,7 +14,7 @@ do
   GAMEID=$(curl --silent -X POST $API/game/$SESSIONID | jq -r .id)
   echo "configuring game, "
   curl --silent -X POST $API/game/$SESSIONID/$GAMEID/users -H "Content-Type: application/json" --data "[\"$USER1ID\",\"$USER2ID\"]"
-  curl --silent -X PUT $API/game/$SESSIONID/$GAMEID/rules/TICTACTOE
+  curl --silent -X PUT $API/game/$SESSIONID/$GAMEID/rules/TicTacToe
   curl --silent -X PUT $API/game/$SESSIONID/$GAMEID/name/tic-tac-toe-test
   EPOCH=$(date +%s)
   curl --silent -X PUT $API/game/$SESSIONID/$GAMEID/starttime/$EPOCH
