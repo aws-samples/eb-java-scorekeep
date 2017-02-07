@@ -31,7 +31,7 @@ public class MoveController {
   }
   /* POST /move/SESSION/GAME/USER ; move string */
   @RequestMapping(value="/{userId}", method=RequestMethod.POST)
-  public Move newMove(@PathVariable String sessionId, @PathVariable String gameId, @PathVariable String userId, @RequestBody String move) throws SessionNotFoundException, GameNotFoundException, StateNotFoundException {
+  public Move newMove(@PathVariable String sessionId, @PathVariable String gameId, @PathVariable String userId, @RequestBody String move) throws SessionNotFoundException, GameNotFoundException, StateNotFoundException, RulesException {
     return moveFactory.newMove(sessionId, gameId, userId, move);
   }
   /** GET /move/SESSION/GAME/MOVE **/

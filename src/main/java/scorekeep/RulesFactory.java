@@ -8,7 +8,7 @@ public class RulesFactory {
   private final HashMap<String, Rules> allRules = new HashMap<String, Rules>(1);
 
   public RulesFactory(){
-    String id = "TICTACTOE";
+    String id = "TicTacToe";
     String name = "Tic Tac Toe";
     String[] categories = { "head to head", "quick" };
     Integer[] users = { 2 };
