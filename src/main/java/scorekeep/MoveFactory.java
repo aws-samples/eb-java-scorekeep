@@ -44,14 +44,15 @@ public class MoveFactory {
     if (newTurn.size() != 1) {
       newTurn.remove(userId);
     }
+    String rulesName = game.getRules();
+    if ( !rulesName.matches("[a-zA-Z]{1,16}") ) {
+      throw new RulesException(rulesName);
+    }
     try {
-      Class<?> rules = Class.forName("scorekeep." + game.getRules());
+      Class<?> rules = Class.forName("scorekeep." + rulesName);
       Method moveMethod = rules.getMethod("move", String.class, String.class);
       newStateText = (String) moveMethod.invoke(null, oldState.getState(), moveText);
-    } catch ( ClassNotFoundException e ) { throw new RulesException(game.getRules()); }
-    catch ( NoSuchMethodException f ) { throw new RulesException(game.getRules()); }
-    catch ( IllegalAccessException g ) { throw new RulesException(game.getRules()); }
-    catch ( InvocationTargetException h ) { throw new RulesException(game.getRules()); }
+    } catch ( ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) { throw new RulesException(rulesName); }
     // save new game state
     State newState = new State(stateId, sessionId, gameId, newStateText, newTurn);
     // register state and move id to game
