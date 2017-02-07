@@ -6,6 +6,7 @@ function Game($q, $scope, $http, $interval, $routeParams, SessionService, UserSe
   $scope.gamestate = []; // game state as Array
   $scope.moving = 0;
   $scope.user = UserService.get({ id: $routeParams.userid });
+  $scope.winner = '';
 
   $scope.playgame = function(){
     return $q(function(resolve, reject) {
@@ -16,6 +17,11 @@ function Game($q, $scope, $http, $interval, $routeParams, SessionService, UserSe
       })
       SetState = GetState.then(function(result){
         $scope.gamestate = $scope.state.state.split('');
+        if ( $scope.gamestate[0] == 'A' ) {
+          $scope.winner = "X wins!";
+        } else if ( $scope.gamestate[0] == 'B') {
+          $scope.winner = "O wins!";
+        }
         resolve();
       });
     });
@@ -28,7 +34,7 @@ function Game($q, $scope, $http, $interval, $routeParams, SessionService, UserSe
   }, 5000);
 
   $scope.move = function(cellid){
-    if ( $scope.moving == 1 ) {
+    if ( $scope.moving == 1 || $scope.winner != '' ) {
       return;
     }
     $scope.moving = 1;
