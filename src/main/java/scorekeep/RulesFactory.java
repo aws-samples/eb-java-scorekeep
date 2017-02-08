@@ -8,16 +8,7 @@ public class RulesFactory {
   private final HashMap<String, Rules> allRules = new HashMap<String, Rules>(1);
 
   public RulesFactory(){
-    String id = "TicTacToe";
-    String name = "Tic Tac Toe";
-    String[] categories = { "head to head", "quick" };
-    Integer[] users = { 2 };
-    Integer teams = 0;
-    String[] phases = { "Move" };
-    String[] moves = { "Roll" };
-    String initialState = "X         ";
-    Rules tictactoe = new Rules(id, name, categories, users, teams, phases, moves, initialState);
-
+    Rules tictactoe = TicTacToe.getRules();
     allRules.put(tictactoe.getId(), tictactoe);
   }
 
