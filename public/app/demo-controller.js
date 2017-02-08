@@ -48,7 +48,7 @@ function DemoController($scope, $http, $location, SessionCollection, UserCollect
             console.log(result);
             session = result;
             ddbOutput += "Creating tic-tac-toe game...<br/>";
-            return GameCollection.createGame(session.id, "tic-tac-toe", "TICTACTOE");
+            return GameCollection.createGame(session.id, "tic-tac-toe", "TicTacToe");
         })
         .then(function(result) {
             console.log(result);
@@ -59,7 +59,7 @@ function DemoController($scope, $http, $location, SessionCollection, UserCollect
         .then(function(result) {
             console.log(result);
             // Avoid NPE in service
-            return GameCollection.setField(session.id, game.id, "rules", "TICTACTOE");
+            return GameCollection.setField(session.id, game.id, "rules", "TicTacToe");
         })
         .then(function(result) {
             console.log(result);

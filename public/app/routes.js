@@ -5,7 +5,7 @@ module.config(function($routeProvider) {
     templateUrl : "main.html",
     controller : "MainController"
   })
-  .when("/demo", {
+  .when("/sql", {
     templateUrl: "demo.html",
     controller: "DemoController"
   })
