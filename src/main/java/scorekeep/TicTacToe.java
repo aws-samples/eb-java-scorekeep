@@ -84,7 +84,11 @@ public class TicTacToe {
    *          O
    *        X X X
    * Xs state in binary is 010000111, 135 in decimal. 135 is a bitwise match
-   * for 000000111, 7 in decimal, one of the 8 winning states.
+   * for 000000111, 7 in decimal, one of the 8 winning states:
+   *      111000000  448      010010010  146
+   *      000111000  56       001001001  73
+   *      000000111  7        100010001  273
+   *      100100100  292      001010100  84
    */
   public static boolean checkWin(int state) {
     int[] winningStates = {7,56,73,84,146,273,292,448};
