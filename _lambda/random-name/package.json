@@ -11,5 +11,8 @@
     "url": "eb-java-scorekeep"
   },
   "author": "mwunderl",
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "dependencies": {
+    "chance": "^1.0.4"
+  }
 }

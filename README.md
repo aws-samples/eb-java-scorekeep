@@ -1,20 +1,37 @@
 # Lambda integration
-This branch uses a Node.js Lambda function to generate random names for new users.
+This branch uses a Node.js Lambda function to generate random names for new users, instead of calling a web API. The Scorekeep API uses the AWS SDK to invoke the Lambda by function name (`random-name`) with Bean classes to represent (and serialize to/from) the input and output JSON.
 
-The Lambda function code is included in `_lambda/random-name/index.js`.
-Create a Lambda function with this code and the following settings:
-- Name: random-name
+The Lambda function code is included in `_lambda/random-name/index.js`. Create a Lambda function with the following settings:
+- Template: blank function
+- Triggers: none
+- Name: `random-name`
 - Runtime: Node.js 4.3
-- Environment variables: REGION_NAME and TOPIC_ARN
-- Include AWS SDK
+- Description: `Generate random names`
+- Code: in `_Lambda/random-name`
+  - Run `npm install`
+  - Run `zip -r ../random-name.zip *`
+  - Upload the ZIP archive
+- Environment variables:
+  - REGION_NAME: The region, e.g. `us-east-2`
+  - TOPIC_ARN: The ARN of an [SNS Topic](https://console.aws.amazon.com/sns/v2/home)
+- Role with permission to call SNS
+- Test event:
+```
+{
+  "userid": "1ABCDEFG"
+}
+```
 
 The Scorekeep API integration is implemented in the following files-
 `src/main/java/scorekeep/`
-- RandomNameInput.java
-- RandomNameOutput.java
-- RandomNameService.java
-- UserFactory.java
-- build.java
+- `RandomNameInput.java` - Bean for the input, a user ID and category.
+- `RandomNameOutput.java` - Bean for the output, a first name.
+- `RandomNameService.java` - Defines the method used to call the Lambda function. Combined with an AWS SDK Lambda client to create a Lambda Invoker.
+- `UserFactory.java` - **UserFactory.randomNameLambda** Creates the Lambda Invoker with `com.amazonaws.services.lambda.invoke.LambdaInvokerFactory`. Calls the Lambda function to generate a random name.
+- `build.gradle` - Adds the Lambda module of the AWS SDK to the Gradle build.
+
+Deploy this branch to your Elastic Beanstalk environment. No further configuration is required.
+If you don't have an environment, see below.
 
 # Scorekeep
 Scorekeep is a RESTful web API implemented in Java that uses Spring to provide an HTTP interface for creating and managing game sessions and users. This project includes the scorekeep API and a frontend web app that consumes it. The frontend and API can run on the same server and domain or separately, with the API running in Elastic Beanstalk and the frontend served statically by a CDN.
