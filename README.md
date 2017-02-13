@@ -3,6 +3,13 @@ Scorekeep is a RESTful web API implemented in Java that uses Spring to provide a
 
 The project shows the use of Spring, Angular, nginx, the AWS SDK for Java, DynamoDB, Gradle, CORS, and Elastic Beanstalk features that let you run both components on the same EC2 instance, create required DynamoDB tables as part of the Elastic Beanstalk environment, and build the API from source on-instance during deployment.
 
+Branches 
+- [`cognito`](https://github.com/awslabs/eb-java-scorekeep/tree/cognito) - Support login and store users in a Cognito user pool.
+- [`lambda`](https://github.com/awslabs/eb-java-scorekeep/tree/lambda) - Call a Lambda function to generate random names.
+- [`sql`](https://github.com/awslabs/eb-java-scorekeep/tree/sql) - Use JDBC to store game histories in an attached PostgreSQL database instance.
+- [`xray`](https://github.com/awslabs/eb-java-scorekeep/tree/xray) - Use the AWS X-Ray SDK to instrument incoming requests, SDK clients, SQL queries, HTTP clients, and sections of code.
+- [`xray-gettingstarted`](https://github.com/awslabs/eb-java-scorekeep/tree/xray-gettingstarted) - Use the AWS X-Ray to instrument incoming requests and SDK clients (no additional configuration required).
+
 Use the procedures in the following sections to run the project on AWS Elastic Beanstalk and configure it for local testing and development. 
 
 ## Create an AWS Elastic Beanstalk environment
