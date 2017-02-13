@@ -9,3 +9,4 @@ build/*
 *.sh
 !bin/*.sh
 lib
+_lambda/random-name/node_modules/*

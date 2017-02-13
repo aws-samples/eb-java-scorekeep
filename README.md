@@ -1,3 +1,21 @@
+# Lambda integration
+This branch uses a Node.js Lambda function to generate random names for new users.
+
+The Lambda function code is included in `_lambda/random-name/index.js`.
+Create a Lambda function with this code and the following settings:
+- Name: random-name
+- Runtime: Node.js 4.3
+- Environment variables: REGION_NAME and TOPIC_ARN
+- Include AWS SDK
+
+The Scorekeep API integration is implemented in the following files-
+`src/main/java/scorekeep/`
+- RandomNameInput.java
+- RandomNameOutput.java
+- RandomNameService.java
+- UserFactory.java
+- build.java
+
 # Scorekeep
 Scorekeep is a RESTful web API implemented in Java that uses Spring to provide an HTTP interface for creating and managing game sessions and users. This project includes the scorekeep API and a frontend web app that consumes it. The frontend and API can run on the same server and domain or separately, with the API running in Elastic Beanstalk and the frontend served statically by a CDN.
 
