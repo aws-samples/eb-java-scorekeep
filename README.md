@@ -8,7 +8,7 @@ The project shows the use of Spring, Angular, nginx, the AWS SDK for Java, Dynam
 - [`lambda`](https://github.com/awslabs/eb-java-scorekeep/tree/lambda) - Call a Lambda function to generate random names.
 - [`sql`](https://github.com/awslabs/eb-java-scorekeep/tree/sql) - Use JDBC to store game histories in an attached PostgreSQL database instance.
 - [`xray`](https://github.com/awslabs/eb-java-scorekeep/tree/xray) - Use the AWS X-Ray SDK to instrument incoming requests, SDK clients, SQL queries, HTTP clients, and sections of code.
-- [`xray-gettingstarted`](https://github.com/awslabs/eb-java-scorekeep/tree/xray-gettingstarted) ([tutorial](http://docs.aws.amazon.com/xray/latest/devguide/xray-gettingstarted.html)) - Use the AWS X-Ray to instrument incoming requests and SDK clients (no additional configuration required).
+- [`xray-gettingstarted`](https://github.com/awslabs/eb-java-scorekeep/tree/xray-gettingstarted) ([tutorial](https://docs.aws.amazon.com/xray/latest/devguide/xray-gettingstarted.html)) - Use the AWS X-Ray to instrument incoming requests and SDK clients (no additional configuration required).
 
 Use the procedures in the following sections to run the project on AWS Elastic Beanstalk and configure it for local testing and development. 
 
