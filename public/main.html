@@ -2,7 +2,7 @@
   <div id="main-user">
     <div class="section-header">User</div>
     <div id="usernamef" class="field"><input name="user" ng-model="username"></div>
-    <div id="passwordf" class="field"><input name="Password" type="password" ng-model="password" placeholder="password (optional)"></div>
+    <div id="passwordf" class="field" ng-hide="username=='random'"><input name="Password" type="password" ng-model="password" placeholder="password (optional)"></div>
   </div>
   <div id="main-session">
     <div class="section-header">Session</div>
