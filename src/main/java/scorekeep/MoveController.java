@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.security.SecureRandom;
 import java.math.BigInteger;
 
+import com.amazonaws.xray.AWSXRay;
+
 @RestController
 @RequestMapping(value="/api/move/{sessionId}/{gameId}")
 public class MoveController {
@@ -32,6 +34,7 @@ public class MoveController {
   /* POST /move/SESSION/GAME/USER ; move string */
   @RequestMapping(value="/{userId}", method=RequestMethod.POST)
   public Move newMove(@PathVariable String sessionId, @PathVariable String gameId, @PathVariable String userId, @RequestBody String move) throws SessionNotFoundException, GameNotFoundException, StateNotFoundException, RulesException {
+    AWSXRay.getCurrentSegment().setUser(userId);
     return moveFactory.newMove(sessionId, gameId, userId, move);
   }
   /** GET /move/SESSION/GAME/MOVE **/

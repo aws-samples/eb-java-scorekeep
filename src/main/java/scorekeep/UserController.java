@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.security.SecureRandom;
 import java.math.BigInteger;
 
+import com.amazonaws.xray.AWSXRay;
+
 @RestController
 @RequestMapping(value="/api/user")
 public class UserController {
@@ -32,12 +34,14 @@ public class UserController {
     } else {
       user = factory.newUser(userbody.getName());
     }
+    AWSXRay.getCurrentSegment().setUser(user.getId());
     return user;
   }
   /* PUT /user/USER */
   @RequestMapping(value="/{userId}", method=RequestMethod.PUT)
   public User updateUser(@PathVariable String userId, @RequestBody User user) {
     model.saveUser(user);
+    AWSXRay.getCurrentSegment().setUser(user.getId());
     return user;
   }
   /* GET /user */
@@ -48,11 +52,13 @@ public class UserController {
   /* GET /user/USER */
   @RequestMapping(value="/{userId}",method=RequestMethod.GET)
   public User getUser(@PathVariable String userId) throws UserNotFoundException {
+    AWSXRay.getCurrentSegment().setUser(userId);
     return factory.getUser(userId);
   }
   /* DELETE /user/USER */
   @RequestMapping(value="/{userId}",method=RequestMethod.DELETE)
   public void deleteUser(@PathVariable String userId) throws UserNotFoundException {
+    AWSXRay.getCurrentSegment().setUser(userId);
     model.deleteUser(userId);
   }
 }
