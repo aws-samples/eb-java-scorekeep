@@ -7,6 +7,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.xray.AWSXRay;
+import com.amazonaws.xray.entities.Segment;
 import com.amazonaws.xray.entities.Subsegment;
 import com.amazonaws.xray.handlers.TracingHandler;
 
@@ -33,6 +34,9 @@ public class GameModel {
       if (sessionModel.loadSession(sessionId) == null ) {
         throw new SessionNotFoundException(sessionId);
       }
+      Segment segment = AWSXRay.getCurrentSegment();
+      subsegment.putMetadata("resources", "game", game);
+      segment.putAnnotation("gameid", game.getId());
       mapper.save(game);
     } catch (Exception e) {
       subsegment.addException(e);
