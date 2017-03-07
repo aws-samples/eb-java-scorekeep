@@ -6,7 +6,23 @@
       "service_name": "*",
       "http_method": "POST",
       "url_path": "/api/user",
-      "fixed_target": 10,
+      "fixed_target": 1,
+      "rate": 1.0
+    },
+    {
+      "description": "Session creation.",
+      "service_name": "*",
+      "http_method": "POST",
+      "url_path": "/api/session",
+      "fixed_target": 1,
+      "rate": 1.0
+    },
+    {
+      "description": "Game creation.",
+      "service_name": "*",
+      "http_method": "POST",
+      "url_path": "/api/game/*",
+      "fixed_target": 1,
       "rate": 1.0
     },
     {
@@ -15,6 +31,30 @@
       "http_method": "*",
       "url_path": "/api/move/*",
       "fixed_target": 1,
+      "rate": 1.0
+    },
+    {
+      "description": "Session polling.",
+      "service_name": "*",
+      "http_method": "GET",
+      "url_path": "/api/session/*",
+      "fixed_target": 0,
+      "rate": 0.05
+    },
+    {
+      "description": "Game polling.",
+      "service_name": "*",
+      "http_method": "GET",
+      "url_path": "/api/game/*/*",
+      "fixed_target": 0,
+      "rate": 0.05
+    },
+    {
+      "description": "State polling.",
+      "service_name": "*",
+      "http_method": "GET",
+      "url_path": "/api/state/*/*/*",
+      "fixed_target": 0,
       "rate": 0.05
     }
   ],
