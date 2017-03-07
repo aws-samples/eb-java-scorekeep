@@ -2,34 +2,10 @@
   "version": 1,
   "rules": [
     {
-      "description": "User creation.",
+      "description": "Resource creation.",
       "service_name": "*",
       "http_method": "POST",
-      "url_path": "/api/user",
-      "fixed_target": 1,
-      "rate": 1.0
-    },
-    {
-      "description": "Session creation.",
-      "service_name": "*",
-      "http_method": "POST",
-      "url_path": "/api/session",
-      "fixed_target": 1,
-      "rate": 1.0
-    },
-    {
-      "description": "Game creation.",
-      "service_name": "*",
-      "http_method": "POST",
-      "url_path": "/api/game/*",
-      "fixed_target": 1,
-      "rate": 1.0
-    },
-    {
-      "description": "Player moves.",
-      "service_name": "*",
-      "http_method": "*",
-      "url_path": "/api/move/*",
+      "url_path": "/api/*",
       "fixed_target": 1,
       "rate": 1.0
     },
