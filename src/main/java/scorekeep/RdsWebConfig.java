@@ -80,7 +80,7 @@ public class RdsWebConfig {
         MetadataImplementor metadataImplementor = (MetadataImplementor) metadataSources.buildMetadata(standardServiceRegistry);
         SchemaExport schemaExport = new SchemaExport(standardServiceRegistry, metadataImplementor);
 
-        AWSXRay.beginSegment("schemaExportCreate");
+        AWSXRay.beginSegment("Scorekeep");
         schemaExport.create(true, true);
         AWSXRay.endSegment();
     }
