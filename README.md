@@ -49,13 +49,13 @@ Deploy the source code for the project to your Elastic Beanstalk environment.
 Click through the app to explore its functionality. Use the network console in your browser to see the HTTP requests that it sends to the API to read and write users, sessions, games, moves and game state to DynamoDB via the API.
 
 ## Configure Notifications
-The API uses Amazon SNS to send a notification email whenever a game ends. Configure your email address in the source code and redeploy to enable notifications.
+The API uses Amazon SNS to send a notification email when a game ends. To enable notifications, configure your email address in an environment variable.
 
 *To enable notifications*
-1. Clone this repository
-2. Add your email address to the `env.config` configuration file in the `.ebextensions` folder.
-3. [Create a source bundle](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/applications-sourcebundle.html).
-4. [Deploy the source bundle](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features.deploy-existing-version.html#deployments-newversion).
+1. Open your environment's page in the [environment management console](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/environments-console.html).
+2. Choose **Configuration**.
+3. Choose **Software Configuration**
+4. Under **Environment Properties**, set **NOTIFICATION_TOPIC** to your email address.
 5. Check your email for a subscription confirmation.
 6. Complete a game to trigger a notification.
 
