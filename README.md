@@ -43,7 +43,7 @@ The project shows the use of Spring, Angular, nginx, the AWS SDK for Java, Dynam
 - [`lambda`](https://github.com/awslabs/eb-java-scorekeep/tree/lambda) - Call a Lambda function to generate random names.
 - [`sql`](https://github.com/awslabs/eb-java-scorekeep/tree/sql) - Use JDBC to store game histories in an attached PostgreSQL database instance.
 - [`xray`](https://github.com/awslabs/eb-java-scorekeep/tree/xray) - Use the AWS X-Ray SDK to instrument incoming requests, SDK clients, SQL queries, HTTP clients, and sections of code.
-- [`xray-gettingstarted`](https://github.com/awslabs/eb-java-scorekeep/tree/xray-gettingstarted) - Use the AWS X-Ray to instrument incoming requests and SDK clients (no additional configuration required).
+- [`xray-gettingstarted`](https://github.com/awslabs/eb-java-scorekeep/tree/xray-gettingstarted) ([tutorial](https://docs.aws.amazon.com/xray/latest/devguide/xray-gettingstarted.html)) - Use the AWS X-Ray to instrument incoming requests and SDK clients (no additional configuration required).
 
 Use the procedures in the following sections to run the project on AWS Elastic Beanstalk and configure it for local testing and development. 
 
@@ -57,14 +57,15 @@ Create a Java 8 SE environment in Elastic Beanstalk to host the application.
 3. When your environment is ready, the console redirects you to the environment Dashboard.
 4. Click the URL at the top of the page to open the site.
 
-## Give the application permission to use DynamoDB
-When the Scorekeep API runs in AWS Elastic Beanstalk, it uses the permissions of its EC2 instance to call AWS. Elastic Beanstalk provides a default instance profile that you can extend to grant the application the permissions it needs to read from and write to resource tables in DynamoDB.
+## Give the application permission to use DynamoDB and SNS
+When the Scorekeep API runs in AWS Elastic Beanstalk, it uses the permissions of its EC2 instance to call AWS. Elastic Beanstalk provides a default instance profile that you can extend to grant the application the permissions it needs to read from and write to resource tables in DynamoDB, and send notifications with SNS.
 
-*To add DynamoDB permissions to the instances in your Elastic Beanstalk environment*
+*To add DynamoDB and SNS permissions to the instances in your Elastic Beanstalk environment*
 
 1. Open the Elastic Beanstalk instance profile in the IAM console: [aws-elasticbeanstalk-ec2-role](https://console.aws.amazon.com/iam/home#roles/aws-elasticbeanstalk-ec2-role)
 2. Click **Attach Policy**.
 3. Select [AmazonDynamoDBFullAccess](https://console.aws.amazon.com/iam/home#policies/arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess) and click **Attach Policy**.
+3. Select [AmazonSNSFullAccess](https://console.aws.amazon.com/iam/home#policies/arn:aws:iam::aws:policy/AmazonSNSFullAccess) and click **Attach Policy**.
 
 ## Deploy the application
 Deploy the source code for the project to your Elastic Beanstalk environment.
@@ -81,6 +82,17 @@ Deploy the source code for the project to your Elastic Beanstalk environment.
 ![Scorekeep flow](/img/scorekeep-flow.png)
 
 Click through the app to explore its functionality. Use the network console in your browser to see the HTTP requests that it sends to the API to read and write users, sessions, games, moves and game state to DynamoDB via the API.
+
+## Configure Notifications
+The API uses Amazon SNS to send a notification email whenever a game ends. Configure your email address in the source code and redeploy to enable notifications.
+
+*To enable notifications*
+1. Clone this repository
+2. Add your email address to the `env.config` configuration file in the `.ebextensions` folder.
+3. [Create a source bundle](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/applications-sourcebundle.html).
+4. [Deploy the source bundle](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features.deploy-existing-version.html#deployments-newversion).
+5. Check your email for a subscription confirmation.
+6. Complete a game to trigger a notification.
 
 # How it works
 The project includes two independent components, an HTML and JavaScript frontend in Angular 1.5 and a Java backend that uses Spring to provide a public API.

@@ -31,6 +31,7 @@ dependencies {
     testCompile("org.springframework.boot:spring-boot-starter-test")
     compile("com.amazonaws:aws-java-sdk-dynamodb")
     compile("com.amazonaws:aws-java-sdk-lambda")
+    compile("com.amazonaws:aws-java-sdk-sns")
     testCompile("junit:junit:4.11")
     compile("com.fasterxml.jackson.core:jackson-databind:2.8.4")
 }
