@@ -1,3 +1,4 @@
+#!/bin/bash
 cd random-name
 npm install
 zip -r ../random-name.zip *

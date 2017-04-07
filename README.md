@@ -1,26 +1,22 @@
 # Lambda integration
 This branch uses a Node.js Lambda function to generate random names for new users, instead of calling a web API. The Scorekeep API uses the AWS SDK to invoke the Lambda by function name (`random-name`) with Bean classes to represent (and serialize to/from) the input and output JSON.
 
-The Lambda function code is included in `_lambda/random-name/index.js`. Create a Lambda function with the following settings:
-- Template: blank function
-- Triggers: none
+The Lambda function code is included in `_lambda/random-name/index.js`. On deploy, configuration files in the .ebextensions folder create a function with the following settings:
 - Name: `random-name`
 - Runtime: Node.js 4.3
 - Description: `Generate random names`
 - Code: in `_Lambda/random-name`
-  - Run `npm install`
-  - Run `zip -r ../random-name.zip *`
-  - Upload the ZIP archive
 - Environment variables:
   - REGION_NAME: The region, e.g. `us-east-2`
   - TOPIC_ARN: The ARN of an [SNS Topic](https://console.aws.amazon.com/sns/v2/home)
-- Role with permission to call SNS
-- Test event:
-```
-{
-  "userid": "1ABCDEFG"
-}
-```
+- Role named "lambda-scorekeep"
+
+Create a role named "lambda-scorekeep" in the IAM management console and add the following policies:
+- AWSLambdaBasicExecutionRole
+- AmazonSNSFullAccess
+
+While you are there, add the following policy to your instance profile (aws-elasticbeanstalk-ec2-role) to let the environment create the Lambda function:
+- AWSLambdaFullAccess
 
 The Scorekeep API integration is implemented in the following files-
 `src/main/java/scorekeep/`
