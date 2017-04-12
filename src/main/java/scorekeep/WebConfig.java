@@ -31,6 +31,7 @@ public class WebConfig {
   }
 
   static {
+    AWSXRay.beginSegment("Scorekeep");
     AWSXRayRecorderBuilder builder = AWSXRayRecorderBuilder.standard().withPlugin(new EC2Plugin()).withPlugin(new ElasticBeanstalkPlugin());
 
     URL ruleFile = WebConfig.class.getResource("/sampling-rules.json");
@@ -41,5 +42,7 @@ public class WebConfig {
     if ( System.getenv("NOTIFICATION_EMAIL") != null ){
       Utils.createSubscription();
     }
+
+    AWSXRay.endSegment();
   }
 }
