@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.servlet.Filter;
 import java.net.URL;
-
+import java.lang.Exception;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,6 @@ public class WebConfig {
   }
 
   static {
-    AWSXRay.beginSegment("Scorekeep");
     AWSXRayRecorderBuilder builder = AWSXRayRecorderBuilder.standard().withPlugin(new EC2Plugin()).withPlugin(new ElasticBeanstalkPlugin());
 
     URL ruleFile = WebConfig.class.getResource("/sampling-rules.json");
@@ -39,8 +38,12 @@ public class WebConfig {
 
     AWSXRay.setGlobalRecorder(builder.build());
 
+    AWSXRay.beginSegment("Scorekeep");
     if ( System.getenv("NOTIFICATION_EMAIL") != null ){
-      Utils.createSubscription();
+      try { Utils.createSubscription(); }
+      catch (Exception e ) {
+        logger.warn("Failed to create subscription for email "+  System.getenv("NOTIFICATION_EMAIL"));
+      }
     }
 
     AWSXRay.endSegment();
