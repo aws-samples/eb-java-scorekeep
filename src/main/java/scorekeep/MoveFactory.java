@@ -55,6 +55,10 @@ public class MoveFactory {
     } catch ( ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) { throw new RulesException(rulesName); }
     // save new game state
     State newState = new State(stateId, sessionId, gameId, newStateText, newTurn);
+    // send notification on game end
+    if ( newStateText.startsWith("A") || newStateText.startsWith("B")) {
+      Utils.sendNotification("Scorekeep game completed", "Winner: " + userId);
+    }
     // register state and move id to game
     gameController.setGameMove(sessionId, gameId, moveId);
     gameController.setGameState(sessionId, gameId, stateId);

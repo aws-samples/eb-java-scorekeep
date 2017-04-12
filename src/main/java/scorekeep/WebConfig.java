@@ -13,8 +13,12 @@ import javax.servlet.Filter;
 import java.net.URL;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Configuration
 public class WebConfig {
+  private static final Logger logger = LoggerFactory.getLogger(WebConfig.class);
 
   @Bean
   public Filter TracingFilter() {
@@ -33,5 +37,9 @@ public class WebConfig {
     builder.withSamplingStrategy(new LocalizedSamplingStrategy(ruleFile));
 
     AWSXRay.setGlobalRecorder(builder.build());
+
+    if ( System.getenv("NOTIFICATION_EMAIL") != null ){
+      Utils.createSubscription();
+    }
   }
 }
