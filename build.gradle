@@ -31,6 +31,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-data-jpa")
     testCompile("org.springframework.boot:spring-boot-starter-test")
     compile("com.amazonaws:aws-java-sdk-dynamodb")
+    compile("com.amazonaws:aws-java-sdk-sns")
     compile("com.amazonaws:aws-xray-recorder-sdk-core")
     compile("com.amazonaws:aws-xray-recorder-sdk-aws-sdk")
     compile("com.amazonaws:aws-xray-recorder-sdk-aws-sdk-instrumentor")

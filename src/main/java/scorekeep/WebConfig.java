@@ -18,13 +18,16 @@ import org.springframework.context.annotation.Profile;
 
 import javax.servlet.Filter;
 import java.net.URL;
+import java.lang.Exception;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Configuration
 @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
 @Profile("nodb")
 public class WebConfig {
-  private static final Log logger = LogFactory.getLog(WebConfig.class);
+  private static final Logger logger = LoggerFactory.getLogger(WebConfig.class);
 
   @Bean
   public Filter TracingFilter() {
@@ -43,5 +46,15 @@ public class WebConfig {
     builder.withSamplingStrategy(new LocalizedSamplingStrategy(ruleFile));
 
     AWSXRay.setGlobalRecorder(builder.build());
+
+    AWSXRay.beginSegment("Scorekeep");
+    if ( System.getenv("NOTIFICATION_EMAIL") != null ){
+      try { Utils.createSubscription(); }
+      catch (Exception e ) {
+        logger.warn("Failed to create subscription for email "+  System.getenv("NOTIFICATION_EMAIL"));
+      }
+    }
+
+    AWSXRay.endSegment();
   }
 }
