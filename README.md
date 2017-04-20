@@ -96,7 +96,7 @@ Deploy the source code for the project to your Elastic Beanstalk environment.
 
 *To deploy the source code*
 
-1. Download the source bundle: [eb-java-scorekeep-v1.zip](https://github.com/awslabs/eb-java-scorekeep/releases/download/v1.1/eb-java-scorekeep-v1.zip)
+1. Download the source bundle: [eb-java-scorekeep-v1.zip](https://github.com/awslabs/eb-java-scorekeep/releases/download/v1.3/eb-java-scorekeep-v1.zip)
 2. Open the [Elastic Beanstalk Management Console](console.aws.amazon.com/elasticbeanstalk/home).
 3. Click your environment's name to open the Dashboard.
 4. Click **Upload and Deploy**.
@@ -108,13 +108,13 @@ Deploy the source code for the project to your Elastic Beanstalk environment.
 Click through the app to explore its functionality. Use the network console in your browser to see the HTTP requests that it sends to the API to read and write users, sessions, games, moves and game state to DynamoDB via the API.
 
 ## Configure Notifications
-The API uses Amazon SNS to send a notification email whenever a game ends. Configure your email address in the source code and redeploy to enable notifications.
+The API uses Amazon SNS to send a notification email when a game ends. To enable notifications, configure your email address in an environment variable.
 
 *To enable notifications*
-1. Clone this repository
-2. Add your email address to the `env.config` configuration file in the `.ebextensions` folder.
-3. [Create a source bundle](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/applications-sourcebundle.html).
-4. [Deploy the source bundle](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features.deploy-existing-version.html#deployments-newversion).
+1. Open your environment's page in the [environment management console](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/environments-console.html).
+2. Choose **Configuration**.
+3. Choose **Software Configuration**
+4. Under **Environment Properties**, set **NOTIFICATION_TOPIC** to your email address.
 5. Check your email for a subscription confirmation.
 6. Complete a game to trigger a notification.
 
