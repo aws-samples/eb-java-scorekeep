@@ -34,7 +34,7 @@ The role named "scorekeep-lambda" has the following policies:
 - Managed policy - AWSLambdaBasicExecutionRole
 - Managed policy - AmazonSNSFullAccess
 - Managed policy - AWSXrayWriteOnlyAccess (optional) for compatibility with the xray branch
-- Trust policy - 
+- Trust policy -
 
     {
       "Version": "2012-10-17",
