@@ -15,9 +15,18 @@ import java.security.SecureRandom;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.amazonaws.services.lambda.AWSLambda;
+import com.amazonaws.services.lambda.AWSLambdaClientBuilder;
+import com.amazonaws.services.lambda.invoke.LambdaInvokerFactory;
+import com.amazonaws.regions.Regions;
+
 public class UserFactory {
   private SecureRandom random = new SecureRandom();
   private UserModel model = new UserModel();
+  private AWSLambda lambdaClient = AWSLambdaClientBuilder.standard()
+        .withRegion(Regions.fromName(System.getenv("AWS_REGION")))
+        .build();
 
   public UserFactory(){
   }
@@ -25,7 +34,8 @@ public class UserFactory {
   public User newUser() throws IOException {
     String id = new BigInteger(40, random).toString(32).toUpperCase();
     User user = new User(id);
-    String name = randomName();
+    String category = "American names";
+    String name = randomNameLambda(id, category);
     user.setName(name);
     model.saveUser(user);
     return user;
@@ -54,6 +64,16 @@ public class UserFactory {
     } finally {
       response.close();
     }
+  }
+
+  public String randomNameLambda(String userid, String category) throws IOException {
+    RandomNameService service = LambdaInvokerFactory.build(RandomNameService.class, lambdaClient);
+    RandomNameInput input = new RandomNameInput();
+    input.setCategory(category);
+    input.setUserid(userid);
+    /** If this fails, state is set but get state fails*/
+    String name = service.randomName(input).getName();
+    return name;
   }
 
   public User getUser(String userId) throws UserNotFoundException {
