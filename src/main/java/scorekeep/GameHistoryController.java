@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import scorekeep.dao.gamehistory.GameHistory;
+import scorekeep.dao.gamehistory.GameHistory;
 
 import java.io.IOException;
 import java.util.List;
@@ -31,8 +32,9 @@ public class GameHistoryController {
             throw new RdsNotConfiguredException();
         }
 
-        String winner = userFactory.randomName();
-        String loser = userFactory.randomName();
+        String category = "American names";
+        String winner = userFactory.randomNameLambda("1235ABCD", category);
+        String loser = userFactory.randomNameLambda("ABCD1235", category);
 
         return model.create(winner, loser);
     }

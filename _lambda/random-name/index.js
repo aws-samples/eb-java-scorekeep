@@ -1,13 +1,18 @@
-var AWS = require('aws-sdk');
+var AWSXRay = require('aws-xray-sdk-core');
+var AWS = AWSXRay.captureAWS(require('aws-sdk'));
+
 AWS.config.update({region: process.env.REGION});
 var Chance = require('chance');
 
 var myFunction = function(event, context, callback) {
   var sns = new AWS.SNS();
   var chance = new Chance();
+  var segment = AWSXRay.getSegment();
   var userid = event.userid;
+  segment.addAnnotation('User ID', userid);
 
   var name = chance.first();
+  segment.addAnnotation('Name', name);
 
   // Nofity
   var params = {
