@@ -20,6 +20,7 @@ import com.amazonaws.services.lambda.AWSLambda;
 import com.amazonaws.services.lambda.AWSLambdaClientBuilder;
 import com.amazonaws.services.lambda.invoke.LambdaInvokerFactory;
 import com.amazonaws.regions.Regions;
+import com.amazonaws.services.lambda.model.ResourceNotFoundException;
 
 public class UserFactory {
   private SecureRandom random = new SecureRandom();
@@ -72,7 +73,11 @@ public class UserFactory {
     input.setCategory(category);
     input.setUserid(userid);
     /** If this fails, state is set but get state fails*/
-    String name = service.randomName(input).getName();
+    String name ="";
+    try { name = service.randomName(input).getName(); }
+    catch ( ResourceNotFoundException e) {
+      name = randomName();
+    }
     return name;
   }
 
