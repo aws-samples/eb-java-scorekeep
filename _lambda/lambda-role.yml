@@ -19,7 +19,6 @@ Resources:
         - arn:aws:iam::aws:policy/AmazonSNSFullAccess
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       Path: /service-role/
-      RoleName: scorekeep-lambda
 
   RandomNameFunction:
     Type: "AWS::Lambda::Function"
@@ -29,9 +28,8 @@ Resources:
       Description: "Generate random names"
       Environment:
         Variables:
-          REGION_NAME: {"Ref" : "AWS::Region"}
           TOPIC_ARN: "PLACEHOLDER"
       FunctionName: random-name
       Handler: index.handler
-      Role: { "Fn::Join": [ "", [ "arn:aws:iam::",{"Ref" : "AWS::AccountId"},":role/service-role/scorekeep-lambda" ] ] }
+      Role: { "Fn::GetAtt": ["RandomNameRole", "Arn"] }
       Runtime: nodejs4.3
