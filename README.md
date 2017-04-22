@@ -1,61 +1,39 @@
-# Lambda integration
-This branch uses a Node.js Lambda function to generate random names for new users, instead of calling a web API. The Scorekeep API uses the AWS SDK to invoke the Lambda by function name (`random-name`) with Bean classes to represent (and serialize to/from) the input and output JSON.
+# AWS X-Ray
+Documentation: [X-Ray SDK for Java Sample Application](http://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-java-sample.html)
 
+If you haven't used X-Ray with Scorekeep yet, try the [`xray-gettingstarted`](https://github.com/awslabs/eb-java-scorekeep/tree/xray-gettingstarted) branch first.
 
-## Configuration
-A CloudFormation template and [AWS CLI](http://docs.aws.amazon.com/cli/latest/userguide/installing.html) scripts to create and delete the function's execution role are included in the `_lambda` folder:
+This branch shows advanced instrumentation with the AWS X-Ray SDK and includes features from other branches. Deploy this branch to see additional trace data in the X-Ray console. Then, follow the instructions below to add an instrumented AWS Lambda function and PostgreSQL database to the application.
+
+## AWS Lambda
+From branch: [`lambda`](https://github.com/awslabs/eb-java-scorekeep/tree/lambda)
+
+In the [`UserFactory`](https://github.com/awslabs/eb-java-scorekeep/tree/xray/src/main/java/scorekeep/UserFactory.java) class, Scorekeep calls a Node.js AWS Lambda function to generate random usernames.  If the call to Lambda fails, Scorekeep falls back on a public API to generate names. 
+
+Run the script in the `_lambda` folder to create the AWS Lambda function that Scorekeep calls to generate random names:
+    eb-java-scorekeep/_lambda$ ./create-lambda-role.sh
+
+The script uses a CloudFormation template and the AWS CLI to create the function and its execution role:
 - `_lambda/lambda-role.yml`       - Template that defines the role
 - `_lambda/create-lambda-role.sh` - Script to create the role
 - `_lambda/delete-lambda-role.sh` - Script to delete the role
 
-Run the script to create the role:
-    eb-java-scorekeep/_lambda$ ./create-lambda-role.sh
+If you don't have the AWS CLI, [install it](http://docs.aws.amazon.com/cli/latest/userguide/installing.html) or use the CloudFormation console to create a stack with the template.
 
-If you don't have the AWS CLI, use the CloudFormation console to create a stack with the template.
-
-Next, add the following policy to your instance profile ([aws-elasticbeanstalk-ec2-role](https://console.aws.amazon.com/iam/home#/roles/aws-elasticbeanstalk-ec2-role)) to let the environment create the Lambda function:
+Next, add Lambda permission to your instance profile ([aws-elasticbeanstalk-ec2-role](https://console.aws.amazon.com/iam/home#/roles/aws-elasticbeanstalk-ec2-role)) to let the environment update the Lambda function:
 - AWSLambdaFullAccess
 
-Deploy this branch to your Elastic Beanstalk environment. No further configuration is required.
-If you don't have an environment, see below.
+Note: In the `lambda` branch, Scorekeep creates the Lambda function with a configuration file. In this branch, you create the function independently with the same template that creates the role. This lets the `xray` branch work even if the Lambda function and role have not been created, whereas in the `lambda` branch, the deployment fails if you haven't created the required role.
 
-## Implementation
-The Lambda function code is included in `_lambda/random-name/index.js`. On deploy, configuration files in the .ebextensions folder create a function with the following settings:
-- Name: `random-name`
-- Runtime: Node.js 4.3
-- Description: `Generate random names`
-- Code: in `_Lambda/random-name`
-- Environment variables:
-  - REGION_NAME: The region, e.g. `us-east-2`
-  - TOPIC_ARN: The ARN of an [SNS Topic](https://console.aws.amazon.com/sns/v2/home)
-- Role named "scorekeep-lambda"
+## Amazon RDS
+From branch: [`sql`](https://github.com/awslabs/eb-java-scorekeep/tree/sql)
+Documentation: [Instrumenting Calls to a PostgreSQL Database](https://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-java-sample.html#xray-sdk-java-sample-postgresql)
 
-The role named "scorekeep-lambda" has the following policies:
-- Managed policy - AWSLambdaBasicExecutionRole
-- Managed policy - AmazonSNSFullAccess
-- Managed policy - AWSXrayWriteOnlyAccess (optional) for compatibility with the xray branch
-- Trust policy -
+In [`application-pgsql.properties`](https://github.com/awslabs/eb-java-scorekeep/tree/xray/src/main/resources/application-pgsql.properties), Scorekeep adds the X-Ray SDK tracing interceptor to the JDBC data source used by Hibernate.
 
-    {
-      "Version": "2012-10-17",
-      "Statement": [
-        {
-          "Effect": "Allow",
-          "Principal": {
-            "Service": "lambda.amazonaws.com"
-          },
-          "Action": "sts:AssumeRole"
-        }
-      ]
-    }
+[Add a PostgreSQL database](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features.managing.db.html) to your Elastic Beanstalk environment to enable RDS tracing on the X-Ray demo page.
 
-The Scorekeep API integration is implemented in the following files-
-`src/main/java/scorekeep/`
-- `RandomNameInput.java` - Bean for the input, a user ID and category.
-- `RandomNameOutput.java` - Bean for the output, a first name.
-- `RandomNameService.java` - Defines the method used to call the Lambda function. Combined with an AWS SDK Lambda client to create a Lambda Invoker.
-- `UserFactory.java` - **UserFactory.randomNameLambda** Creates the Lambda Invoker with `com.amazonaws.services.lambda.invoke.LambdaInvokerFactory`. Calls the Lambda function to generate a random name.
-- `build.gradle` - Adds the Lambda module of the AWS SDK to the Gradle build.
+Hibernate also calls the database during application startup. No segment is available to the X-Ray SDK during startup, so we create one manually in [`RdsWebConfig.java`](https://github.com/awslabs/eb-java-scorekeep/blob/xray/src/main/java/scorekeep/RdsWebConfig.java#L83) by overriding Hibernate's `SchemaExport` class.
 
 # Scorekeep
 Scorekeep is a RESTful web API implemented in Java that uses Spring to provide an HTTP interface for creating and managing game sessions and users. This project includes the scorekeep API and a frontend web app that consumes it. The frontend and API can run on the same server and domain or separately, with the API running in Elastic Beanstalk and the frontend served statically by a CDN.
