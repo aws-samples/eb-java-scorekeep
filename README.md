@@ -116,7 +116,7 @@ Deploy the source code for the project to your Elastic Beanstalk environment.
 
 *To deploy the source code*
 
-1. Download the source bundle: [eb-java-scorekeep-v1.zip](https://github.com/awslabs/eb-java-scorekeep/releases/download/v1.1/eb-java-scorekeep-v1.zip)
+1. Download the source bundle: [eb-java-scorekeep-v1.zip](https://github.com/awslabs/eb-java-scorekeep/releases/download/v1.3/eb-java-scorekeep-v1.zip)
 2. Open the [Elastic Beanstalk Management Console](console.aws.amazon.com/elasticbeanstalk/home).
 3. Click your environment's name to open the Dashboard.
 4. Click **Upload and Deploy**.
