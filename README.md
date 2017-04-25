@@ -12,7 +12,15 @@ Other branches extend the application's functionality and show the use of other 
 - [`xray`](https://github.com/awslabs/eb-java-scorekeep/tree/xray) - Use the AWS X-Ray SDK to instrument incoming requests, SDK clients, SQL queries, HTTP clients, and sections of code.
 - [`xray-gettingstarted`](https://github.com/awslabs/eb-java-scorekeep/tree/xray-gettingstarted) ([tutorial](https://docs.aws.amazon.com/xray/latest/devguide/xray-gettingstarted.html)) - Use the AWS X-Ray to instrument incoming requests and SDK clients (no additional configuration required).
 
-Use the procedures in the following sections to run the project on AWS Elastic Beanstalk and configure it for local testing and development. 
+Use the procedures in the following sections to run the project on AWS Elastic Beanstalk and configure it for local testing and development.
+
+**Sections**
+- [Prerequisites](#prerequisites)
+- [Deploy the application](#deploy-the-application)
+- [Configure notifications](#configure-notifications)
+- [How it works](#how-it-works)
+- [Running the project locally](#running-the-project-locally)
+- [Contributing](#contributing)
 
 # Prerequisites
 - User permissions - Elastic Beanstalk, IAM*
@@ -68,7 +76,7 @@ Deploy the source code for the project to your Elastic Beanstalk environment.
 
 Click through the app to explore its functionality. Use the network console in your browser to see the HTTP requests that it sends to the API to read and write users, sessions, games, moves and game state to DynamoDB via the API.
 
-# Configure Notifications
+# Configure notifications
 The API uses Amazon SNS to send a notification email when a game ends. To enable notifications, configure your email address in an environment variable.
 
 *To enable notifications*
