@@ -9,6 +9,7 @@ This branch uses Spring Boot Data JPA to store game records in a PostgreSQL data
 - [`demo.html`](https://github.com/awslabs/eb-java-scorekeep/blob/sql/public/demo.html) - Demo page with buttons for generating calls to database
 - [`demo-controller.js`](https://github.com/awslabs/eb-java-scorekeep/blob/sql/public/app/demo-controller.js) - Controller
 - [`game-history-model.js`](https://github.com/awslabs/eb-java-scorekeep/blob/sql/public/app/game-history-model.js) - Model
+- [`routes.js`](https://github.com/awslabs/eb-java-scorekeep/blob/sql/public/app/routes.js) - Route
 
 **API**
 - [`GameHistoryController.java`](https://github.com/awslabs/eb-java-scorekeep/blob/sql/src/main/java/scorekeep/GameHistoryController.java) - Controller
