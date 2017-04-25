@@ -1,5 +1,5 @@
 # Scorekeep
-Scorekeep is a RESTful web API implemented in Java that uses Spring to provide an HTTP interface for creating and managing game sessions and users. This project includes the scorekeep API and a frontend web app that consumes it. The frontend and API can run on the same server and domain or separately, with the API running in Elastic Beanstalk and the frontend served statically by a CDN.
+Scorekeep is a RESTful web API implemented in Java that uses Spring to provide an HTTP interface for creating and managing game sessions and users. This project includes the Scorekeep API and a frontend web app that consumes it. The frontend and API can run on the same server and domain or separately, with the API running in Elastic Beanstalk and the frontend served statically by a CDN.
 
 The `master` branch shows the use of Spring, Angular, nginx, the AWS SDK for Java, DynamoDB, Gradle, CORS, and Elastic Beanstalk features that let you run both components on the same EC2 instance, create required DynamoDB and SNS resources as part of the Elastic Beanstalk environment, and build the API from source on-instance during deployment.
 
