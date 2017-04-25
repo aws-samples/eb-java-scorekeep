@@ -1,7 +1,9 @@
 # Scorekeep
 Scorekeep is a RESTful web API implemented in Java that uses Spring to provide an HTTP interface for creating and managing game sessions and users. This project includes the scorekeep API and a frontend web app that consumes it. The frontend and API can run on the same server and domain or separately, with the API running in Elastic Beanstalk and the frontend served statically by a CDN.
 
-The project shows the use of Spring, Angular, nginx, the AWS SDK for Java, DynamoDB, Gradle, CORS, and Elastic Beanstalk features that let you run both components on the same EC2 instance, create required DynamoDB tables as part of the Elastic Beanstalk environment, and build the API from source on-instance during deployment.
+The `master` branch shows the use of Spring, Angular, nginx, the AWS SDK for Java, DynamoDB, Gradle, CORS, and Elastic Beanstalk features that let you run both components on the same EC2 instance, create required DynamoDB and SNS resources as part of the Elastic Beanstalk environment, and build the API from source on-instance during deployment.
+
+Other branches extend the application's functionality and show the use of other AWS services. See the readme in each branch for details about the integration, and instructions for use.
 
 **Branches**
 - [`cognito`](https://github.com/awslabs/eb-java-scorekeep/tree/cognito) - Support login and store users in a Cognito user pool.
@@ -12,7 +14,25 @@ The project shows the use of Spring, Angular, nginx, the AWS SDK for Java, Dynam
 
 Use the procedures in the following sections to run the project on AWS Elastic Beanstalk and configure it for local testing and development. 
 
-## Create an AWS Elastic Beanstalk environment
+# Prerequisites
+- User permissions - Elastic Beanstalk, IAM*
+- Instance profile with permission to use DynamoDB and SNS
+- Elastic Beanstalk environment running Java 8
+
+*If you don't have permission to manage permissions in IAM, get someone who does to add DynamoDB and SNS permissions to the default Elastic Beanstalk instance profile.
+
+## Get permission to use Elastic Beanstalk
+If you are using an IAM user with limited permissions, good work! Add Elastic Beanstalk permissions to your user account to get started.
+
+*To add Elastic Beanstalk permissions to an IAM user*
+
+1. Sign in to a user or role with administrator permissions.
+2. Open the [users page](https://console.aws.amazon.com/iam/home#/users) of the IAM console.
+3. Choose a user.
+4. Click **Add permissions**.
+5. Add the  **AWSElasticBeanstalkFullAccess** managed policy.
+
+## Create an Elastic Beanstalk environment
 Create a Java 8 SE environment in Elastic Beanstalk to host the application.
 
 *To create an Elastic Beanstalk environment running the Java 8 SE platform*
@@ -32,7 +52,7 @@ When the Scorekeep API runs in AWS Elastic Beanstalk, it uses the permissions of
 3. Select [AmazonDynamoDBFullAccess](https://console.aws.amazon.com/iam/home#policies/arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess) and click **Attach Policy**.
 3. Select [AmazonSNSFullAccess](https://console.aws.amazon.com/iam/home#policies/arn:aws:iam::aws:policy/AmazonSNSFullAccess) and click **Attach Policy**.
 
-## Deploy the application
+# Deploy the application
 Deploy the source code for the project to your Elastic Beanstalk environment.
 
 *To deploy the source code*
@@ -48,7 +68,7 @@ Deploy the source code for the project to your Elastic Beanstalk environment.
 
 Click through the app to explore its functionality. Use the network console in your browser to see the HTTP requests that it sends to the API to read and write users, sessions, games, moves and game state to DynamoDB via the API.
 
-## Configure Notifications
+# Configure Notifications
 The API uses Amazon SNS to send a notification email when a game ends. To enable notifications, configure your email address in an environment variable.
 
 *To enable notifications*
@@ -159,3 +179,29 @@ When you run both the API and frontend in the same Elastic Beanstalk environment
         ~/eb-java-scorekeep$ git archive -o scorekeep-v1.zip HEAD
 
 5. Open your environment's Dashboard in the [Elastic Beanstalk Management Console](console.aws.amazon.com/elasticbeanstalk/home) and deploy the updated code.
+
+# Contributing
+
+This sample application could be better with your help!
+
+- Add a new game!
+  - Implement game logic in game class. See [TicTacToe.java](https://github.com/awslabs/eb-java-scorekeep/blob/master/src/main/java/scorekeep/TicTacToe.java)
+  - Add the class to [RulesFactory.java](https://github.com/awslabs/eb-java-scorekeep/blob/master/src/main/java/scorekeep/RulesFactory.java)
+- Create your own client frontend!
+  - Web frameworks - Angular 2, React, ember, etc
+  - Mobile app
+  - Desktop application
+- Integrate with other AWS services!
+  - CICD with CodeCommit, CodePipeline, CodeBuild, and CodeDeploy
+  - Analytics with Kinesis, Athena, EMR, or QuickSight
+  - Security with VPC
+  - Performance with ElastiCache
+  - Scalability with CloudFront
+  - Portability with ECS or CloudFormation
+  - Accessibility with Polly
+- Write tests!
+  - Unit tests
+  - Integration tests
+  - Functional tests
+  - Load tests
+- File an [issue](https://github.com/awslabs/eb-java-scorekeep/issues) to report a bug or request new features.
