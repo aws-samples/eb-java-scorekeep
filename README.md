@@ -20,7 +20,7 @@ This branch uses Spring Boot Data JPA to store game records in a PostgreSQL data
 **Configuration**
 - [`Application.java`](https://github.com/awslabs/eb-java-scorekeep/blob/sql/src/main/java/scorekeep/Application.java) - Checks for the environment variables that Elastic Beanstalk sets when a database is attached and chooses a profile.
   - `pgsl` profile - [`application-pgsql.properties`](https://github.com/awslabs/eb-java-scorekeep/blob/sql/src/main/resources/application-pgsql.properties), [`RdsWebConfig.java`](https://github.com/awslabs/eb-java-scorekeep/blob/sql/src/main/java/scorekeep/RdsWebConfig.java)
-  - `nodb` profile - [`application-nodb.properties`](https://github.com/awslabs/eb-java-scorekeep/blob/sql/src/main/resources/application-nodb.properties), [WebConfig.java](https://github.com/awslabs/eb-java-scorekeep/blob/sql/src/main/java/scorekeep/WebConfig.java)
+  - `nodb` profile - [`application-nodb.properties`](https://github.com/awslabs/eb-java-scorekeep/blob/sql/src/main/resources/application-nodb.properties), [`WebConfig.java`](https://github.com/awslabs/eb-java-scorekeep/blob/sql/src/main/java/scorekeep/WebConfig.java)
 - [`build.gradle`](https://github.com/awslabs/eb-java-scorekeep/blob/sql/build.gradle) - Adds PostgreSQL and Spring Boot Data JPA to build dependencies
 
 # Scorekeep
