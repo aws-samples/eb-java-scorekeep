@@ -3,6 +3,8 @@
 
 This branch uses Spring Boot Data JPA to store game records in a PostgreSQL database on Amazon RDS.
 
+[Add a PostgreSQL database](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features.managing.db.html) to your Elastic Beanstalk environment, deploy this branch, and then use the demo page (/#/sql) to test the connection.
+
 **Front end**
 - [`demo.html`](https://github.com/awslabs/eb-java-scorekeep/blob/sql/public/demo.html) - Demo page with buttons for generating calls to database
 - [`demo-controller.js`](https://github.com/awslabs/eb-java-scorekeep/blob/sql/public/app/demo-controller.js) - Controller
