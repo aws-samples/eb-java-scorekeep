@@ -1,3 +1,28 @@
+# SQL Database Integration
+[Compare to master](https://github.com/awslabs/eb-java-scorekeep/compare/sql)
+
+This branch uses Spring Boot Data JPA to store game records in a PostgreSQL database on Amazon RDS.
+
+**Front end**
+- [`demo.html`](https://github.com/awslabs/eb-java-scorekeep/blob/sql/public/demo.html) - Demo page with buttons for generating calls to database
+- [`demo-controller.js`](https://github.com/awslabs/eb-java-scorekeep/blob/sql/public/app/demo-controller.js) - Controller
+- [`game-history-model.js`](https://github.com/awslabs/eb-java-scorekeep/blob/sql/public/app/game-history-model.js) - Model
+
+**API**
+- [`GameHistoryController.java`](https://github.com/awslabs/eb-java-scorekeep/blob/sql/src/main/java/scorekeep/GameHistoryController.java) - Controller
+- [`GameHistoryModel.java`](https://github.com/awslabs/eb-java-scorekeep/blob/sql/src/main/java/scorekeep/GameHistoryModel.java) - Model
+- [`RdsNotConfiguredException.java`](https://github.com/awslabs/eb-java-scorekeep/blob/sql/src/main/java/scorekeep/RdsNotConfiguredException.java) - Exception
+
+**Data Access Object (DAO) Layer**
+- [`GameHistory.java`](https://github.com/awslabs/eb-java-scorekeep/blob/sql/src/main/java/scorekeep/dao/gamehistory/GameHistory.java) - Model
+- [`GameHistoryRepository.java`](https://github.com/awslabs/eb-java-scorekeep/blob/sql/src/main/java/scorekeep/dao/gamehistory/GameHistoryRepository.java) - CRUD repository
+
+**Configuration**
+- [`Application.java`](https://github.com/awslabs/eb-java-scorekeep/blob/sql/src/main/java/scorekeep/Application.java) - Checks for the environment variables that Elastic Beanstalk sets when a database is attached and chooses a profile.
+  - `pgsl` profile - [`application-pgsql.properties`](https://github.com/awslabs/eb-java-scorekeep/blob/sql/src/main/resources/application-pgsql.properties), [`RdsWebConfig.java`](https://github.com/awslabs/eb-java-scorekeep/blob/sql/src/main/java/scorekeep/RdsWebConfig.java)
+  - `nodb` profile - [`application-nodb.properties`](https://github.com/awslabs/eb-java-scorekeep/blob/sql/src/main/resources/application-nodb.properties), [WebConfig.java](https://github.com/awslabs/eb-java-scorekeep/blob/sql/src/main/java/scorekeep/WebConfig.java)
+- [`build.gradle`](https://github.com/awslabs/eb-java-scorekeep/blob/sql/build.gradle) - Adds PostgreSQL and Spring Boot Data JPA to build dependencies
+
 # Scorekeep
 Scorekeep is a RESTful web API implemented in Java that uses Spring to provide an HTTP interface for creating and managing game sessions and users. This project includes the scorekeep API and a frontend web app that consumes it. The frontend and API can run on the same server and domain or separately, with the API running in Elastic Beanstalk and the frontend served statically by a CDN.
 
