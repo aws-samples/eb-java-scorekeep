@@ -8,5 +8,6 @@ build/*
 *.zip
 *.sh
 !bin/*.sh
+!_lambda/*.sh
 lib
 _lambda/random-name/node_modules/*
