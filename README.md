@@ -5,7 +5,7 @@ If you haven't used X-Ray with Scorekeep yet, try the [`xray-gettingstarted`](ht
 
 This branch shows advanced instrumentation with the AWS X-Ray SDK and includes features from other branches. Deploy this branch to see additional trace data in the X-Ray console. Then, follow the instructions below to add an instrumented AWS Lambda function and PostgreSQL database to the application.
 
-## AWS Lambda
+## AWS Lambda Integration
 From branch: [`lambda`](https://github.com/awslabs/eb-java-scorekeep/tree/lambda)
 
 In the [`UserFactory`](https://github.com/awslabs/eb-java-scorekeep/tree/xray/src/main/java/scorekeep/UserFactory.java) class, Scorekeep calls a Node.js AWS Lambda function to generate random usernames.  If the call to Lambda fails, Scorekeep falls back on a public API to generate names. 
@@ -25,7 +25,7 @@ Next, add Lambda permission to your instance profile ([aws-elasticbeanstalk-ec2-
 
 Note: In the `lambda` branch, Scorekeep creates the Lambda function with a configuration file. In this branch, you create the function independently with the same template that creates the role. This lets the `xray` branch work even if the Lambda function and role have not been created, whereas in the `lambda` branch, the deployment fails if you haven't created the required role.
 
-## Amazon RDS
+## Amazon RDS Integration
 From branch: [`sql`](https://github.com/awslabs/eb-java-scorekeep/tree/sql)
 Documentation: [Instrumenting Calls to a PostgreSQL Database](https://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-java-sample.html#xray-sdk-java-sample-postgresql)
 
