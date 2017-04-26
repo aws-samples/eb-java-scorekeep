@@ -1,6 +1,5 @@
 package scorekeep;
 
-import com.amazonaws.xray.proxies.apache.http.HttpClientBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -21,6 +20,8 @@ import com.amazonaws.services.lambda.AWSLambdaClientBuilder;
 import com.amazonaws.services.lambda.invoke.LambdaInvokerFactory;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.lambda.model.ResourceNotFoundException;
+
+import com.amazonaws.xray.proxies.apache.http.HttpClientBuilder;
 
 public class UserFactory {
   private SecureRandom random = new SecureRandom();
