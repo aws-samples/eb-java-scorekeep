@@ -1,14 +1,11 @@
 package scorekeep;
 
-
 import java.net.URL;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.Filter;
 import javax.sql.DataSource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.BootstrapServiceRegistryBuilder;
 import org.hibernate.boot.registry.StandardServiceRegistry;
@@ -27,6 +24,9 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
 import scorekeep.dao.gamehistory.GameHistory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.amazonaws.xray.AWSXRay;
 import com.amazonaws.xray.AWSXRayRecorderBuilder;
 import com.amazonaws.xray.javax.servlet.AWSXRayServletFilter;
@@ -38,7 +38,7 @@ import com.amazonaws.xray.strategy.sampling.LocalizedSamplingStrategy;
 @EnableAutoConfiguration
 @Profile("pgsql")
 public class RdsWebConfig {
-    private static final Log logger = LogFactory.getLog(WebConfig.class);
+    private static final Logger logger = LoggerFactory.getLogger(WebConfig.class);
 
     @Bean
     public Filter TracingFilter() {
