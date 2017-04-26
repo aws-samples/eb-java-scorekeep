@@ -31,7 +31,7 @@ Documentation: [Instrumenting Calls to a PostgreSQL Database](https://docs.aws.a
 
 In [`application-pgsql.properties`](https://github.com/awslabs/eb-java-scorekeep/tree/xray/src/main/resources/application-pgsql.properties), Scorekeep adds the X-Ray SDK tracing interceptor to the JDBC data source used by Hibernate.
 
-[Add a PostgreSQL database](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features.managing.db.html) to your Elastic Beanstalk environment to enable RDS tracing on the X-Ray demo page.
+[Add a PostgreSQL database](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features.managing.db.html) to your Elastic Beanstalk environment to enable SQL tracing on the X-Ray demo page (/#/xray).
 
 Hibernate also calls the database during application startup. No segment is available to the X-Ray SDK during startup, so we create one manually in [`RdsWebConfig.java`](https://github.com/awslabs/eb-java-scorekeep/blob/xray/src/main/java/scorekeep/RdsWebConfig.java#L83) by overriding Hibernate's `SchemaExport` class.
 
