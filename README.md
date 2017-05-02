@@ -18,13 +18,13 @@ Create a user pool in the [Amazon Cognito console](https://console.aws.amazon.co
  - alias attributes: none
  - custom attributes:
    - name: userid
-     type: string
+   - type: string
  - min password length: 6
  - password policy: no requirements
  - apps:
    - name: Scorekeep
-     generate client secret: false
-     write permissions: custom:userid
+   - generate client secret: false
+   - write permissions: custom:userid
 
 Copy the **Pool Id** from the **Pool details** page and add it to the `scorekeep` module in `public/app/scorekeep.js`. On the **Apps** tab, copy the **App client id** and add that to the module as well. Update the region to match the region in which you created the user pool.
 
