@@ -78,3 +78,5 @@ Outputs:
   UserPoolClientId:
     Description: User pool client ID
     Value: { "Ref" : "UserPoolClient" }
+    Export:
+      Name: ScorekeepUserPoolClientId
