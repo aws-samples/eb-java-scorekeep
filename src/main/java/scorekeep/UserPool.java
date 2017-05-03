@@ -4,6 +4,7 @@ public class UserPool {
 
   private String poolId;
   private String clientId;
+  private String region;
 
   public UserPool() {
   }
@@ -27,4 +28,10 @@ public class UserPool {
     this.clientId = clientId;
   }
 
+  public String getRegion() {
+    return region;
+  }
+  public void setRegion(String region) {
+    this.region = region;
+  }
 }
