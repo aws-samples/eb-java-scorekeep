@@ -1,13 +1,17 @@
 var module = angular.module('scorekeep');
-module.service('UserCollection', function(UserService, $http, api, cognitoUserPoolId, cognitoClientId, cognitoRegion) {
+module.service('UserCollection', function(UserService, $http, api) {
   var collection = {};
   // Cognito stuff
-  AWSCognito.config.region = cognitoRegion;
-  var poolData = {
-    UserPoolId : cognitoUserPoolId,
-    ClientId : cognitoClientId
-  };
-  var userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(poolData);
+  var userPool;
+  GetUserPool = $http.get( api + 'userpool');
+  GetUserPool.then( function(userpool){
+    AWSCognito.config.region = userpool.data.region;
+    var poolData = {
+      UserPoolId : userpool.data.poolId,
+      ClientId : userpool.data.clientId
+    };
+    userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(poolData);
+  })
 
   collection.getUser = function(username, password, userid) {
     var promise = new Promise(function(resolve, reject){

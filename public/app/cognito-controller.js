@@ -1,6 +1,6 @@
 var module = angular.module('scorekeep');
 module.controller('CognitoController', Cognito);
-function Cognito($scope, $http, UserService, api, cognitoUserPoolId, cognitoClientId, cognitoRegion) {
+function Cognito($scope, $http, UserService, api) {
   // Scope
   $scope.username = "myname";
   $scope.password = "testpassword";
@@ -9,12 +9,16 @@ function Cognito($scope, $http, UserService, api, cognitoUserPoolId, cognitoClie
   $scope.errormessage = "";
 
   // Cognito stuff
-  AWSCognito.config.region = cognitoRegion;
-  var poolData = {
-    UserPoolId : cognitoUserPoolId,
-    ClientId : cognitoClientId
-  };
-  var userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(poolData);
+  var userPool;
+  GetUserPool = $http.get( api + 'userpool');
+  GetUserPool.then( function(userpool){
+    AWSCognito.config.region = userpool.data.region;
+    var poolData = {
+      UserPoolId : userpool.data.poolId,
+      ClientId : userpool.data.clientId
+    };
+    userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(poolData);
+  })
 
   $scope.createUser = function () {
     $scope.errormessage = "";
