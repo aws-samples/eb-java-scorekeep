@@ -4,28 +4,16 @@ This branch adds a demo page, controller, and changes to the main web app that s
 For Scorekeep, Cognito integration lets users save their user ID, username and password in AWS. When a user logs in to the web app, it authenticates them to Cognito and retrieves their user ID, allowing them to use the same account accross sessions.
 
 ## Configuring a Cognito User Pool
-Before you use the branch, create a User Pool in Amazon Cognito and configure the web app with its id, app key and region.
+Before you use the branch, create a User Pool in Amazon Cognito, and configure it with a client application and Lambda function. Create a user pool, user pool client, and the Lambda function that the pool uses to confirm users, with the `create-userpool.sh` script in the `_cognito` directory.
 
-Create a user pool, user pool client, and the Lambda function that the pool uses to confirm users, with the `create-userpool.sh` script in the `_cognito` directory.
 ```
 ~/eb-java-scorekeep/_cognito$ ./create-userpool.sh
 ```
 
-This script uses a CloudFormation template named userpool to create the required resources.
-Get the user pool ID and client ID from the [Amazon Cognito console](https://console.aws.amazon.com/cognito/users/).
-
-Copy the **Pool Id** from the **Pool details** page and add it to the `scorekeep` module in `public/app/scorekeep.js`. On the **Apps** tab, copy the **App client id** and add that to the module as well. Update the region to match the region in which you created the user pool.
-
-`public/app/scorekeep.js`
-```
- /* Cognito User pool */
- module.value('cognitoUserPoolId', 'us-east-1_AbCd12345');
- module.value('cognitoClientId', 'abcdef123456ghijklmnopqr7');
- module.value('cognitoRegion', 'us-east-1');
-```
+This script uses a CloudFormation template named userpool to create the required resources. The template outputs the pool ID and client ID and saves the values in CloudFormation exports, which can be read from other stacks' templates. The env.config file then uses the Fn::ImportValue function to read these values and pass them to the API through environment variables. The API, in turn, provides a route named `/api/userpool` to retrieve the data, which the web app calls when you load the cognito demo page. This is all done to avoid hard coding the values in the web app.
 
 ## Test Cognito Integration
-Commit your changes and deploy the branch to your Elastic Beanstalk environment. Open the web app in a browser and choose **Powered by Amazon Cognito** in the upper right corner to view the demo page. Follow the instructions shown to test the code and learn how it works.
+After creating the user pool stack, deploy this branch to your Elastic Beanstalk environment. Open the web app in a browser and choose **Powered by Amazon Cognito** in the upper right corner to view the demo page. Follow the instructions shown to test the code and learn how it works.
 
 If you don't have an Elastic Beanstalk environment, follow the instructions below.
 
