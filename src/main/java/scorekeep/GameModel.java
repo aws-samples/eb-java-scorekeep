@@ -21,16 +21,12 @@ public class GameModel {
   private SessionModel sessionModel = new SessionModel();
 
   public void saveGame(Game game) throws SessionNotFoundException {
-    try {
-      // check session
-      String sessionId = game.getSession();
-      if (sessionModel.loadSession(sessionId) == null ) {
-        throw new SessionNotFoundException(sessionId);
-      }
-      mapper.save(game);
-    } catch (Exception e) {
-      throw e;
+    // check session
+    String sessionId = game.getSession();
+    if (sessionModel.loadSession(sessionId) == null ) {
+      throw new SessionNotFoundException(sessionId);
     }
+    mapper.save(game);
   }
 
   public Game loadGame(String gameId) throws GameNotFoundException {
