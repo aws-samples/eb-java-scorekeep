@@ -21,7 +21,7 @@ public class UserModel {
   private DynamoDBMapper mapper = new DynamoDBMapper(client);
 
   public void saveUser(User user) {
-    // wrap in subsegment
+    // Wrap in subsegment
     Subsegment subsegment = AWSXRay.beginSubsegment("## UserModel.saveUser");
     try {
       mapper.save(user);
