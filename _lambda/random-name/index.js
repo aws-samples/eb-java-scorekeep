@@ -9,7 +9,7 @@ var myFunction = function(event, context, callback) {
 
   var name = chance.first();
 
-  // Nofity
+  // Notify
   var params = {
     Message: 'Created randon name "' + name + '"" for user "' + userid + '".',
     Subject: 'New user: ' + name,
