@@ -20,7 +20,6 @@ import java.math.BigInteger;
 @RestController
 @RequestMapping(value="/api/move/{sessionId}/{gameId}")
 public class MoveController {
-  private SecureRandom random = new SecureRandom();
   private MoveFactory moveFactory = new MoveFactory();
   private MoveModel model = new MoveModel();
   private GameController gameController = new GameController();
