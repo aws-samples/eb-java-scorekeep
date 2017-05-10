@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TicTacToe {
-  private static final Logger logger = LoggerFactory.getLogger("TicTacToe");
+  private static final Logger logger = LoggerFactory.getLogger(TicTacToe.class);
 
   public static Rules getRules() {
     String id = "TicTacToe";

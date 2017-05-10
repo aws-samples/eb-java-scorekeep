@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MoveFactory {
-  private static final Logger logger = LoggerFactory.getLogger("scorekeep.MoveFactory");
+  private static final Logger logger = LoggerFactory.getLogger(MoveFactory.class);
   private SecureRandom random = new SecureRandom();
   private final HashMap<String, Move> allMoves = new HashMap<String, Move>(1);
   private MoveModel moveModel = new MoveModel();

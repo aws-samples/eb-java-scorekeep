@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Utils {
-  private static final Logger logger = LoggerFactory.getLogger("scorekeep.Utils");
+  private static final Logger logger = LoggerFactory.getLogger(Utils.class);
   private static AmazonSNS snsclient = AmazonSNSClientBuilder.standard()
         .withRegion(Regions.fromName(System.getenv("AWS_REGION")))
         .build();
