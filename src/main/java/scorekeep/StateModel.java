@@ -50,16 +50,16 @@ public class StateModel {
     if ( gameModel.loadGame(gameId) == null ) {
       throw new GameNotFoundException(gameId);
     }
-    Map<String, AttributeValue> eav = new HashMap<String, AttributeValue>();
-    eav.put(":val1", new AttributeValue().withS(gameId));
+    Map<String, AttributeValue> attributeValues = new HashMap<String, AttributeValue>();
+    attributeValues.put(":val1", new AttributeValue().withS(gameId));
 
-    Map<String, String> ean = new HashMap<String, String>();
-    ean.put("#key1", "game");
+    Map<String, String> attributeNames = new HashMap<String, String>();
+    attributeNames.put("#key1", "game");
 
     DynamoDBQueryExpression<State> queryExpression = new DynamoDBQueryExpression<State>()
         .withIndexName("game-index")
-        .withExpressionAttributeValues(eav)
-        .withExpressionAttributeNames(ean)
+        .withExpressionAttributeValues(attributeValues)
+        .withExpressionAttributeNames(attributeNames)
         .withKeyConditionExpression("#key1 = :val1")
         .withConsistentRead(false);
 
