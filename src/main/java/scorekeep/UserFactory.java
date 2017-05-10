@@ -10,20 +10,17 @@ import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.util.List;
 import java.util.Map;
 
 public class UserFactory {
-  private final SecureRandom random = new SecureRandom();
   private final UserModel model = new UserModel();
 
   public UserFactory(){
   }
 
   public User newUser() throws IOException {
-    String id = new BigInteger(40, random).toString(32).toUpperCase();
+    String id = Identifiers.random();
     User user = new User(id);
     String name = randomName();
     user.setName(name);
@@ -32,7 +29,7 @@ public class UserFactory {
   }
 
   public User newUser(String name) throws IOException {
-    String id = new BigInteger(40, random).toString(32).toUpperCase();
+    String id = Identifiers.random();
     User user = new User(id);
     user.setName(name);
     model.saveUser(user);

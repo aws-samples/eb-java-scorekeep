@@ -1,11 +1,8 @@
 package scorekeep;
 import java.util.*;
-import java.security.SecureRandom;
-import java.math.BigInteger;
 import java.lang.Exception;
 
 public class GameFactory {
-  private final SecureRandom random = new SecureRandom();
   private final HashMap<String, Game> allGames = new HashMap<String, Game>(1);
   private final GameModel model = new GameModel();
   private final SessionController sessionController = new SessionController();
@@ -14,7 +11,7 @@ public class GameFactory {
   }
 
   public Game newGame(String sessionId) throws SessionNotFoundException, GameNotFoundException {
-    String gameId = new BigInteger(40, random).toString(32).toUpperCase();
+    String gameId = Identifiers.random();
     Game game = new Game(gameId, sessionId);
     model.saveGame(game);
     // Register game to session
