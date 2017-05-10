@@ -19,9 +19,9 @@ import java.math.BigInteger;
 @RestController
 @RequestMapping(value="/api/user")
 public class UserController {
-  private SecureRandom random = new SecureRandom();
-  private UserFactory factory = new UserFactory();
-  private UserModel model = new UserModel();
+  private final SecureRandom random = new SecureRandom();
+  private final UserFactory factory = new UserFactory();
+  private final UserModel model = new UserModel();
 
   /* POST /user */
   @RequestMapping(method=RequestMethod.POST)

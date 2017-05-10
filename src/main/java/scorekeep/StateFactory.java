@@ -5,9 +5,9 @@ import java.math.BigInteger;
 import java.lang.Exception;
 
 public class StateFactory {
-  private SecureRandom random = new SecureRandom();
+  private final SecureRandom random = new SecureRandom();
   private final HashMap<String, State> allStates = new HashMap<String, State>(1);
-  private StateModel model = new StateModel();
+  private final StateModel model = new StateModel();
 
   public StateFactory(){
   }

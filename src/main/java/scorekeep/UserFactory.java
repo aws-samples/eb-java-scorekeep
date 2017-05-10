@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.Map;
 
 public class UserFactory {
-  private SecureRandom random = new SecureRandom();
-  private UserModel model = new UserModel();
+  private final SecureRandom random = new SecureRandom();
+  private final UserModel model = new UserModel();
 
   public UserFactory(){
   }

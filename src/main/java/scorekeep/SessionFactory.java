@@ -5,8 +5,8 @@ import java.math.BigInteger;
 import java.lang.Exception;
 
 public class SessionFactory {
-  private SecureRandom random = new SecureRandom();
-  private SessionModel model = new SessionModel();
+  private final SecureRandom random = new SecureRandom();
+  private final SessionModel model = new SessionModel();
 
   public SessionFactory(){
   }

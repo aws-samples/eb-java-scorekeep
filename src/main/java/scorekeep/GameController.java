@@ -28,11 +28,11 @@ import java.math.BigInteger;
     Use GameModel to persist updated Game objects to DynamoDB
 **/
 public class GameController {
-  private SecureRandom random = new SecureRandom();
-  private GameFactory gameFactory = new GameFactory();
-  private RulesFactory rulesFactory = new RulesFactory();
-  private StateFactory stateFactory = new StateFactory();
-  private GameModel model = new GameModel();
+  private final SecureRandom random = new SecureRandom();
+  private final GameFactory gameFactory = new GameFactory();
+  private final RulesFactory rulesFactory = new RulesFactory();
+  private final StateFactory stateFactory = new StateFactory();
+  private final GameModel model = new GameModel();
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   /* GET /game/SESSION/ */
   @RequestMapping(method=RequestMethod.GET)

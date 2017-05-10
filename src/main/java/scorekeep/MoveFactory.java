@@ -13,13 +13,13 @@ import org.slf4j.LoggerFactory;
 
 public class MoveFactory {
   private static final Logger logger = LoggerFactory.getLogger(MoveFactory.class);
-  private SecureRandom random = new SecureRandom();
+  private final SecureRandom random = new SecureRandom();
   private final HashMap<String, Move> allMoves = new HashMap<String, Move>(1);
-  private MoveModel moveModel = new MoveModel();
-  private StateModel stateModel = new StateModel();
-  private GameController gameController = new GameController();
-  private StateController stateController = new StateController();
-  private RulesFactory rulesFactory = new RulesFactory(); 
+  private final MoveModel moveModel = new MoveModel();
+  private final StateModel stateModel = new StateModel();
+  private final GameController gameController = new GameController();
+  private final StateController stateController = new StateController();
+  private final RulesFactory rulesFactory = new RulesFactory(); 
 
   public MoveFactory(){
   }

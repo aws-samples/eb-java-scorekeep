@@ -5,10 +5,10 @@ import java.math.BigInteger;
 import java.lang.Exception;
 
 public class GameFactory {
-  private SecureRandom random = new SecureRandom();
+  private final SecureRandom random = new SecureRandom();
   private final HashMap<String, Game> allGames = new HashMap<String, Game>(1);
-  private GameModel model = new GameModel();
-  private SessionController sessionController = new SessionController();
+  private final GameModel model = new GameModel();
+  private final SessionController sessionController = new SessionController();
 
   public GameFactory(){
   }

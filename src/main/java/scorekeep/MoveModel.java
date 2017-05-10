@@ -17,8 +17,8 @@ public class MoveModel {
         .withRegion(Regions.fromName(System.getenv("AWS_REGION")))
         .build();
   private DynamoDBMapper mapper = new DynamoDBMapper(client);
-  private SessionModel sessionModel = new SessionModel();
-  private GameModel gameModel = new GameModel();
+  private final SessionModel sessionModel = new SessionModel();
+  private final GameModel gameModel = new GameModel();
 
   public void saveMove(Move move) throws SessionNotFoundException, GameNotFoundException {
     // check session

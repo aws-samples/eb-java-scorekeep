@@ -18,9 +18,9 @@ import java.math.BigInteger;
 @RestController
 @RequestMapping(value="/api/session")
 public class SessionController {
-  private SecureRandom random = new SecureRandom();
-  private SessionFactory sessionFactory = new SessionFactory();
-  private SessionModel model = new SessionModel();
+  private final SecureRandom random = new SecureRandom();
+  private final SessionFactory sessionFactory = new SessionFactory();
+  private final SessionModel model = new SessionModel();
 
   /* POST /session */
   @RequestMapping(method=RequestMethod.POST)

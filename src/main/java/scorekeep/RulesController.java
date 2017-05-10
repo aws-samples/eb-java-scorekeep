@@ -15,8 +15,8 @@ import java.math.BigInteger;
 @RestController
 @RequestMapping(value="/api/rules")
 public class RulesController {
-  private SecureRandom random = new SecureRandom();
-  private RulesFactory rulesFactory = new RulesFactory();
+  private final SecureRandom random = new SecureRandom();
+  private final RulesFactory rulesFactory = new RulesFactory();
 
   /* GET /rules */
   @RequestMapping(method=RequestMethod.GET)

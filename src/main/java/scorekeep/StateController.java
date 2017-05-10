@@ -20,10 +20,10 @@ import java.math.BigInteger;
 @RestController
 @RequestMapping(value="/api/state/{sessionId}/{gameId}")
 public class StateController {
-  private SecureRandom random = new SecureRandom();
-  private StateFactory stateFactory = new StateFactory();
-  private StateModel model = new StateModel();
-  private GameController gameController = new GameController();
+  private final SecureRandom random = new SecureRandom();
+  private final StateFactory stateFactory = new StateFactory();
+  private final StateModel model = new StateModel();
+  private final GameController gameController = new GameController();
 
   /* GET /state/SESSION/GAME */
   @RequestMapping(method=RequestMethod.GET)
