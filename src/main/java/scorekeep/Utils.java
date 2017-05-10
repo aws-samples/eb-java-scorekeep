@@ -1,6 +1,5 @@
 package scorekeep;
 
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClientBuilder;
 import com.amazonaws.services.sns.model.PublishRequest;
@@ -12,7 +11,6 @@ import org.slf4j.LoggerFactory;
 public class Utils {
   private static final Logger logger = LoggerFactory.getLogger(Utils.class);
   private static AmazonSNS snsclient = AmazonSNSClientBuilder.standard()
-        .withRegion(Regions.fromName(System.getenv("AWS_REGION")))
         .build();
   /*
    * Send a notification email.
