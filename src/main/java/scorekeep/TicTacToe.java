@@ -72,7 +72,7 @@ public class TicTacToe {
     int len = state.length;
     for ( int i = 1; i <= len; i++ ){
       if ( state[len-i] == turn) {
-        out += java.lang.Math.pow( 2, i-1 );
+        out += Math.pow( 2, i-1 );
       }
     }
     return out;
