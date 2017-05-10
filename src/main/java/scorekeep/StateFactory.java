@@ -6,7 +6,6 @@ import java.lang.Exception;
 
 public class StateFactory {
   private final SecureRandom random = new SecureRandom();
-  private final HashMap<String, State> allStates = new HashMap<String, State>(1);
   private final StateModel model = new StateModel();
 
   public StateFactory(){
