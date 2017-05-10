@@ -57,7 +57,7 @@ public class SessionController {
   @RequestMapping(value="/{sessionId}/game/{gameId}", method=RequestMethod.PUT)
   public void setSessionGame(@PathVariable String sessionId, @PathVariable String gameId) throws SessionNotFoundException, GameNotFoundException {
     Session session = sessionFactory.getSession(sessionId);
-    session.setGame(gameId);
+    session.addGame(gameId);
     model.saveSession(session);
   }
 }
