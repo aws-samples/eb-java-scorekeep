@@ -13,13 +13,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.security.SecureRandom;
-import java.math.BigInteger;
-
 @RestController
 @RequestMapping(value="/api/user")
 public class UserController {
-  private final SecureRandom random = new SecureRandom();
   private final UserFactory factory = new UserFactory();
   private final UserModel model = new UserModel();
 

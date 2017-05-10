@@ -12,13 +12,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.security.SecureRandom;
-import java.math.BigInteger;
-
 @RestController
 @RequestMapping(value="/api/session")
 public class SessionController {
-  private final SecureRandom random = new SecureRandom();
   private final SessionFactory sessionFactory = new SessionFactory();
   private final SessionModel model = new SessionModel();
 

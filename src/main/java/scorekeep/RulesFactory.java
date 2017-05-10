@@ -1,10 +1,7 @@
 package scorekeep;
 import java.util.*;
-import java.security.SecureRandom;
-import java.math.BigInteger;
 
 public class RulesFactory {
-  private final SecureRandom random = new SecureRandom();
   private final HashMap<String, Rules> allRules = new HashMap<String, Rules>(1);
 
   public RulesFactory(){

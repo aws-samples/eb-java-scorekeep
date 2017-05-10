@@ -17,9 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.security.SecureRandom;
-import java.math.BigInteger;
-
 @RestController
 @RequestMapping(value="/api/game/{sessionId}")
 /** Routes for game CRUD 
@@ -28,7 +25,6 @@ import java.math.BigInteger;
     Use GameModel to persist updated Game objects to DynamoDB
 **/
 public class GameController {
-  private final SecureRandom random = new SecureRandom();
   private final GameFactory gameFactory = new GameFactory();
   private final RulesFactory rulesFactory = new RulesFactory();
   private final StateFactory stateFactory = new StateFactory();
