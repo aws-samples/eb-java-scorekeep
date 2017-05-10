@@ -9,7 +9,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIndexHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIgnore;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
-@DynamoDBTable( tableName = Constants.MOVE_TABLE )
+@DynamoDBTable( tableName = TableNames.MOVE_TABLE )
 public class Move {
 
   private String id;

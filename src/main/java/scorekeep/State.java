@@ -9,7 +9,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIndexHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIgnore;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
-@DynamoDBTable( tableName = Constants.STATE_TABLE )
+@DynamoDBTable( tableName = TableNames.STATE_TABLE )
 public class State {
 
   private String id;
