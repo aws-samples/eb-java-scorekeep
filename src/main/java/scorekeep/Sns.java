@@ -8,8 +8,8 @@ import com.amazonaws.services.sns.model.SubscribeRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Utils {
-  private static final Logger logger = LoggerFactory.getLogger(Utils.class);
+public class Sns {
+  private static final Logger logger = LoggerFactory.getLogger(Sns.class);
   private static AmazonSNS snsclient = AmazonSNSClientBuilder.standard()
         .build();
   /*
