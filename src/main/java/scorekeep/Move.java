@@ -9,7 +9,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIndexHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIgnore;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
-@DynamoDBTable( tableName = Constants.MOVE_TABLE )
+@DynamoDBTable( tableName = TableNames.MOVE_TABLE )
 public class Move {
 
   private String id;
@@ -21,53 +21,48 @@ public class Move {
   public Move() {
   }
 
-  public Move(String id, String session, String game, String user, String move) {
-    this.id = id;
-    this.session = session;
-    this.game = game;
-    this.user = user;
-    this.move = move;
-  }
-
   @DynamoDBHashKey(attributeName="id")
   public String getId() {
     return id;
   }
-  public void setId(String id){
+  public Move setId(String id){
     this.id = id;
+    return this;
   }
 
   @DynamoDBIndexHashKey(globalSecondaryIndexName="game-index",attributeName="game")
   public String getGame() {
     return game;
   }
-  public void setGame(String gameId){
+  public Move setGame(String gameId){
     this.game = gameId;
+    return this;
   }
 
   @DynamoDBAttribute(attributeName="session")  
   public String getSession() {
     return session;
   }
-  public void setSession(String sessionId) {
+  public Move setSession(String sessionId) {
     this.session = sessionId;
+    return this;
   }
 
   @DynamoDBAttribute(attributeName="user")  
   public String getUser() {
     return user;
   }
-  public void setUser(String userId) {
+  public Move setUser(String userId) {
     this.user = userId;
+    return this;
   }
 
   @DynamoDBAttribute(attributeName="move")  
   public String getMove() {
     return move;
   }
-  public void setMove(String moveId) {
+  public Move setMove(String moveId) {
     this.move = moveId;
+    return this;
   }
-
-
 }

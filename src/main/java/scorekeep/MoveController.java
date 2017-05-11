@@ -14,16 +14,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.security.SecureRandom;
-import java.math.BigInteger;
-
 @RestController
 @RequestMapping(value="/api/move/{sessionId}/{gameId}")
 public class MoveController {
-  private SecureRandom random = new SecureRandom();
-  private MoveFactory moveFactory = new MoveFactory();
-  private MoveModel model = new MoveModel();
-  private GameController gameController = new GameController();
+  private final MoveFactory moveFactory = new MoveFactory();
+  private final MoveModel model = new MoveModel();
+  private final GameController gameController = new GameController();
   /* GET /move/SESSION/GAME */
   @RequestMapping(method=RequestMethod.GET)
   public List<Move> getMoves(@PathVariable String sessionId, @PathVariable String gameId) throws SessionNotFoundException, GameNotFoundException {

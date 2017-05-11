@@ -12,15 +12,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.security.SecureRandom;
-import java.math.BigInteger;
-
 @RestController
 @RequestMapping(value="/api/session")
 public class SessionController {
-  private SecureRandom random = new SecureRandom();
-  private SessionFactory sessionFactory = new SessionFactory();
-  private SessionModel model = new SessionModel();
+  private final SessionFactory sessionFactory = new SessionFactory();
+  private final SessionModel model = new SessionModel();
 
   /* POST /session */
   @RequestMapping(method=RequestMethod.POST)
@@ -61,7 +57,7 @@ public class SessionController {
   @RequestMapping(value="/{sessionId}/game/{gameId}", method=RequestMethod.PUT)
   public void setSessionGame(@PathVariable String sessionId, @PathVariable String gameId) throws SessionNotFoundException, GameNotFoundException {
     Session session = sessionFactory.getSession(sessionId);
-    session.setGame(gameId);
+    session.addGame(gameId);
     model.saveSession(session);
   }
 }

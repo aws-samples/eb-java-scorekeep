@@ -1,6 +1,5 @@
 package scorekeep;
 
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
@@ -18,11 +17,10 @@ import java.util.Map;
 public class StateModel {
   /** AWS SDK credentials. */
   private AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
-        .withRegion(Regions.fromName(System.getenv("AWS_REGION")))
         .build();
   private DynamoDBMapper mapper = new DynamoDBMapper(client);
-  private SessionModel sessionModel = new SessionModel();
-  private GameModel gameModel = new GameModel();
+  private final SessionModel sessionModel = new SessionModel();
+  private final GameModel gameModel = new GameModel();
 
   public void saveState(State state) throws SessionNotFoundException, GameNotFoundException {
     // check session
@@ -52,16 +50,16 @@ public class StateModel {
     if ( gameModel.loadGame(gameId) == null ) {
       throw new GameNotFoundException(gameId);
     }
-    Map<String, AttributeValue> eav = new HashMap<String, AttributeValue>();
-    eav.put(":val1", new AttributeValue().withS(gameId));
+    Map<String, AttributeValue> attributeValues = new HashMap<String, AttributeValue>();
+    attributeValues.put(":val1", new AttributeValue().withS(gameId));
 
-    Map<String, String> ean = new HashMap<String, String>();
-    ean.put("#key1", "game");
+    Map<String, String> attributeNames = new HashMap<String, String>();
+    attributeNames.put("#key1", "game");
 
     DynamoDBQueryExpression<State> queryExpression = new DynamoDBQueryExpression<State>()
         .withIndexName("game-index")
-        .withExpressionAttributeValues(eav)
-        .withExpressionAttributeNames(ean)
+        .withExpressionAttributeValues(attributeValues)
+        .withExpressionAttributeNames(attributeNames)
         .withKeyConditionExpression("#key1 = :val1")
         .withConsistentRead(false);
 

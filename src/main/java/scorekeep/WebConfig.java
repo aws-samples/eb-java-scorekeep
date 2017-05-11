@@ -26,7 +26,7 @@ public class WebConfig {
 
   static {
     if ( System.getenv("NOTIFICATION_EMAIL") != null ){
-      Utils.createSubscription();
+      Sns.createSubscription();
     }
   }
 }
