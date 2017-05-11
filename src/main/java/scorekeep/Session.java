@@ -8,7 +8,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
-@DynamoDBTable( tableName = Constants.SESSION_TABLE )
+@DynamoDBTable( tableName = TableNames.SESSION_TABLE )
 public class Session {
 
   private String id;
@@ -66,7 +66,7 @@ public class Session {
   public void clearGames() {
     this.games = null;
   }
-  public void setGame(String game) {
+  public void addGame(String game) {
     if ( games == null ) {
       games = new HashSet<String>();
     }
