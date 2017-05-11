@@ -11,7 +11,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIndexHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIgnore;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
-@DynamoDBTable( tableName = Constants.GAME_TABLE )
+@DynamoDBTable( tableName = TableNames.GAME_TABLE )
 public class Game {
 
   private String id;

@@ -1,6 +1,5 @@
 package scorekeep;
 
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
@@ -12,7 +11,6 @@ public class SessionModel {
 
   /** AWS SDK credentials. */
   private AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
-        .withRegion(Regions.fromName(System.getenv("AWS_REGION")))
         .build();
   private DynamoDBMapper mapper = new DynamoDBMapper(client);
 

@@ -9,14 +9,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
-import java.security.SecureRandom;
-import java.math.BigInteger;
-
 @RestController
 @RequestMapping(value="/api/rules")
 public class RulesController {
-  private SecureRandom random = new SecureRandom();
-  private RulesFactory rulesFactory = new RulesFactory();
+  private final RulesFactory rulesFactory = new RulesFactory();
 
   /* GET /rules */
   @RequestMapping(method=RequestMethod.GET)

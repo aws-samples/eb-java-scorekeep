@@ -14,16 +14,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.security.SecureRandom;
-import java.math.BigInteger;
-
 @RestController
 @RequestMapping(value="/api/state/{sessionId}/{gameId}")
 public class StateController {
-  private SecureRandom random = new SecureRandom();
-  private StateFactory stateFactory = new StateFactory();
-  private StateModel model = new StateModel();
-  private GameController gameController = new GameController();
+  private final StateFactory stateFactory = new StateFactory();
+  private final StateModel model = new StateModel();
+  private final GameController gameController = new GameController();
 
   /* GET /state/SESSION/GAME */
   @RequestMapping(method=RequestMethod.GET)

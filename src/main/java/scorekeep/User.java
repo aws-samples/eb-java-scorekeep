@@ -4,7 +4,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
-@DynamoDBTable( tableName = Constants.USER_TABLE )
+@DynamoDBTable( tableName = TableNames.USER_TABLE )
 public class User {
 
   private String id;
