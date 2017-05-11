@@ -17,7 +17,14 @@ public class TicTacToe {
     String[] phases = { "Move" };
     String[] moves = { "Roll" };
     String initialState = "X         ";
-    Rules tictactoe = new Rules(id, name, categories, users, teams, phases, moves, initialState);
+    Rules tictactoe = new Rules().setId(id)
+                                 .setName(name)
+                                 .setCategories(categories)
+                                 .setUsers(users)
+                                 .setTeams(teams)
+                                 .setPhases(phases)
+                                 .setMoves(moves)
+                                 .setInitialState(initialState);
     return tictactoe;
   }
   /* State is a string with one character that indicates the current turn

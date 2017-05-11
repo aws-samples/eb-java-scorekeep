@@ -24,7 +24,11 @@ public class MoveFactory {
   public Move newMove(String sessionId, String gameId, String userId, String moveText) throws SessionNotFoundException, GameNotFoundException, StateNotFoundException, RulesException {
     String moveId = Identifiers.random();
     String stateId = Identifiers.random();
-    Move move = new Move(moveId, sessionId, gameId, userId, moveText);
+    Move move = new Move().setId(moveId)
+                          .setSession(sessionId)
+                          .setGame(gameId)
+                          .setUser(userId)
+                          .setMove(moveText);
     String newStateText = "";
     // load game state
     Game game = gameController.getGame(sessionId, gameId);
