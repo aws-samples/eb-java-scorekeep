@@ -6,6 +6,5 @@ build/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
 *.zip
-*.sh
-!bin/*.sh
+
 
