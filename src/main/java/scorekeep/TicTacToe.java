@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TicTacToe {
-  private static final Logger logger = LoggerFactory.getLogger("TicTacToe");
+  private static final Logger logger = LoggerFactory.getLogger(TicTacToe.class);
 
   public static Rules getRules() {
     String id = "TicTacToe";
@@ -17,7 +17,14 @@ public class TicTacToe {
     String[] phases = { "Move" };
     String[] moves = { "Roll" };
     String initialState = "X         ";
-    Rules tictactoe = new Rules(id, name, categories, users, teams, phases, moves, initialState);
+    Rules tictactoe = new Rules().setId(id)
+                                 .setName(name)
+                                 .setCategories(categories)
+                                 .setUsers(users)
+                                 .setTeams(teams)
+                                 .setPhases(phases)
+                                 .setMoves(moves)
+                                 .setInitialState(initialState);
     return tictactoe;
   }
   /* State is a string with one character that indicates the current turn
@@ -72,7 +79,7 @@ public class TicTacToe {
     int len = state.length;
     for ( int i = 1; i <= len; i++ ){
       if ( state[len-i] == turn) {
-        out += java.lang.Math.pow( 2, i-1 );
+        out += Math.pow( 2, i-1 );
       }
     }
     return out;

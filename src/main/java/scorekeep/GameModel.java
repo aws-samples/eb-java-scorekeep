@@ -1,6 +1,5 @@
 package scorekeep;
 
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
@@ -20,11 +19,10 @@ import com.amazonaws.xray.handlers.TracingHandler;
 public class GameModel {
   /** AWS SDK credentials. */
   private AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
-        .withRegion(Regions.fromName(System.getenv("AWS_REGION")))
         .withRequestHandlers(new TracingHandler())
         .build();
   private DynamoDBMapper mapper = new DynamoDBMapper(client);
-  private SessionModel sessionModel = new SessionModel();
+  private final SessionModel sessionModel = new SessionModel();
 
   public void saveGame(Game game) throws SessionNotFoundException {
     // wrap in subsegment
@@ -45,6 +43,7 @@ public class GameModel {
     } finally {
       AWSXRay.endSubsegment();
     }
+    mapper.save(game);
   }
 
   public Game loadGame(String gameId) throws GameNotFoundException {

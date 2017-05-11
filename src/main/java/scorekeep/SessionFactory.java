@@ -1,18 +1,15 @@
 package scorekeep;
 import java.util.*;
-import java.security.SecureRandom;
-import java.math.BigInteger;
 import java.lang.Exception;
 
 public class SessionFactory {
-  private SecureRandom random = new SecureRandom();
-  private SessionModel model = new SessionModel();
+  private final SessionModel model = new SessionModel();
 
   public SessionFactory(){
   }
 
   public Session newSession() {
-    String id = new BigInteger(40, random).toString(32).toUpperCase();
+    String id = Identifiers.random();
     Session session = new Session(id);
     model.saveSession(session);
     return session;

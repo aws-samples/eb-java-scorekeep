@@ -9,8 +9,6 @@ import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.util.List;
 import java.util.Map;
 
@@ -24,17 +22,15 @@ import com.amazonaws.services.lambda.model.ResourceNotFoundException;
 import com.amazonaws.xray.proxies.apache.http.HttpClientBuilder;
 
 public class UserFactory {
-  private SecureRandom random = new SecureRandom();
-  private UserModel model = new UserModel();
+  private final UserModel model = new UserModel();
   private AWSLambda lambdaClient = AWSLambdaClientBuilder.standard()
-        .withRegion(Regions.fromName(System.getenv("AWS_REGION")))
         .build();
 
   public UserFactory(){
   }
 
   public User newUser() throws IOException {
-    String id = new BigInteger(40, random).toString(32).toUpperCase();
+    String id = Identifiers.random();
     User user = new User(id);
     String category = "American names";
     String name = randomNameLambda(id, category);
@@ -44,7 +40,7 @@ public class UserFactory {
   }
 
   public User newUser(String name) throws IOException {
-    String id = new BigInteger(40, random).toString(32).toUpperCase();
+    String id = Identifiers.random();
     User user = new User(id);
     user.setName(name);
     model.saveUser(user);
