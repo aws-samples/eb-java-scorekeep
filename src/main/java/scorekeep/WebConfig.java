@@ -40,7 +40,7 @@ public class WebConfig {
 
     AWSXRay.beginSegment("Scorekeep");
     if ( System.getenv("NOTIFICATION_EMAIL") != null ){
-      try { Utils.createSubscription(); }
+      try { Sns.createSubscription(); }
       catch (Exception e ) {
         logger.warn("Failed to create subscription for email "+  System.getenv("NOTIFICATION_EMAIL"));
       }

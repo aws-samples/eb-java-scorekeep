@@ -1,6 +1,5 @@
 package scorekeep;
 
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
@@ -15,22 +14,17 @@ import java.util.Set;
 public class GameModel {
   /** AWS SDK credentials. */
   private AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
-        .withRegion(Regions.fromName(System.getenv("AWS_REGION")))
         .build();
   private DynamoDBMapper mapper = new DynamoDBMapper(client);
-  private SessionModel sessionModel = new SessionModel();
+  private final SessionModel sessionModel = new SessionModel();
 
   public void saveGame(Game game) throws SessionNotFoundException {
-    try {
-      // check session
-      String sessionId = game.getSession();
-      if (sessionModel.loadSession(sessionId) == null ) {
-        throw new SessionNotFoundException(sessionId);
-      }
-      mapper.save(game);
-    } catch (Exception e) {
-      throw e;
+    // check session
+    String sessionId = game.getSession();
+    if (sessionModel.loadSession(sessionId) == null ) {
+      throw new SessionNotFoundException(sessionId);
     }
+    mapper.save(game);
   }
 
   public Game loadGame(String gameId) throws GameNotFoundException {
