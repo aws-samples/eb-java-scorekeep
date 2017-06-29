@@ -7,12 +7,13 @@ var Chance = require('chance');
 var myFunction = function(event, context, callback) {
   var sns = new AWS.SNS();
   var chance = new Chance();
-  var segment = AWSXRay.getSegment();
   var userid = event.userid;
-  segment.addAnnotation('User ID', userid);
-
   var name = chance.first();
-  segment.addAnnotation('Name', name);
+
+  AWSXRay.captureFunc('annotations', function(subsegment){
+    subsegment.addAnnotation('Name', name);
+    subsegment.addAnnotation('UserID', event.userid);
+  });
 
   // Notify
   var params = {
