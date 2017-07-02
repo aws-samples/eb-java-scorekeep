@@ -1,1 +1,1 @@
-01build: gradle build
+01build: ./bin/build.sh
