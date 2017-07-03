@@ -18,33 +18,33 @@ import javax.sql.DataSource;
 @EnableJpaRepositories("scorekeep")
 @Profile("pgsql")
 public class RdsWebConfig {
-    private static final Log logger = LogFactory.getLog(WebConfig.class);
+  private static final Log logger = LogFactory.getLog(WebConfig.class);
 
-    @Bean
-    public Filter SimpleCORSFilter() {
-        return new SimpleCORSFilter();
-    }
+  @Bean
+  public Filter SimpleCORSFilter() {
+    return new SimpleCORSFilter();
+  }
 
-    @Bean
-    @ConfigurationProperties(prefix = "spring.datasource")
-    public DataSource dataSource() {
-        logger.info("Initializing PostgreSQL datasource");
-        return DataSourceBuilder.create()
-                .driverClassName("org.postgresql.Driver")
-                .url("jdbc:postgresql://" + System.getenv("RDS_HOSTNAME") + ":" + System.getenv("RDS_PORT") + "/ebdb")
-                .username(System.getenv("RDS_USERNAME"))
-                .password(System.getenv("RDS_PASSWORD"))
-                .build();
-    }
+  @Bean
+  @ConfigurationProperties(prefix = "spring.datasource")
+  public DataSource dataSource() {
+    logger.info("Initializing PostgreSQL datasource");
+    return DataSourceBuilder.create()
+      .driverClassName("org.postgresql.Driver")
+      .url("jdbc:postgresql://" + System.getenv("RDS_HOSTNAME") + ":" + System.getenv("RDS_PORT") + "/ebdb")
+      .username(System.getenv("RDS_USERNAME"))
+      .password(System.getenv("RDS_PASSWORD"))
+      .build();
+  }
 
-    @Bean
-    public GameHistoryModel gameHistoryModel() {
-        return new GameHistoryModel();
-    }
+  @Bean
+  public GameHistoryModel gameHistoryModel() {
+    return new GameHistoryModel();
+  }
 
-    static {
-      if ( System.getenv("NOTIFICATION_EMAIL") != null ){
-        Sns.createSubscription();
-      }
+  static {
+    if ( System.getenv("NOTIFICATION_EMAIL") != null ){
+      Sns.createSubscription();
     }
+  }
 }
