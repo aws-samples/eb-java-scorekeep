@@ -1,9 +1,8 @@
 SEGMENT=$(python bin/xray_start.py)
-GRADLE_OUTPUT=$(gradle build); GRADLE_RETURN=$? 
+gradle build --quiet --stacktrace &> /var/log/gradle.log; GRADLE_RETURN=$?
 if (( GRADLE_RETURN != 0 )); then 
-  echo "Grade failed with exit status $GRADLE_RETURN" >&2 
-  echo "and output: $GRADLE_OUTPUT" >&2
-  python bin/xray_error.py "$SEGMENT" "$GRADLE_OUTPUT"
+  echo "Grade failed with exit status $GRADLE_RETURN" >&2
+  python bin/xray_error.py "$SEGMENT" "$(cat /var/log/gradle.log)"
   exit 1
 fi
 python bin/xray_success.py "$SEGMENT"
