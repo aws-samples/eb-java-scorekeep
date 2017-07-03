@@ -80,7 +80,7 @@ public class RdsWebConfig {
         MetadataImplementor metadataImplementor = (MetadataImplementor) metadataSources.buildMetadata(standardServiceRegistry);
         SchemaExport schemaExport = new SchemaExport(standardServiceRegistry, metadataImplementor);
 
-        AWSXRay.beginSegment("Scorekeep");
+        AWSXRay.beginSegment("Scorekeep-init");
         schemaExport.create(true, true);
         AWSXRay.endSegment();
     }
@@ -90,5 +90,13 @@ public class RdsWebConfig {
         URL ruleFile = WebConfig.class.getResource("/sampling-rules.json");
         builder.withSamplingStrategy(new LocalizedSamplingStrategy(ruleFile));
         AWSXRay.setGlobalRecorder(builder.build());
+        AWSXRay.beginSegment("Scorekeep-init");
+        if ( System.getenv("NOTIFICATION_EMAIL") != null ){
+          try { Sns.createSubscription(); }
+          catch (Exception e ) {
+            logger.warn("Failed to create subscription for email "+  System.getenv("NOTIFICATION_EMAIL"));
+          }
+        }
+        AWSXRay.endSegment();
     }
 }

@@ -46,7 +46,7 @@ public class WebConfig {
 
     AWSXRay.setGlobalRecorder(builder.build());
 
-    AWSXRay.beginSegment("Scorekeep");
+    AWSXRay.beginSegment("Scorekeep-init");
     if ( System.getenv("NOTIFICATION_EMAIL") != null ){
       try { Sns.createSubscription(); }
       catch (Exception e ) {
