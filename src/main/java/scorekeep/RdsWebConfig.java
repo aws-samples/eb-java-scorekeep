@@ -41,4 +41,10 @@ public class RdsWebConfig {
     public GameHistoryModel gameHistoryModel() {
         return new GameHistoryModel();
     }
+
+    static {
+      if ( System.getenv("NOTIFICATION_EMAIL") != null ){
+        Sns.createSubscription();
+      }
+    }
 }
