@@ -30,11 +30,11 @@ public class RdsWebConfig {
   public DataSource dataSource() {
     logger.info("Initializing PostgreSQL datasource");
     return DataSourceBuilder.create()
-      .driverClassName("org.postgresql.Driver")
-      .url("jdbc:postgresql://" + System.getenv("RDS_HOSTNAME") + ":" + System.getenv("RDS_PORT") + "/ebdb")
-      .username(System.getenv("RDS_USERNAME"))
-      .password(System.getenv("RDS_PASSWORD"))
-      .build();
+        .driverClassName("org.postgresql.Driver")
+        .url("jdbc:postgresql://" + System.getenv("RDS_HOSTNAME") + ":" + System.getenv("RDS_PORT") + "/ebdb")
+        .username(System.getenv("RDS_USERNAME"))
+        .password(System.getenv("RDS_PASSWORD"))
+        .build();
   }
 
   @Bean
