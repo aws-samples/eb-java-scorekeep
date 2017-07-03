@@ -38,65 +38,65 @@ import com.amazonaws.xray.strategy.sampling.LocalizedSamplingStrategy;
 @EnableAutoConfiguration
 @Profile("pgsql")
 public class RdsWebConfig {
-    private static final Logger logger = LoggerFactory.getLogger(WebConfig.class);
+  private static final Logger logger = LoggerFactory.getLogger(WebConfig.class);
 
-    @Bean
-    public Filter TracingFilter() {
-        return new AWSXRayServletFilter("Scorekeep");
+  @Bean
+  public Filter TracingFilter() {
+    return new AWSXRayServletFilter("Scorekeep");
+  }
+
+  @Bean
+  public Filter SimpleCORSFilter() {
+    return new SimpleCORSFilter();
+  }
+
+  @Bean
+  @ConfigurationProperties(prefix = "spring.datasource")
+  public DataSource dataSource() {
+    logger.info("Initializing PostgreSQL datasource");
+    return DataSourceBuilder.create()
+        .driverClassName("org.postgresql.Driver")
+        .url("jdbc:postgresql://" + System.getenv("RDS_HOSTNAME") + ":" + System.getenv("RDS_PORT") + "/ebdb")
+        .username(System.getenv("RDS_USERNAME"))
+        .password(System.getenv("RDS_PASSWORD"))
+        .build();
+  }
+
+  @Bean
+  public GameHistoryModel gameHistoryModel() {
+    return new GameHistoryModel();
+  }
+
+  @Autowired
+  LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean;
+
+  @PostConstruct
+  public void schemaExport() {
+    EntityManagerFactoryImpl entityManagerFactoryImpl = (EntityManagerFactoryImpl) localContainerEntityManagerFactoryBean.getNativeEntityManagerFactory();
+    SessionFactoryImplementor sessionFactoryImplementor = entityManagerFactoryImpl.getSessionFactory();
+    StandardServiceRegistry standardServiceRegistry = sessionFactoryImplementor.getSessionFactoryOptions().getServiceRegistry();
+    MetadataSources metadataSources = new MetadataSources(new BootstrapServiceRegistryBuilder().build());
+    metadataSources.addAnnotatedClass(GameHistory.class);
+    MetadataImplementor metadataImplementor = (MetadataImplementor) metadataSources.buildMetadata(standardServiceRegistry);
+    SchemaExport schemaExport = new SchemaExport(standardServiceRegistry, metadataImplementor);
+
+    AWSXRay.beginSegment("Scorekeep-init");
+    schemaExport.create(true, true);
+    AWSXRay.endSegment();
+  }
+
+  static {
+    AWSXRayRecorderBuilder builder = AWSXRayRecorderBuilder.standard().withPlugin(new EC2Plugin()).withPlugin(new ElasticBeanstalkPlugin());
+    URL ruleFile = WebConfig.class.getResource("/sampling-rules.json");
+    builder.withSamplingStrategy(new LocalizedSamplingStrategy(ruleFile));
+    AWSXRay.setGlobalRecorder(builder.build());
+    AWSXRay.beginSegment("Scorekeep-init");
+    if ( System.getenv("NOTIFICATION_EMAIL") != null ){
+      try { Sns.createSubscription(); }
+      catch (Exception e ) {
+        logger.warn("Failed to create subscription for email "+  System.getenv("NOTIFICATION_EMAIL"));
+      }
     }
-
-    @Bean
-    public Filter SimpleCORSFilter() {
-        return new SimpleCORSFilter();
-    }
-
-    @Bean
-    @ConfigurationProperties(prefix = "spring.datasource")
-    public DataSource dataSource() {
-        logger.info("Initializing PostgreSQL datasource");
-        return DataSourceBuilder.create()
-                .driverClassName("org.postgresql.Driver")
-                .url("jdbc:postgresql://" + System.getenv("RDS_HOSTNAME") + ":" + System.getenv("RDS_PORT") + "/ebdb")
-                .username(System.getenv("RDS_USERNAME"))
-                .password(System.getenv("RDS_PASSWORD"))
-                .build();
-    }
-
-    @Bean
-    public GameHistoryModel gameHistoryModel() {
-        return new GameHistoryModel();
-    }
-
-    @Autowired
-    LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean;
-
-    @PostConstruct
-    public void schemaExport() {
-        EntityManagerFactoryImpl entityManagerFactoryImpl = (EntityManagerFactoryImpl) localContainerEntityManagerFactoryBean.getNativeEntityManagerFactory();
-        SessionFactoryImplementor sessionFactoryImplementor = entityManagerFactoryImpl.getSessionFactory();
-        StandardServiceRegistry standardServiceRegistry = sessionFactoryImplementor.getSessionFactoryOptions().getServiceRegistry();
-        MetadataSources metadataSources = new MetadataSources(new BootstrapServiceRegistryBuilder().build());
-        metadataSources.addAnnotatedClass(GameHistory.class);
-        MetadataImplementor metadataImplementor = (MetadataImplementor) metadataSources.buildMetadata(standardServiceRegistry);
-        SchemaExport schemaExport = new SchemaExport(standardServiceRegistry, metadataImplementor);
-
-        AWSXRay.beginSegment("Scorekeep-init");
-        schemaExport.create(true, true);
-        AWSXRay.endSegment();
-    }
-
-    static {
-        AWSXRayRecorderBuilder builder = AWSXRayRecorderBuilder.standard().withPlugin(new EC2Plugin()).withPlugin(new ElasticBeanstalkPlugin());
-        URL ruleFile = WebConfig.class.getResource("/sampling-rules.json");
-        builder.withSamplingStrategy(new LocalizedSamplingStrategy(ruleFile));
-        AWSXRay.setGlobalRecorder(builder.build());
-        AWSXRay.beginSegment("Scorekeep-init");
-        if ( System.getenv("NOTIFICATION_EMAIL") != null ){
-          try { Sns.createSubscription(); }
-          catch (Exception e ) {
-            logger.warn("Failed to create subscription for email "+  System.getenv("NOTIFICATION_EMAIL"));
-          }
-        }
-        AWSXRay.endSegment();
-    }
+    AWSXRay.endSegment();
+  }
 }
