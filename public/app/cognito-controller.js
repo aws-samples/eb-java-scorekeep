@@ -119,6 +119,7 @@ function Cognito($scope, $http, UserService, api) {
     $scope.user = {};
     $scope.cognitoUser = {};
     $scope.errormessage = "";
+    $scope.servicegraph = "";
   }
 
   $scope.deleteUser = function () {
@@ -153,6 +154,7 @@ function Cognito($scope, $http, UserService, api) {
       } else {
         console.log(data);
         $scope.servicegraph = JSON.stringify(data, null, 2);
+        $scope.$apply();
       }
     })
   }
