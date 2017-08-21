@@ -4,6 +4,7 @@ public class UserPool {
 
   private String poolId;
   private String clientId;
+  private String identityPoolId;
   private String region;
 
   public UserPool() {
@@ -26,6 +27,13 @@ public class UserPool {
   }
   public void setClientId(String clientId) {
     this.clientId = clientId;
+  }
+
+  public String getIdentityPoolId() {
+    return identityPoolId;
+  }
+  public void setIdentityPoolId(String identityPoolId) {
+    this.identityPoolId = identityPoolId;
   }
 
   public String getRegion() {

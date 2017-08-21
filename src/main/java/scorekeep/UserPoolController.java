@@ -18,9 +18,11 @@ public class UserPoolController {
     UserPool userpool = new UserPool();
     userpool.setPoolId(System.getenv("USERPOOL_ID"));
     userpool.setClientId(System.getenv("USERPOOL_CLIENT_ID"));
+    userpool.setIdentityPoolId(System.getenv("IDENTITYPOOL_ID"));
     userpool.setRegion(System.getenv("AWS_REGION"));
     logger.info("cognito pool ID: " + userpool.getPoolId());
     logger.info("cognito client ID: " + userpool.getClientId());
+    logger.info("cognito identity pool ID: " + userpool.getIdentityPoolId());
     return userpool;
   }
 }

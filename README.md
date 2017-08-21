@@ -12,8 +12,24 @@ Before you use the branch, create a User Pool in Amazon Cognito, and configure i
 
 This script uses a CloudFormation template named userpool to create the required resources. The template outputs the pool ID and client ID and saves the values in CloudFormation exports, which can be read from other stacks' templates. The env.config file then uses the Fn::ImportValue function to read these values and pass them to the API through environment variables. The API, in turn, provides a route named `/api/userpool` to retrieve the data, which the web app calls when you load the cognito demo page. This is all done to avoid hard coding the values in the web app.
 
+Next, create an *identity pool*. The identity pool allows signed-in users to get credentials for use with the AWS SDK.
+
+```
+~/eb-java-scorekeep/_cognito$ ./create-identitypool.sh
+```
+
+This script creates another stack in CloudFormation that creates an identity pool associated with the Scorekeep user pool, and a role with read-only permissions for X-Ray that users assume when they sign in to their user account.
+
+Finally, associate the role with the identity pool.
+
+```
+~/eb-java-scorekeep/_cognito$ ./associate-role.sh
+```
+
+This script retrieves information about the user pool and identity pool from the output of the CloudFormation stack and uses it to run an AWS CLI command that associates the role with the identity pool. While you can create a role association in a CloudFormation template, one of the attribute keys needs to contain resource IDs. You can't use functions like Ref to get key values in a CloudFormation template, so you need to use a script to associate the role to avoid hard coding values in the template.
+
 ## Test Cognito Integration
-After creating the user pool stack, deploy this branch to your Elastic Beanstalk environment. Open the web app in a browser and choose **Powered by Amazon Cognito** in the upper right corner to view the demo page. Follow the instructions shown to test the code and learn how it works.
+After creating the user pool resources, deploy this branch to your Elastic Beanstalk environment. Open the web app in a browser and choose **Powered by Amazon Cognito** in the upper right corner to view the demo page. Follow the instructions shown to test the code and learn how it works.
 
 If you don't have an Elastic Beanstalk environment, follow the instructions below.
 

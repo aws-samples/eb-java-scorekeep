@@ -7,15 +7,18 @@ function Cognito($scope, $http, UserService, api) {
   $scope.user = {};
   $scope.cognitoUser = {};
   $scope.errormessage = "";
+  $scope.userpooldata = {};
+  $scope.servicegraph = "";
 
   // Cognito stuff
   var userPool;
   GetUserPool = $http.get( api + 'userpool');
   GetUserPool.then( function(userpool){
-    AWSCognito.config.region = userpool.data.region;
+    $scope.userpooldata = angular.copy(userpool.data);
+    AWSCognito.config.region = $scope.userpooldata.region;
     var poolData = {
-      UserPoolId : userpool.data.poolId,
-      ClientId : userpool.data.clientId
+      UserPoolId : $scope.userpooldata.poolId,
+      ClientId : $scope.userpooldata.clientId
     };
     userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(poolData);
   })
@@ -82,28 +85,33 @@ function Cognito($scope, $http, UserService, api) {
     var cognitoUser = new AWSCognito.CognitoIdentityServiceProvider.CognitoUser(userData);
     cognitoUser.authenticateUser(authenticationDetails, {
       onSuccess: function (result) {
-        console.log('access token = ' + result.getAccessToken().getJwtToken());
         cognitoUser.getUserAttributes(function(err, attributes){
-          console.log(attributes);
           var userid;
           for (i=0; i < attributes.length ; i++) {
-            console.log(attributes[i]);
             if (attributes[i].Name == "custom:userid") {
               userid = attributes[i].Value;
               break;
             }
           }
-          console.log('userid = ' + userid);
           $scope.user = UserService.get({ id: userid });
           $scope.cognitoUser = angular.copy(cognitoUser);
+        });
+
+        AWS.config.region = $scope.userpooldata.region;
+        var logins = {};
+        loginkey = 'cognito-idp.' + $scope.userpooldata.region + '.amazonaws.com/' + $scope.userpooldata.poolId;
+        logins[loginkey] = result.getIdToken().getJwtToken()
+        AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+          IdentityPoolId : $scope.userpooldata.identityPoolId,
+          Logins : logins
         });
       },
       onFailure: function(err) {
         $scope.errormessage = err.message;
       }
     });
-
   }
+
   $scope.logout = function() {
     $scope.errormessage = "";
     $scope.cognitoUser.signOut();
@@ -130,5 +138,22 @@ function Cognito($scope, $http, UserService, api) {
       $scope.cognitoUser = {};
       $http.delete( api + 'user/' + userId);
     });
+  }
+
+  $scope.callXray = function() {
+    var xray = new AWS.XRay();
+    var params = {
+      EndTime: Date.now()/1000,
+      StartTime: Date.now()/1000 - 600
+    };
+    xray.getServiceGraph(params, function(err, data) {
+      if (err) {
+        $scope.errormessage = err;
+        console.log(err, err.stack);
+      } else {
+        console.log(data);
+        $scope.servicegraph = JSON.stringify(data, null, 2);
+      }
+    })
   }
 }
