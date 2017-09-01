@@ -10,17 +10,26 @@ function Cognito($scope, $http, UserService, api) {
   $scope.userpooldata = {};
   $scope.servicegraph = "";
 
-  // Cognito stuff
+  if ( sessionStorage['username'] ) {
+    $scope.username = sessionStorage['username'];
+  }
+  // Get region, userpool ID and client ID from Scorekeep API
   var userPool;
   GetUserPool = $http.get( api + 'userpool');
   GetUserPool.then( function(userpool){
     $scope.userpooldata = angular.copy(userpool.data);
+    // Configure region
     AWSCognito.config.region = $scope.userpooldata.region;
+    AWS.config.region = $scope.userpooldata.region;
     var poolData = {
       UserPoolId : $scope.userpooldata.poolId,
       ClientId : $scope.userpooldata.clientId
     };
     userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(poolData);
+    // Configure AWS SDK credentials if user is signed in
+    if ( sessionStorage['JWTToken'] ) {
+      $scope.getAWSCredentials(sessionStorage['JWTToken']);
+    }
   })
 
   $scope.createUser = function () {
@@ -58,7 +67,6 @@ function Cognito($scope, $http, UserService, api) {
           return;
         }
         cognitoUser = result.user;
-        console.log('user name is ' + cognitoUser.getUsername());
         $scope.cognitoUser = angular.copy(cognitoUser);
         return cognitoUser;
       });
@@ -67,6 +75,18 @@ function Cognito($scope, $http, UserService, api) {
       $scope.login();
     })
   };
+
+  $scope.getAWSCredentials = function(JWTToken) {
+    AWS.config.region = $scope.userpooldata.region;
+    var logins = {};
+    loginkey = 'cognito-idp.' + $scope.userpooldata.region + '.amazonaws.com/' + $scope.userpooldata.poolId;
+    logins[loginkey] = JWTToken;
+    var credentials = new AWS.CognitoIdentityCredentials({
+      IdentityPoolId : $scope.userpooldata.identityPoolId,
+      Logins : logins
+    });
+    AWS.config.credentials = credentials;
+  }
 
   $scope.login = function() {
     $scope.errormessage = "";
@@ -96,15 +116,10 @@ function Cognito($scope, $http, UserService, api) {
           $scope.user = UserService.get({ id: userid });
           $scope.cognitoUser = angular.copy(cognitoUser);
         });
-
-        AWS.config.region = $scope.userpooldata.region;
-        var logins = {};
-        loginkey = 'cognito-idp.' + $scope.userpooldata.region + '.amazonaws.com/' + $scope.userpooldata.poolId;
-        logins[loginkey] = result.getIdToken().getJwtToken()
-        AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-          IdentityPoolId : $scope.userpooldata.identityPoolId,
-          Logins : logins
-        });
+        var JWTToken = result.getIdToken().getJwtToken();
+        $scope.getAWSCredentials(JWTToken);
+        sessionStorage['username'] = $scope.username;
+        sessionStorage['JWTToken'] = JWTToken;
       },
       onFailure: function(err) {
         $scope.errormessage = err.message;
@@ -117,9 +132,12 @@ function Cognito($scope, $http, UserService, api) {
     $scope.cognitoUser.signOut();
     console.log('Signed out from Cognito.');
     $scope.user = {};
+    $scope.username = "";
     $scope.cognitoUser = {};
     $scope.errormessage = "";
     $scope.servicegraph = "";
+    sessionStorage['JWTToken'] = "";
+    sessionStorage['username'] = "";
   }
 
   $scope.deleteUser = function () {
@@ -149,11 +167,13 @@ function Cognito($scope, $http, UserService, api) {
     };
     xray.getServiceGraph(params, function(err, data) {
       if (err) {
-        $scope.errormessage = err;
+        $scope.errormessage = JSON.stringify(err, null, 2);
         console.log(err, err.stack);
+        $scope.$apply();
       } else {
         console.log(data);
         $scope.servicegraph = JSON.stringify(data, null, 2);
+        $scope.errormessage = "";
         $scope.$apply();
       }
     })
