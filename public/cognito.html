@@ -3,7 +3,7 @@
   <form name="create-user">
     <p>Enter a name and password to sign up for Scorekeep. Login information and a copy of the Scorekeep user id are stored in a Cognito User Pool. When you sign in with these credentials the app retrieves the Scorekeep user ID and shows the user information for the logged in user.</p>
     <p><b>Log out</b> to end the Cognito session and unload the Scorekeep user from scope. Log in and click <b>Delete me</b> to delete both Scorekeep and Cognito users.</p>
-    <p>All of the Cognito related code for this page is in <code>cognitoController.js</code>. See the changes (relative to the master branch) to <code>main-controller.js</code> and <code>user-collection.js</code> for an object oriented example.</p>
+    <p>All of the Cognito related code for this page is in <code>cognito-controller.js</code>. See the changes (relative to the master branch) to <code>main-controller.js</code> and <code>user-collection.js</code> for an object oriented example.</p>
     Name: <input name="name" ng-model="username" required><br/>
     Password: <input name="password" type="password" ng-model="password" required><br/>
     User name: {{ user.name }}<br/>
