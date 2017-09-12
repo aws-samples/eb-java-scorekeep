@@ -1,7 +1,19 @@
 var module = angular.module('scorekeep');
 module.controller('UserController', User);
-function User($scope, $http, UserService, api) {
-  $scope.users = UserService.query();
+function User($scope, $http, UserService, UserCollection, api) {
+  GetUserPool = $http.get( api + 'userpool');
+  GetUserPool.then( function(userpool){
+    // configure region and get poolData for Cognito
+    var poolData = UserCollection.configureAWSClients(userpool);
+    // create userPool
+    userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(poolData);
+    // get credentials
+    if ( sessionStorage['JWTToken'] ) {
+      AWS.config.credentials = UserCollection.getAWSCredentials(sessionStorage['JWTToken'], userpool.data);
+    };
+    // call Scorekeep
+    $scope.users = UserService.query();
+  })
 
   $scope.username = "my name";
   $scope.createUser = function () {

@@ -1,14 +1,27 @@
 var module = angular.module('scorekeep');
 module.controller('GameController', Game);
-function Game($q, $scope, $http, $interval, $routeParams, SessionService, UserService, GameService, GameCollection, RulesService, StateService, api) {
+function Game($q, $scope, $http, $interval, $routeParams, SessionService, UserService, UserCollection, GameService, GameCollection, RulesService, StateService, api) {
   $scope.game = new GameService;
   $scope.state = new StateService; // game state object
   $scope.gamestate = []; // game state as Array
   $scope.moving = 0;
-  $scope.user = UserService.get({ id: $routeParams.userid });
   $scope.winner = '';
   $scope.gameid = $routeParams.gameid;
 
+  GetUserPool = $http.get( api + 'userpool');
+  GetUserPool.then( function(userpool){
+    // configure region and get poolData for Cognito
+    var poolData = UserCollection.configureAWSClients(userpool);
+    // create userPool
+    userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(poolData);
+    // get credentials
+    if ( sessionStorage['JWTToken'] ) {
+      AWS.config.credentials = UserCollection.getAWSCredentials(sessionStorage['JWTToken'], userpool.data);
+    };
+    // call Scorekeep
+    $scope.sessions = SessionService.query();
+    $scope.user = UserService.get({ id: $routeParams.userid });
+  })
   $scope.playgame = function(){
     return $q(function(resolve, reject) {
       GetGame = $scope.game.$get({ sessionid: $routeParams.sessionid, id: $routeParams.gameid });

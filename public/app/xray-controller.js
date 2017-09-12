@@ -11,6 +11,17 @@ function XRayController($scope, $http, $location, SessionCollection, UserCollect
   var shouldRunRdsDemo = false;
   $scope.gameHistory = [];
 
+  GetUserPool = $http.get( api + 'userpool');
+  GetUserPool.then( function(userpool){
+    // configure region and get poolData for Cognito
+    var poolData = UserCollection.configureAWSClients(userpool);
+    // create userPool
+    userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(poolData);
+    // get credentials
+    if ( sessionStorage['JWTToken'] ) {
+      AWS.config.credentials = UserCollection.getAWSCredentials(sessionStorage['JWTToken'], userpool.data);
+    };
+  })
   $scope.isRdsConfigured = false;
   var isRdsConfigured = function() {
     GameHistoryModel.get().then(

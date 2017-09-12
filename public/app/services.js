@@ -2,6 +2,33 @@ var module = angular.module('scorekeep');
 module.factory('SessionService', function($resource, api, XRay) {
   return $resource(api + 'session/:id', { id: '@_id' }, {
     segment: {},
+    get: {
+      method: 'GET',
+      headers: {
+        'X-Amzn-Trace-Id': function(config) {
+          segment = XRay.beginSegment();
+          return XRay.getTraceHeader(segment);
+        }
+      },
+      transformResponse: function(data) {
+        XRay.endSegment(segment);
+        return angular.fromJson(data);
+      },
+    },
+    query: {
+      method: 'GET',
+      isArray: true,
+      headers: {
+        'X-Amzn-Trace-Id': function(config) {
+          segment = XRay.beginSegment();
+          return XRay.getTraceHeader(segment);
+        }
+      },
+      transformResponse: function(data) {
+        XRay.endSegment(segment);
+        return angular.fromJson(data);
+      },
+    },
     save: {
       method: 'POST',
       headers: {
@@ -16,7 +43,30 @@ module.factory('SessionService', function($resource, api, XRay) {
       },
     },
     update: {
-      method: 'PUT'
+      method: 'PUT',
+      headers: {
+        'X-Amzn-Trace-Id': function(config) {
+          segment = XRay.beginSegment();
+          return XRay.getTraceHeader(segment);
+        }
+      },
+      transformResponse: function(data) {
+        XRay.endSegment(segment);
+        return angular.fromJson(data);
+      },
+    },
+    remove: {
+      method: 'DELETE',
+      headers: {
+        'X-Amzn-Trace-Id': function(config) {
+          segment = XRay.beginSegment();
+          return XRay.getTraceHeader(segment);
+        }
+      },
+      transformResponse: function(data) {
+        XRay.endSegment(segment);
+        return angular.fromJson(data);
+      },
     }
   });
 });

@@ -7,18 +7,22 @@ module.service('UserCollection', function(UserService, $http, api) {
   GetUserPool = $http.get( api + 'userpool');
   GetUserPool.then( function(userpool){
     userPoolData = userpool.data;
-    AWSCognito.config.region = userpool.data.region;
-    AWS.config.region = userpool.data.region;
-    var poolData = {
-      UserPoolId : userpool.data.poolId,
-      ClientId : userpool.data.clientId
-    };
+    var poolData = collection.configureAWSClients(userpool);
     userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(poolData);
     if ( sessionStorage['JWTToken'] ) {
       AWS.config.credentials = collection.getAWSCredentials(sessionStorage['JWTToken'], userpool.data);
     }
   })
 
+  collection.configureAWSClients = function(userpool) {
+    AWSCognito.config.region = userpool.data.region;
+    AWS.config.region = userpool.data.region;
+    var poolData = {
+      UserPoolId : userpool.data.poolId,
+      ClientId : userpool.data.clientId
+    };
+    return poolData;
+  }
   collection.getAWSCredentials = function(JWTToken, userpooldata) {
     AWS.config.region = userpooldata.region;
     var logins = {};

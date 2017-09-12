@@ -1,6 +1,6 @@
 var module = angular.module('scorekeep');
 module.controller('CognitoController', Cognito);
-function Cognito($scope, $http, UserService, api) {
+function Cognito($scope, $http, UserService, UserCollection, api) {
   // Scope
   $scope.username = "myname";
   $scope.password = "testpassword";
@@ -13,23 +13,18 @@ function Cognito($scope, $http, UserService, api) {
   if ( sessionStorage['username'] ) {
     $scope.username = sessionStorage['username'];
   }
-  // Get region, userpool ID and client ID from Scorekeep API
-  var userPool;
+
   GetUserPool = $http.get( api + 'userpool');
   GetUserPool.then( function(userpool){
     $scope.userpooldata = angular.copy(userpool.data);
-    // Configure region
-    AWSCognito.config.region = $scope.userpooldata.region;
-    AWS.config.region = $scope.userpooldata.region;
-    var poolData = {
-      UserPoolId : $scope.userpooldata.poolId,
-      ClientId : $scope.userpooldata.clientId
-    };
+    // configure region and get poolData for Cognito
+    var poolData = UserCollection.configureAWSClients(userpool);
+    // create userPool
     userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(poolData);
-    // Configure AWS SDK credentials if user is signed in
+    // get credentials
     if ( sessionStorage['JWTToken'] ) {
-      $scope.getAWSCredentials(sessionStorage['JWTToken']);
-    }
+      AWS.config.credentials = UserCollection.getAWSCredentials(sessionStorage['JWTToken'], userpool.data);
+    };
   })
 
   $scope.createUser = function () {

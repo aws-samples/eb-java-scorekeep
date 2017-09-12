@@ -1,16 +1,28 @@
 var module = angular.module('scorekeep');
 module.controller('SessionController', Session);
-function Session($scope, $http, $location, $interval, $routeParams, SessionService, RulesService, GameCollection, UserService, GameService, api) {
-  $scope.games = GameService.query({ sessionid: $routeParams.sessionid });
-  $scope.session = new SessionService;
-  $scope.user = UserService.get({ id: $routeParams.userid });
-  $scope.allrules = RulesService.query();
+function Session($scope, $http, $location, $interval, $routeParams, UserCollection, SessionService, RulesService, GameCollection, UserService, GameService, api) {
   $scope.sessionid = $routeParams.sessionid;
-
-  /* TODO: Use stored credentials to access AWS */
-  // $scope.cognitoAccessToken = sessionStorage.getItem("cognitoAccessToken");
-  // $scope.cognitoIdToken = sessionStorage.getItem("cognitoIdToken");
-  // $scope.cognitoRefreshToken = sessionStorage.getItem("cognitoRefreshToken");
+  $scope.session = new SessionService;
+  if ( sessionStorage['username'] ) {
+    $scope.username = sessionStorage['username'];
+  }
+  var userPool;
+  GetUserPool = $http.get( api + 'userpool');
+  GetUserPool.then( function(userpool){
+    // configure region and get poolData for Cognito
+    var poolData = UserCollection.configureAWSClients(userpool);
+    // create userPool
+    userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(poolData);
+    // get credentials
+    if ( sessionStorage['JWTToken'] ) {
+      AWS.config.credentials = UserCollection.getAWSCredentials(sessionStorage['JWTToken'], userpool.data);
+    };
+    // call Scorekeep
+    $scope.games = GameService.query({ sessionid: $routeParams.sessionid });
+    $scope.user = UserService.get({ id: $routeParams.userid });
+    $scope.allrules = RulesService.query();
+    $scope.loadSession();
+  })
 
   $scope.loadSession = function() {
     GetSession = $scope.games.$promise.then(function(result) {
@@ -43,7 +55,6 @@ function Session($scope, $http, $location, $interval, $routeParams, SessionServi
       }
     })
   }
-  $scope.loadSession();
   // BUG: loadsession continues to call after pressing back to load main controller
   $scope.interval = $interval(function(){
     $scope.loadSession();
