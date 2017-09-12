@@ -19,6 +19,9 @@ module.service('XRay', function(api) {
   service.getEpochTime = function() {
     return new Date().getTime()/1000;
   }
+  service.getTraceHeader = function(segment) {
+    return "Root=" + segment.trace_id + ";Parent=" + segment.id + ";Sampled=1";
+  }
   service.beginSegment = function() {
     var segment = {};
     var traceId = '1-' + service.getHexTime() + '-' + service.getHexId(24);

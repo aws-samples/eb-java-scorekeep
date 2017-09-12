@@ -7,7 +7,7 @@ module.factory('SessionService', function($resource, api, XRay) {
       headers: {
         'X-Amzn-Trace-Id': function(config) {
           segment = XRay.beginSegment();
-          return "Root=" + segment.trace_id + ";Parent=" + segment.id + ";Sampled=1";
+          return XRay.getTraceHeader(segment);
         }
       },
       transformResponse: function(data) {
