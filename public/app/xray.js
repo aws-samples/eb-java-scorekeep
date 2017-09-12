@@ -1,6 +1,6 @@
 var crypto = window.crypto;
 var module = angular.module('scorekeep');
-module.service('XRay', function(api) {
+module.service('XRay', function(api, $window) {
 
   var service = {};
 
@@ -34,6 +34,11 @@ module.service('XRay', function(api) {
     segment.start_time = startTime;
     segment.name = 'Scorekeep-client';
     segment.in_progress = true;
+    segment.http = {
+      request: {
+        url: window.location.href
+      }
+    };
 
     var documents = [];
     documents[0] = JSON.stringify(segment);
