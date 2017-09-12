@@ -1,17 +1,35 @@
 var module = angular.module('scorekeep');
 module.service('UserCollection', function(UserService, $http, api) {
   var collection = {};
-  // Cognito stuff
+  // Get region, userpool ID and client ID from Scorekeep API
   var userPool;
+  var userPoolData;
   GetUserPool = $http.get( api + 'userpool');
   GetUserPool.then( function(userpool){
+    userPoolData = userpool.data;
     AWSCognito.config.region = userpool.data.region;
+    AWS.config.region = userpool.data.region;
     var poolData = {
       UserPoolId : userpool.data.poolId,
       ClientId : userpool.data.clientId
     };
     userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(poolData);
+    if ( sessionStorage['JWTToken'] ) {
+      AWS.config.credentials = collection.getAWSCredentials(sessionStorage['JWTToken'], userpool.data);
+    }
   })
+
+  collection.getAWSCredentials = function(JWTToken, userpooldata) {
+    AWS.config.region = userpooldata.region;
+    var logins = {};
+    loginkey = 'cognito-idp.' + userpooldata.region + '.amazonaws.com/' + userpooldata.poolId;
+    logins[loginkey] = JWTToken;
+    var credentials = new AWS.CognitoIdentityCredentials({
+      IdentityPoolId : userpooldata.identityPoolId,
+      Logins : logins
+    });
+    return credentials;
+  }
 
   collection.getUser = function(username, password, userid) {
     var promise = new Promise(function(resolve, reject){
@@ -58,7 +76,7 @@ module.service('UserCollection', function(UserService, $http, api) {
       //Password is null
       // Create scorekeep user
       else {
-        console.log("creating cognito user");
+        console.log("creating Scorekeep user");
         CreateUser = collection.createUser(username, null);
         CreateUser.then(function(user){
           out.userid = user.id
@@ -141,6 +159,10 @@ module.service('UserCollection', function(UserService, $http, api) {
             // sessionStorage.setItem("cognitoIdToken", cognitoUser.signInUserSession.idToken.jwtToken);
             // sessionStorage.setItem("cognitoRefreshToken", cognitoUser.signInUserSession.refreshToken.token);
 
+            var JWTToken = result.getIdToken().getJwtToken();
+            collection.getAWSCredentials(JWTToken, userPoolData);
+            sessionStorage['username'] = username;
+            sessionStorage['JWTToken'] = JWTToken;
             resolve(out);
           });
         },

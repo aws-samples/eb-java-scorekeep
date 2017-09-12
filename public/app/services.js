@@ -1,6 +1,20 @@
 var module = angular.module('scorekeep');
-module.factory('SessionService', function($resource, api) {
+module.factory('SessionService', function($resource, api, XRay) {
   return $resource(api + 'session/:id', { id: '@_id' }, {
+    segment: {},
+    save: {
+      method: 'POST',
+      headers: {
+        'X-Amzn-Trace-Id': function(config) {
+          segment = XRay.beginSegment();
+          return "Root=" + segment.trace_id + ";Parent=" + segment.id + ";Sampled=1";
+        }
+      },
+      transformResponse: function(data) {
+        XRay.endSegment(segment);
+        return angular.fromJson(data);
+      },
+    },
     update: {
       method: 'PUT'
     }

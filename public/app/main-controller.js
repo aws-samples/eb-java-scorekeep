@@ -10,7 +10,55 @@ function Main($window, $scope, $http, $location, SessionService, SessionCollecti
   $scope.user = {};
   $scope.cognitoUser = {};
   $scope.errormessage = "";
+  $scope.signedin = sessionStorage['signedin'];
+  $scope.showpassword = false;
 
+  if ( sessionStorage['username'] ) {
+    $scope.username = sessionStorage['username'];
+  }
+  var userPool;
+  GetUserPool = $http.get( api + 'userpool');
+  GetUserPool.then( function(userpool){
+    AWSCognito.config.region = userpool.data.region;
+    AWS.config.region = userpool.data.region;
+    var poolData = {
+      UserPoolId : userpool.data.poolId,
+      ClientId : userpool.data.clientId
+    };
+    userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(poolData);
+    if ( sessionStorage['JWTToken'] ) {
+      AWS.config.credentials = UserCollection.getAWSCredentials(sessionStorage['JWTToken'], userpool.data);
+    }
+  })
+  $scope.signin = function() {
+    if ( $scope.showpassword == false ) {
+      $scope.showpassword = true;
+      if ($scope.username == "random") {
+        $scope.username = "";
+      }
+      return;
+    }
+    var sessionid;
+    var userid;
+    CreateUserResult = UserCollection.getUser($scope.username, $scope.password, null);
+    CreateUserResult.then(function(result){
+      $scope.cognitoUser = result.cognitoUser;
+      userid = result.userid;
+      $scope.user = UserService.get({ id: userid });
+      $scope.errormessage = result.errormessage;
+      $scope.signedin = "true";
+      sessionStorage['signedin'] = "true";
+      sessionStorage['username'] = $scope.username;
+      $scope.showpassword = false;
+    })
+  }
+  $scope.signup = function() {
+    if ( $scope.showpassword == false ) {
+      $scope.showpassword = true;
+      return;
+    }
+    $scope.signin();
+  }
   $scope.createSession = function (sessionname, username) {
     var sessionid;
     var userid;
@@ -37,7 +85,6 @@ function Main($window, $scope, $http, $location, SessionService, SessionCollecti
       //$scope.$apply();
     });
   };
-
   $scope.joinSession = function(sessionid, username) {
     var userid;
     CreateUser = UserCollection.getUser($scope.username, $scope.password, null);
@@ -53,14 +100,16 @@ function Main($window, $scope, $http, $location, SessionService, SessionCollecti
       $window.location.assign('/#/session/'+ sessionid + '/' + userid);
     });
   };
-
   $scope.logout = function() {
     $scope.errormessage = "";
+    $scope.user = {};
+    $scope.errormessage = "";
+    sessionStorage.clear();
+    $scope.username = "random";
+    $scope.signedin = false;
     $scope.cognitoUser.signOut();
     console.log('Signed out from Cognito.');
-    $scope.user = {};
     $scope.cognitoUser = {};
-    $scope.errormessage = "";
   }
   $scope.deleteUser = function () {
     $scope.errormessage = "";
