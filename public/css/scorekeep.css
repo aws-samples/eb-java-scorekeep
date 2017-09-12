@@ -154,7 +154,6 @@ a:active, a:hover, a:focus {
   padding: 15px;
 }
 #main-user {
-  height: 120px;
   padding: 15px;
 }
 .sub-header {
@@ -269,3 +268,9 @@ input {
 .square:active {
   background-color: #85144b;
 }
+.error {
+  padding: 25px;
+}
+form, h1, h2 {
+  font-family: helvetica;
+ }

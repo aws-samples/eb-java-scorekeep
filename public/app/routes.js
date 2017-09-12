@@ -28,5 +28,9 @@ module.config(function($routeProvider) {
   .when("/game/:sessionid/:gameid/:userid", {
     templateUrl : "game.html",
     controller : "GameController"
+  })
+  .when("/cognito", {
+    templateUrl : "cognito.html",
+    controller : "CognitoController"
   });
 });

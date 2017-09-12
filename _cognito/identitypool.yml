@@ -1,0 +1,75 @@
+Resources:
+  IdentityPool:
+    Type: "AWS::Cognito::IdentityPool"
+    Properties:
+      IdentityPoolName: Scorekeep
+      AllowUnauthenticatedIdentities: false
+      DeveloperProviderName: scorekeep
+      CognitoIdentityProviders:
+        - ClientId: { "Fn::ImportValue" : "ScorekeepUserPoolClientId" }
+          ProviderName: { "Fn::Join" : [ "", [ "cognito-idp.",{"Ref": "AWS::Region" },".amazonaws.com/",{ "Fn::ImportValue" : "ScorekeepUserPoolId" }] ] }
+          ServerSideTokenCheck: false
+#  IdentityPoolRoleAttachment:
+#    Type: "AWS::Cognito::IdentityPoolRoleAttachment"
+#    Properties:
+#      IdentityPoolId: { "Ref" : "IdentityPool" }
+#      RoleMappings:
+#        { "Fn::Join" : [ "", [ "cognito-idp.",{"Ref": "AWS::Region" },".amazonaws.com/",{ "Fn::ImportValue" : "ScorekeepUserPoolId" },":",{ "Fn::ImportValue" : "UserPoolClientId" }] ] }:
+#          AmbiguousRoleResolution: AuthenticatedRole
+#          Type: Token
+#      Roles:
+#        authenticated: { "Fn::GetAtt": ["IdentityPoolRole", "Arn"] }
+
+  IdentityPoolRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument: {
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "cognito-identity.amazonaws.com"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity"
+    }
+  ]
+}
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSXrayReadOnlyAccess
+      Policies:
+        - PolicyDocument: {
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "mobileanalytics:PutEvents",
+        "cognito-sync:*",
+        "cognito-identity:*"
+      ],
+      "Resource": [
+        "*"
+      ]
+    }
+  ]
+}
+          PolicyName: SyncPerms
+      Path: /service-role/
+
+Outputs:
+  IdentityPoolId:
+    Description: Identity pool ID
+    Value: { "Ref" : "IdentityPool" }
+    Export:
+      Name: ScorekeepIdentityPoolId
+  IdentityPoolRole:
+    Description: Identity pool role
+    Value: { "Fn::GetAtt": ["IdentityPoolRole", "Arn"] }
+    Export:
+      Name: ScorekeepIdentityPoolRole
+  Region:
+    Description: IdentityPoolRegion
+    Value: { "Ref" : "AWS::Region"}
+    Export:
+      Name: ScorekeepIdentityPoolRegion

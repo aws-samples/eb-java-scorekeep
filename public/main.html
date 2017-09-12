@@ -1,7 +1,12 @@
 <div id="main">
   <div id="main-user">
-    <div class="section-header">Username</div>
-    <div id="usernamef" class="field"><input name="user" ng-model="username"></div>
+    <div class="section-header">User</div>
+    <div id="usernamef" class="field"><input name="user" ng-model="username" placeholder="username"></div>
+    <div id="passwordf" class="field" ng-show="showpassword"><input name="Password" type="password" ng-model="password" placeholder="password"></div>
+    <div id="signin" class="button" ng-hide="signedin" ng-click="signin()">Sign in</div>
+    <div id="signup" class="button" ng-hide="signedin" ng-click="signup()">Sign up</div>
+    <div id="logout" class="button" ng-show="signedin" ng-click="logout()">Logout</div>
+
   </div>
   <div id="main-session">
     <div class="section-header">Session</div>

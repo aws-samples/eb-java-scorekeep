@@ -7,6 +7,11 @@ function Session($scope, $http, $location, $interval, $routeParams, SessionServi
   $scope.allrules = RulesService.query();
   $scope.sessionid = $routeParams.sessionid;
 
+  /* TODO: Use stored credentials to access AWS */
+  // $scope.cognitoAccessToken = sessionStorage.getItem("cognitoAccessToken");
+  // $scope.cognitoIdToken = sessionStorage.getItem("cognitoIdToken");
+  // $scope.cognitoRefreshToken = sessionStorage.getItem("cognitoRefreshToken");
+
   $scope.loadSession = function() {
     GetSession = $scope.games.$promise.then(function(result) {
       return $scope.session.$get({ id: $routeParams.sessionid });
@@ -39,6 +44,7 @@ function Session($scope, $http, $location, $interval, $routeParams, SessionServi
     })
   }
   $scope.loadSession();
+  // BUG: loadsession continues to call after pressing back to load main controller
   $scope.interval = $interval(function(){
     $scope.loadSession();
   }, 5000);

@@ -1,6 +1,6 @@
 var module = angular.module("scorekeep", ["ngRoute","ngResource"]);
 /* API running at /api on the same domain name and port (no CORS) */
-  module.value('api', '/api/');
+module.value('api', '/api/');
 
 /* API running on Elastic Beanstalk, frontend running locally or
    on a different domain (CORS) */

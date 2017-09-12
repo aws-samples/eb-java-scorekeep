@@ -1,9 +1,38 @@
-# AWS X-Ray
+# AWS X-Ray with Client Instrumentation
 Documentation: [X-Ray SDK for Java Sample Application](http://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-java-sample.html)
 
 If you haven't used X-Ray with Scorekeep yet, try the [`xray-gettingstarted`](https://github.com/awslabs/eb-java-scorekeep/tree/xray-gettingstarted) branch first.
 
-This branch shows advanced instrumentation with the AWS X-Ray SDK and includes features from other branches. Deploy this branch to see additional trace data in the X-Ray console. Then, follow the instructions below to add an instrumented AWS Lambda function and PostgreSQL database to the application.
+This branch includes the full content of the `xray` branch with the addition of client instrumentation with Amazon Cognito. Cognito integration lets users save their user ID, username and password in AWS. When a user logs in to the web app, it authenticates them to Cognito and retrieves their user ID, allowing them to use the same account accross sessions. When a user is signed in, the app uses their Cognito credentials to upload trace data to X-Ray.
+
+Before you deploy this branch, follow the instructions in the next section to create the required Amazon Cognito resources.
+
+## Amazon Cognito Integration
+From branch: [`cognito`](https://github.com/awslabs/eb-java-scorekeep/tree/cognito)
+
+Create a user pool, user pool client, and the Lambda function that the pool uses to confirm users, with the `create-userpool.sh` script in the `_cognito` directory.
+
+```
+~/eb-java-scorekeep/_cognito$ ./create-userpool.sh
+```
+
+This script uses a CloudFormation template named userpool to create the required resources. The template outputs the pool ID and client ID and saves the values in CloudFormation exports, which can be read from other stacks' templates. The env.config file then uses the Fn::ImportValue function to read these values and pass them to the API through environment variables. The API, in turn, provides a route named `/api/userpool` to retrieve the data, which the web app calls when you load the cognito demo page. This is all done to avoid hard coding the values in the web app.
+
+Next, create an *identity pool*. The identity pool allows signed-in users to get credentials for use with the AWS SDK.
+
+```
+~/eb-java-scorekeep/_cognito$ ./create-identitypool.sh
+```
+
+This script creates another stack in CloudFormation that creates an identity pool associated with the Scorekeep user pool, and a role with write-only permissions for X-Ray that users assume when they sign in to their user account.
+
+Finally, associate the role with the identity pool.
+
+```
+~/eb-java-scorekeep/_cognito$ ./associate-role.sh
+```
+
+This script retrieves information about the user pool and identity pool from the output of the CloudFormation stack and uses it to run an AWS CLI command that associates the role with the identity pool. While you can create a role association in a CloudFormation template, one of the attribute keys needs to contain resource IDs. You can't use functions like Ref to get key values in a CloudFormation template, so you need to use a script to associate the role to avoid hard coding values in the template.
 
 ## AWS Lambda Integration
 From branch: [`lambda`](https://github.com/awslabs/eb-java-scorekeep/tree/lambda)

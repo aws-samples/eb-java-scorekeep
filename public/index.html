@@ -8,6 +8,7 @@
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-resource.js"></script>
     <script src="app/scorekeep.js"></script>
     <script src="app/routes.js"></script>
+    <script src="app/xray.js"></script>
     <script src="app/services.js"></script>
     <script src="app/game-history-model.js"></script>
     <script src="app/xray-controller.js"></script>
@@ -26,7 +27,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.7/js/tether.js"></script>
     <script src="https://code.jquery.com/jquery-3.1.1.js" integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA=" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>
-      <script>
+    <script src="/lib/jsbn.js"></script>
+    <script src="/lib/jsbn2.js"></script>
+    <script src="/lib/sjcl.js"></script>
+    <script src="/lib/aws-cognito-sdk.min.js"></script>
+    <script src="/lib/amazon-cognito-identity.min.js"></script>
+    <script src="/lib/aws-sdk-2.100.0.min.js"></script>
+    <script src="app/cognito-controller.js"></script>
+    <script>
     function showhide(div) {
      if ( document.getElementById(div).style.display == 'block') {
           document.getElementById(div).style.display = 'none';
@@ -35,7 +43,7 @@
           document.getElementById(div).style.display = 'block';
         }
      }
-  </script>
+    </script>
   </head>
   <body>
     <div class="site-wrapper">
