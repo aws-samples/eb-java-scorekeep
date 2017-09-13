@@ -34,6 +34,7 @@ module.service('XRay', function(api, $window) {
     segment.start_time = startTime;
     segment.name = 'Scorekeep-client';
     segment.in_progress = true;
+    segment.user =  sessionStorage['userid'];
     segment.http = {
       request: {
         url: window.location.href

@@ -47,6 +47,7 @@ function Main($window, $scope, $http, $location, SessionService, SessionCollecti
       $scope.signedin = "true";
       sessionStorage['signedin'] = "true";
       sessionStorage['username'] = $scope.username;
+      sessionStorage['userid'] = userid;
       $scope.showpassword = false;
     })
   }
