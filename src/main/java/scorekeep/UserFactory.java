@@ -56,6 +56,7 @@ public class UserFactory {
       Map<String, String> jsonMap = mapper.readValue(inputStream, Map.class);
       String name = jsonMap.get("name");
       EntityUtils.consume(entity);
+      Sns.sendNotification("Scorekeep user created", "Name: " + name);
       return name;
     } finally {
       response.close();
