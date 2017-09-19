@@ -17,8 +17,8 @@ var myFunction = function(event, context, callback) {
 
   // Notify
   var params = {
-    Message: 'Created randon name "' + name + '"" for user "' + userid + '".',
-    Subject: 'New user: ' + name,
+    Message: 'Created random name "' + name + '" for user ' + userid + '.',
+    Subject: 'Scorekeep user created',
     TopicArn: process.env.TOPIC_ARN
   };
   sns.publish(params, function(err, data) {
