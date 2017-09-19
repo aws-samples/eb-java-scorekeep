@@ -4,8 +4,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.lang.Class;
+import java.lang.Thread;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +18,7 @@ public class MoveFactory {
   private final StateModel stateModel = new StateModel();
   private final GameController gameController = new GameController();
   private final StateController stateController = new StateController();
-  private final RulesFactory rulesFactory = new RulesFactory(); 
+  private final RulesFactory rulesFactory = new RulesFactory();
 
   public MoveFactory(){
   }
@@ -58,7 +60,12 @@ public class MoveFactory {
     State newState = new State(stateId, sessionId, gameId, newStateText, newTurn);
     // send notification on game end
     if ( newStateText.startsWith("A") || newStateText.startsWith("B")) {
-      Sns.sendNotification("Scorekeep game completed", "Winner: " + userId);
+      Thread comm = new Thread() {
+        public void run() {
+          Sns.sendNotification("Scorekeep game completed", "Winner: " + userId);
+        }
+      };
+      comm.start();
     }
     // register state and move id to game
     gameController.setGameMove(sessionId, gameId, moveId);
