@@ -63,6 +63,7 @@ public class MoveFactory {
       Thread comm = new Thread() {
         public void run() {
           Sns.sendNotification("Scorekeep game completed", "Winner: " + userId);
+          Sqs.queueItem("{ \"endpoint\" : \"" + System.getenv("LBENDPOINT") + "\", \"sessionid\" : \"" + sessionId + "\", \"gameid\" : \"" + gameId + "\", \"bucketname\" : \"" + System.getenv("BUCKET_NAME") + "\" }");
         }
       };
       comm.start();
