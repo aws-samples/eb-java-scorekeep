@@ -1,17 +1,26 @@
-# Lambda integration
-This branch uses a Node.js Lambda function to generate random names for new users, instead of calling a web API. The Scorekeep API uses the AWS SDK to invoke the Lambda by function name (`random-name`) with Bean classes to represent (and serialize to/from) the input and output JSON.
+# Lambda worker
+This branch adds a Lambda worker function, SQS queue, and CloudWatch Events to the contents of the `lambda` branch. The worker is a Python 3 function that processes game records and stores the output in S3. A CloudWatch Event fires every 5 minutes, triggering the Lambda function, which pulls the ID of a completed game from the SQS queue, reads all of the associated data from DynamoDB, and outputs a record of the game session in JSON format.
 
+To use this branch, first deploy the Lambda functions with the included shell scripts, described in the configuration section. See the `lambda` branch for details on the `random-name` function.
+
+With this branch deployed, the worker function pulls game data out of multiple DynamoDB and stores it in single JSON files organized by date. You can perform queries on this data with Amazon Athena to do lightweight analytics with no servers-- no worker instance processing the data, and no database instance storing it.
 
 ## Configuration
-A CloudFormation template and [AWS CLI](http://docs.aws.amazon.com/cli/latest/userguide/installing.html) scripts to create and delete the function's execution role are included in the `_lambda` folder:
+Create the worker function with the `create-scorekeep-worker.sh` function in the `_lambda` folder 
+
+Use the CloudFormation templates and [AWS CLI](http://docs.aws.amazon.com/cli/latest/userguide/installing.html) scripts to create the required function and roles:
 - `_lambda/lambda-role.yml`       - Template that defines the role
 - `_lambda/create-lambda-role.sh` - Script to create the role
 - `_lambda/delete-lambda-role.sh` - Script to delete the role
+- `_lambda/scorekeep-worker.yml`  - Template that defines the function
+- `_lambda/create-scorekeep-worker.sh` - Script to create the function
+- `_lambda/delete-scorekeep-worker.sh` - Script to delete the function
 
-Run the script to create the role:
+Run the create scripts to create the roles and function:
     eb-java-scorekeep/_lambda$ ./create-lambda-role.sh
+    eb-java-scorekeep/_lambda$ ./create-scorekeep-worker.sh
 
-If you don't have the AWS CLI, use the CloudFormation console to create a stack with the template.
+If you don't have the AWS CLI, use the CloudFormation console to create a stack with the templates.
 
 Next, add the following policy to your instance profile ([aws-elasticbeanstalk-ec2-role](https://console.aws.amazon.com/iam/home#/roles/aws-elasticbeanstalk-ec2-role)) to let the environment create the Lambda function:
 - AWSLambdaFullAccess
@@ -20,19 +29,20 @@ Deploy this branch to your Elastic Beanstalk environment. No further configurati
 If you don't have an environment, see below.
 
 ## Implementation
-The Lambda function code is included in `_lambda/random-name/index.js`. On deploy, configuration files in the .ebextensions folder create a function with the following settings:
-- Name: `random-name`
-- Runtime: Node.js 4.3
-- Description: `Generate random names`
-- Code: in `_Lambda/random-name`
+The Lambda function code is included in `_lambda/scorekeep-worker/worker.py`. On deploy, configuration files in the .ebextensions folder create a function with the following settings:
+- Name: `scorekeep-worker`
+- Runtime: Python3.6
+- Description: `Flatten game records for analytics`
+- Code: in `_Lambda/scorekeep-worker`
 - Environment variables:
   - REGION_NAME: The region, e.g. `us-east-2`
-  - TOPIC_ARN: The ARN of an [SNS Topic](https://console.aws.amazon.com/sns/v2/home)
-- Role named "scorekeep-lambda"
+  - WORKER_QUEUE: The URL of an SQS Queue
+- IAM role with permissions for the function
 
-The role named "scorekeep-lambda" has the following policies:
+The role has the following policies:
 - Managed policy - AWSLambdaBasicExecutionRole
-- Managed policy - AmazonSNSFullAccess
+- Managed policy - AmazonSQSFullAccess
+- Managed policy - AmazonS3FullAccess
 - Managed policy - AWSXrayWriteOnlyAccess (optional) for compatibility with the xray branch
 - Trust policy -
 
@@ -48,14 +58,6 @@ The role named "scorekeep-lambda" has the following policies:
         }
       ]
     }
-
-The Scorekeep API integration is implemented in the following files-
-`src/main/java/scorekeep/`
-- `RandomNameInput.java` - Bean for the input, a user ID and category.
-- `RandomNameOutput.java` - Bean for the output, a first name.
-- `RandomNameService.java` - Defines the method used to call the Lambda function. Combined with an AWS SDK Lambda client to create a Lambda Invoker.
-- `UserFactory.java` - **UserFactory.randomNameLambda** Creates the Lambda Invoker with `com.amazonaws.services.lambda.invoke.LambdaInvokerFactory`. Calls the Lambda function to generate a random name.
-- `build.gradle` - Adds the Lambda module of the AWS SDK to the Gradle build.
 
 # Scorekeep
 Scorekeep is a RESTful web API implemented in Java that uses Spring to provide an HTTP interface for creating and managing game sessions and users. This project includes the Scorekeep API and a front-end web app that consumes it. The front end and API can run on the same server and domain or separately, with the API running in Elastic Beanstalk and the front end served statically by a CDN.
