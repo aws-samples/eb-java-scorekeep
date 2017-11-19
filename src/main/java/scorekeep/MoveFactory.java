@@ -73,6 +73,7 @@ public class MoveFactory {
           recorder.setTraceEntity(segment);
           Subsegment subsegment = AWSXRay.beginSubsegment("## Send notification");
           Sns.sendNotification("Scorekeep game completed", "Winner: " + userId);
+          Sqs.queueItem("{ \"endpoint\" : \"" + System.getenv("LBENDPOINT") + "\", \"sessionid\" : \"" + sessionId + "\", \"gameid\" : \"" + gameId + "\", \"bucketname\" : \"" + System.getenv("BUCKET_NAME") + "\" }");
           AWSXRay.endSubsegment();
         }
       };

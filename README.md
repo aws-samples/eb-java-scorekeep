@@ -6,17 +6,26 @@ If you haven't used X-Ray with Scorekeep yet, try the [`xray-gettingstarted`](ht
 This branch shows advanced instrumentation with the AWS X-Ray SDK and includes features from other branches. Deploy this branch to see additional trace data in the X-Ray console. Then, follow the instructions below to add an instrumented AWS Lambda function and PostgreSQL database to the application.
 
 ## AWS Lambda Integration
-From branch: [`lambda`](https://github.com/awslabs/eb-java-scorekeep/tree/lambda)
+From branches: [`lambda`](https://github.com/awslabs/eb-java-scorekeep/tree/lambda) and [`lambda-worker`](https://github.com/awslabs/eb-java-scorekeep/tree/lambda-worker)
 
 In the [`UserFactory`](https://github.com/awslabs/eb-java-scorekeep/tree/xray/src/main/java/scorekeep/UserFactory.java) class, Scorekeep calls a Node.js AWS Lambda function to generate random usernames.  If the call to Lambda fails, Scorekeep falls back on a public API to generate names. 
 
-Run the script in the `_lambda` folder to create the AWS Lambda function that Scorekeep calls to generate random names:
-    eb-java-scorekeep/_lambda$ ./create-random-name.sh
+The worker function pulls game data out of multiple DynamoDB and stores it in single JSON files organized by date. You can perform queries on this data with Amazon Athena to do lightweight analytics with no servers-- no worker instance processing the data, and no database instance storing it.
 
-The script uses a CloudFormation template and the AWS CLI to create the function and its execution role:
+## Configuration
+Create the worker function with the `create-scorekeep-worker.sh` function in the `_lambda` folder 
+
+Use the CloudFormation templates and [AWS CLI](http://docs.aws.amazon.com/cli/latest/userguide/installing.html) scripts to create the required function and roles:
 - `_lambda/random-name.yml`       - Template that defines the role and function
 - `_lambda/create-random-name.sh` - Script to create the role and function
 - `_lambda/delete-random-name.sh` - Script to delete the role and function
+- `_lambda/scorekeep-worker.yml`  - Template that defines the role and function
+- `_lambda/create-scorekeep-worker.sh` - Script to create the role and function
+- `_lambda/delete-scorekeep-worker.sh` - Script to delete the role and function
+
+Run the script in the `_lambda` folder to create the AWS Lambda functions that Scorekeep calls to generate random names and process game records:
+    eb-java-scorekeep/_lambda$ ./create-random-name.sh
+    eb-java-scorekeep/_lambda$ ./create-scorekeep-worker.sh
 
 If you don't have the AWS CLI, [install it](http://docs.aws.amazon.com/cli/latest/userguide/installing.html) or use the CloudFormation console to create a stack with the template.
 
@@ -25,9 +34,9 @@ Next, add Lambda permission to your instance profile ([aws-elasticbeanstalk-ec2-
 
 Note: In the `lambda` branch, Scorekeep creates the Lambda function with a configuration file. In this branch, you create the function independently with the same template that creates the role. This lets the `xray` branch work even if the Lambda function and role have not been created, whereas in the `lambda` branch, the deployment fails if you haven't created the required role.
 
-Finally, redeploy this branch to your environment. During deployment, the [update script in `lambda-function.config`](https://github.com/awslabs/eb-java-scorekeep/blob/xray/.ebextensions/lambda-function.config#L31) builds the function and uploads the source code to Lambda.
+Finally, redeploy this branch to your environment. During deployment, the [update script in `lambda-function.config`](https://github.com/awslabs/eb-java-scorekeep/blob/xray/.ebextensions/lambda-function.config#L31) builds the functions and uploads the source code to Lambda.
 
-Create a new user in the web app and refresh your service map to see the two Lambda nodes.
+Create a new user and play a game in the web app and refresh your service map to see the Lambda nodes.
 
 ## Amazon RDS Integration
 From branch: [`sql`](https://github.com/awslabs/eb-java-scorekeep/tree/sql)
