@@ -26,7 +26,10 @@ public class WebConfig {
 
   static {
     if ( System.getenv("NOTIFICATION_EMAIL") != null ){
-      Sns.createSubscription();
+      try { Sns.createSubscription(); }
+      catch (Exception e ) {
+        logger.warn("Failed to create subscription for email "+  System.getenv("NOTIFICATION_EMAIL"));
+      }
     }
   }
 }
