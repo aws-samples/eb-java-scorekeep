@@ -1,9 +1,11 @@
-# AWS X-Ray
+# AWS X-Ray with a Lambda Worker
 Documentation: [X-Ray SDK for Java Sample Application](http://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-java-sample.html)
 
 If you haven't used X-Ray with Scorekeep yet, try the [`xray-gettingstarted`](https://github.com/awslabs/eb-java-scorekeep/tree/xray-gettingstarted) branch first.
 
-This branch shows advanced instrumentation with the AWS X-Ray SDK and includes features from other branches. Deploy this branch to see additional trace data in the X-Ray console. Then, follow the instructions below to add an instrumented AWS Lambda function and PostgreSQL database to the application.
+This branch includes the full content of the xray branch with the addition of an instrumented Python Lambda worker function from the [`lambda-worker`](https://github.com/awslabs/eb-java-scorekeep/tree/lambda-worker) branch.
+
+Before you deploy this branch, follow the instructions in the next section to create the required resources.
 
 ## AWS Lambda Integration
 From branches: [`lambda`](https://github.com/awslabs/eb-java-scorekeep/tree/lambda) and [`lambda-worker`](https://github.com/awslabs/eb-java-scorekeep/tree/lambda-worker)
