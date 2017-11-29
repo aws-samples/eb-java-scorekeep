@@ -5,6 +5,7 @@ buildscript {
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:1.4.0.RELEASE")
         classpath("io.spring.gradle:dependency-management-plugin:0.5.4.RELEASE")
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0'
     }
 }
 
@@ -13,6 +14,7 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'spring-boot'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'org.junit.platform.gradle.plugin'
 
 jar {
     baseName = 'scorekeep-api'
@@ -39,8 +41,9 @@ dependencies {
     compile("com.amazonaws:aws-xray-recorder-sdk-apache-http")
     compile("com.amazonaws:aws-xray-recorder-sdk-sql-postgres")
     compile("org.postgresql:postgresql:9.4.1211.jre7")
-    testCompile("junit:junit:4.11")
     compile("com.fasterxml.jackson.core:jackson-databind:2.8.4")
+    testCompile("org.junit.jupiter:junit-jupiter-api:5.0.0")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.0")
 }
 
 dependencyManagement {
