@@ -21,8 +21,8 @@ public class Game {
   private String rules;
   private Date startTime;
   private Date endTime;
-  private ArrayList<String> states;
-  private ArrayList<String> moves;
+  private List<String> states;
+  private List<String> moves;
 
   public Game() {
   }
@@ -95,10 +95,10 @@ public class Game {
   }
 
   @DynamoDBAttribute(attributeName="states")
-  public ArrayList<String> getStates() {
+  public List<String> getStates() {
     return states;
   }
-  public void setStates(ArrayList<String> states) {
+  public void setStates(List<String> states) {
     this.states = states;
   }
   public void setState(String state) {
@@ -109,10 +109,10 @@ public class Game {
   }
 
   @DynamoDBAttribute(attributeName="moves")
-  public ArrayList<String> getMoves() {
+  public List<String> getMoves() {
     return moves;
   }
-  public void setMoves(ArrayList<String> moves) {
+  public void setMoves(List<String> moves) {
     this.moves = moves;
   }
   public void setMove(String move) {
