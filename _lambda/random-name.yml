@@ -33,3 +33,4 @@ Resources:
       Handler: index.handler
       Role: { "Fn::GetAtt": ["RandomNameRole", "Arn"] }
       Runtime: nodejs4.3
+      Timeout: 7
