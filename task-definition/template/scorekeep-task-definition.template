@@ -1,0 +1,55 @@
+{
+    "family": "scorekeep",
+    "networkMode":"awsvpc",
+     "containerDefinitions": [
+         {
+          "name": "scorekeep-frontend",                                                          
+          "image": "$$ACCOUNT_ID$$.dkr.ecr.$$REGION$$.amazonaws.com/scorekeep-frontend",
+          "cpu": 256,
+          "memoryReservation": 512,
+          "portMappings" : [
+              {
+                  "containerPort": 8080
+              }
+          ],
+          "logConfiguration": {
+              "logDriver": "awslogs",
+              "options": {
+                  "awslogs-group": "scorekeep",
+                  "awslogs-region": "$$REGION$$",
+                  "awslogs-stream-prefix": "scorekeep/frontend"
+              }
+          }
+         },
+         {
+          "name": "scopekeep-api",                                                          
+          "image": "$$ACCOUNT_ID$$.dkr.ecr.$$REGION$$.amazonaws.com/scorekeep-api",
+          "cpu": 768,
+          "memoryReservation": 512,
+          "environment": [
+              { "name" : "AWS_REGION", "value" : "$$REGION$$" },
+              { "name" : "NOTIFICATION_TOPIC", "value" : "arn:aws:sns:$$REGION$$:$$ACCOUNT_ID$$:scorekeep-notifications" }
+          ],
+          "portMappings" : [
+              {
+                  "containerPort": 5000
+              }
+          ],
+          "logConfiguration": {
+              "logDriver": "awslogs",
+              "options": {
+                  "awslogs-group": "scorekeep",
+                  "awslogs-region": "$$REGION$$",
+                  "awslogs-stream-prefix": "scorekeep/api"
+              }
+          }
+         }
+    ],
+    "executionRoleArn": "arn:aws:iam::$$ACCOUNT_ID$$:role/scorekeepExecutionRole",
+    "taskRoleArn": "arn:aws:iam::$$ACCOUNT_ID$$:role/scorekeepRole",
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": ".25 vcpu",
+    "memory": "1 gb"
+}

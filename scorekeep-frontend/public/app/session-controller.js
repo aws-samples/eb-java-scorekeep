@@ -40,7 +40,7 @@ function Session($scope, $http, $location, $interval, $routeParams, SessionServi
   $scope.loadSession();
   $scope.interval = $interval(function(){
     $scope.loadSession();
-  }, 5000);
+  }, 3000);
   $scope.createGame = function (gamename, gamerules) {
     var sessionid = $routeParams.sessionid;
 

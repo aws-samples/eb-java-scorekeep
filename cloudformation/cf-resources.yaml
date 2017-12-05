@@ -1,0 +1,290 @@
+Resources:
+  UserTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: "scorekeep-user"
+      KeySchema:
+        HashKeyElement: {AttributeName: id, AttributeType: S}
+      ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
+  SessionTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: "scorekeep-session"
+      KeySchema:
+        HashKeyElement: {AttributeName: id, AttributeType: S}
+      ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
+  GameTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: "scorekeep-game"
+      AttributeDefinitions:
+        - AttributeName: "id"
+          AttributeType: "S"
+        - AttributeName: "session"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "id"
+          KeyType: "HASH"
+      GlobalSecondaryIndexes:
+        - IndexName: "session-index"
+          KeySchema:
+            - AttributeName: "session"
+              KeyType: "HASH"
+          ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
+          Projection: { ProjectionType: ALL }
+      ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
+  MoveTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: "scorekeep-move"
+      AttributeDefinitions:
+        - AttributeName: "id"
+          AttributeType: "S"
+        - AttributeName: "game"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "id"
+          KeyType: "HASH"
+      GlobalSecondaryIndexes:
+        - IndexName: "game-index"
+          KeySchema:
+            - AttributeName: "game"
+              KeyType: "HASH"
+          ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
+          Projection: { ProjectionType: ALL }
+      ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
+  StateTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: "scorekeep-state"
+      AttributeDefinitions:
+        - AttributeName: "id"
+          AttributeType: "S"
+        - AttributeName: "game"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "id"
+          KeyType: "HASH"
+      GlobalSecondaryIndexes:
+        - IndexName: "game-index"
+          KeySchema:
+            - AttributeName: "game"
+              KeyType: "HASH"
+          ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
+          Projection: { ProjectionType: ALL }
+      ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
+  NotificationTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: "scorekeep-notifications"
+  CloudwatchLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: "scorekeep"
+      RetentionInDays: 30
+  ScorekeepAPIRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: "scorekeep-api"
+  ScorekeepFrontendRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: "scorekeep-frontend"
+  ECSExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "ecs-tasks.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+        - "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
+      RoleName: "scorekeepExecutionRole"
+  ECSTaskRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "ecs-tasks.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
+        - "arn:aws:iam::aws:policy/AmazonSNSFullAccess"
+      RoleName: "scorekeepRole"
+  PubPrivateVPC:
+    Type: 'AWS::EC2::VPC'
+    Properties:
+      CidrBlock: 172.31.0.0/16
+      Tags:
+        - Key: Name
+          Value: !Join [_, [!Ref 'AWS::StackName']]
+  PublicSubnet1:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref PubPrivateVPC
+      AvailabilityZone:
+        Fn::Select:
+         - 0
+         - Fn::GetAZs: ""
+      CidrBlock: 172.31.0.0/24
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Join [_, [!Ref 'AWS::StackName',Public]]
+  PublicSubnet2:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+         - 1
+         - Fn::GetAZs: ""
+      VpcId: !Ref PubPrivateVPC
+      CidrBlock: 172.31.1.0/24
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Join [_, [!Ref 'AWS::StackName',Public]]
+  PrivateSubnet1:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref PubPrivateVPC
+      AvailabilityZone:
+        Fn::Select:
+         - 0
+         - Fn::GetAZs: ""
+      CidrBlock: 172.31.3.0/24
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Join [_, [!Ref 'AWS::StackName',Private]]
+  PrivateSubnet2:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref PubPrivateVPC
+      AvailabilityZone:
+        Fn::Select:
+         - 1
+         - Fn::GetAZs: ""
+      CidrBlock: 172.31.2.0/24
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Join [_, [!Ref 'AWS::StackName',Private]]
+  InternetGateway:
+    Type: 'AWS::EC2::InternetGateway'
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Join [_, [!Ref 'AWS::StackName']]
+  GatewayToInternet:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      VpcId: !Ref PubPrivateVPC
+      InternetGatewayId: !Ref InternetGateway
+  PublicRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref PubPrivateVPC
+  PublicRoute:
+    Type: 'AWS::EC2::Route'
+    DependsOn: GatewayToInternet
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+  PublicSubnet1RouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref PublicSubnet1
+      RouteTableId: !Ref PublicRouteTable
+  PublicSubnet2RouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref PublicSubnet2
+      RouteTableId: !Ref PublicRouteTable
+  NatGateway:
+    Type: "AWS::EC2::NatGateway"
+    DependsOn: NatPublicIP
+    Properties:
+      AllocationId: !GetAtt NatPublicIP.AllocationId
+      SubnetId: !Ref PublicSubnet1
+  NatPublicIP:
+    Type: "AWS::EC2::EIP"
+    DependsOn: PubPrivateVPC
+    Properties:
+      Domain: vpc
+  PrivateRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref PubPrivateVPC
+  PrivateRoute:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGateway
+  PrivateSubnet1RouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref PrivateSubnet1
+      RouteTableId: !Ref PrivateRouteTable
+  PrivateSubnet2RouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref PrivateSubnet2
+      RouteTableId: !Ref PrivateRouteTable
+  ScorekeepLbSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupName: "ScorekeepLbSecurityGroup"
+      GroupDescription: "Security group the the scorekeep Application Load Balancer"
+      SecurityGroupEgress:
+       - IpProtocol: 'tcp'
+         FromPort: '8080'
+         ToPort: '8080'
+         SourceSecurityGroupId: !GetAtt PubPrivateVPC.DefaultSecurityGroup
+      SecurityGroupIngress:
+       - IpProtocol: 'tcp'
+         FromPort: '80'
+         ToPort: '80'
+         CidrIp: 0.0.0.0/0        
+      VpcId: !Ref PubPrivateVPC
+    DependsOn: PubPrivateVPC
+  DefaultSecurityGroupIngress:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !GetAtt PubPrivateVPC.DefaultSecurityGroup
+      IpProtocol: tcp
+      FromPort: '8080'
+      ToPort: '8080'
+      SourceSecurityGroupId: !Ref ScorekeepLbSecurityGroup
+    DependsOn: ScorekeepLbSecurityGroup
+  ScorekeepLoadBalancer:
+    Type: "AWS::ElasticLoadBalancingV2::LoadBalancer"
+    Properties:
+      Name: "scorekeep-lb"
+      Scheme: "internet-facing"
+      SecurityGroups:
+        - !Ref ScorekeepLbSecurityGroup
+      Subnets:
+        - !Ref PublicSubnet1
+        - !Ref PublicSubnet2
+      Tags:
+        - Key: Name
+          Value: !Join [_, [!Ref 'AWS::StackName']]
+      Type: "application"
+      IpAddressType: "ipv4"
+    DependsOn: ScorekeepLbSecurityGroup
