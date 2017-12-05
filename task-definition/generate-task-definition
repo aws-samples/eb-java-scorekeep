@@ -1,0 +1,28 @@
+#!/bin/bash
+
+set -e 
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+TASK_DEFINITION_INPUT_FILE="scorekeep-task-definition.template"
+TASK_DEFINITION_INPUT_PATH="${DIR}/template/${TASK_DEFINITION_INPUT_FILE}"
+
+TASK_DEFINITION_OUTPUT_FILE="scorekeep-task-definition.json"
+TASK_DEFINITION_OUTPUT_PATH="${DIR}/${TASK_DEFINITION_OUTPUT_FILE}"
+
+PARAMETERS_FILE="../aws.env"
+PARAMETERS_PATH="${DIR}/${PARAMETERS_FILE}"
+
+echo "Sourcing paramters from ${PARAMETERS_PATH}"
+source ${PARAMETERS_PATH}
+
+if [[ -z "${ACCOUNT_ID}" || -z "${AWS_REGION}" ]]; then
+	echo "Must specify both ACCOUNT_ID and AWS_REGION in ${PARAMETERS_PATH}"
+	exit 1
+fi
+
+echo "Configuring region to: ${AWS_REGION}"
+echo "Configuring account id to: ${ACCOUNT_ID}"
+
+sed -e 's/\$\$REGION\$\$/'"${AWS_REGION}"'/g' -e 's/\$\$ACCOUNT_ID\$\$/'"${ACCOUNT_ID}"'/g' ${TASK_DEFINITION_INPUT_PATH} > ${TASK_DEFINITION_OUTPUT_PATH}
+
+echo "Task Definition written to: ${TASK_DEFINITION_OUTPUT_PATH}"

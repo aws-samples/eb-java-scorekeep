@@ -1,11 +1,8 @@
 .gradle/*
 build/*
 *.DS_Store
-# Elastic Beanstalk Files
-.elasticbeanstalk/*
-!.elasticbeanstalk/*.cfg.yml
-!.elasticbeanstalk/*.global.yml
 *.zip
 *.sh
 !bin/*.sh
 lib
+task-definition/scorekeep-task-definition.json

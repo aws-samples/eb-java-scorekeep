@@ -4,7 +4,7 @@ var module = angular.module("scorekeep", ["ngRoute","ngResource"]);
 
 /* API running on Elastic Beanstalk, frontend running locally or
    on a different domain (CORS) */
-// module.value('api', 'http://XXXXX.elasticbeanstalk.com/api/');
+// module.value('api', 'http://35.160.152.48/api/');
 
 /* API running locally on port 5000, frontend on port 8080 (CORS) */
 // module.value('api', 'http://localhost:5000/api/');
