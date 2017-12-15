@@ -33,8 +33,10 @@ Use the procedures in the following sections to run the project on Fargate and c
 - [Contributing](#contributing)
 
 # Prerequisites
-- Docker installed locally
-- AWS CLI installed locally with permission for: IAM, DynamoDB, SNS, ECS, Cloudwatch Logs, and ECR
+Install the following tools to create Docker images, upload them to ECR, and register task definitions with ECS.
+- Docker
+- AWS CLI v1.14.0+
+- AWS user with permission for IAM, DynamoDB, SNS, ECS, CloudWatch Logs, and ECR
 
 # Repository Layout
 The project contains two independent applications:
@@ -63,15 +65,48 @@ The Java application is built using the gradle Docker container so it does not r
 
 # Deploying the application
 
-To deploy the containers to your AWS Account,
+*To deploy the containers to your AWS Account*
 
 1. Setup the Cloudformation stack to create the prerequisite resources by executing `make stack` in the `cloudformation/` folder
 2. Build and Publish your API container to the ECR repository created by Cloudformation executing `make publish` in the root folder
 3. Build and Publish your Frontend container to the ECR repository created by Cloudformation executing `make publish` in the `scorekeep-frontend/` folder
 4. Populate your Task Definition with the correct region and account id using the `generate-task-definition` script in the `task-definition` folder
 5. Register your Task Definition to ECS with `aws ecs register-task-definition --cli-input-json file://scorekeep-task-definition.json`
-6. Launch your Service or Task using the AWS CLI, ECS CLI, or AWS Console
+6. Launch your Service or Task using the AWS CLI, ECS CLI, or AWS Management Console
 
+To create a Fargate Service for Scorekeep with the ECS console
+
+1. Open [the ECS console](https://console.aws.amazon.com/ecs/home).
+2. Click **Create cluster**.
+3. Select **Networking only** and click **Next step**.
+4. Enter *scorekeep-cluster* for the cluster name and click **Create**.
+5. Choose **View cluster**.
+6. Under **Services**, click **Create**.
+7. Create a service with the following settings. Click **Next Step** to proceed through each page as necessary.
+  - Launch type: **Fargate**
+  - Task definition: **scorekeep:1**
+  - Platform version: **latest**
+  - Cluster: **scorekeep-cluster**
+  - Service name: **scorekeep-service**
+  - Number of tasks: **4**
+  - Minimum healthy percent: **50**
+  - Maximum percent: **200**
+  - Cluster VPC: **scorekeep**
+  - Subnets: both **scorekeep_Private** subnets
+  - Security groups: click Edit > Select existing > select **default**
+  - Auto-assign public IP: **enabled**
+  - Load balancer type: **Application load balancer**
+  - Load balancer name: **scorekeep-lb**
+  - Container name: **scorekeep-frontend** (click **Add to load balancer**)
+  - Listener port: **80:HTTP**
+  - Target group name: **Create new**
+  - Path pattern: /
+  - Health check pattern: /
+  - Service auto scaling: **Do not adjust**
+8. Choose **View service**.
+9. Open the [load balancers screen](https://console.aws.amazon.com/ec2/v2/home#LoadBalancers:) in the EC2 console.
+10. Choose **scorekeep-lb**.
+11. Under **Description**, copy the **DNS name** and open it.
 
 ![Scorekeep flow](/img/scorekeep-flow.png)
 
