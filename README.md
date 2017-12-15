@@ -100,7 +100,7 @@ To create a Fargate Service for Scorekeep with the ECS console
   - Container name: **scorekeep-frontend** (click **Add to load balancer**)
   - Listener port: **80:HTTP**
   - Target group name: **Create new**
-  - Path pattern: /
+  - Path pattern: /*
   - Health check pattern: /
   - Service auto scaling: **Do not adjust**
 8. Choose **View service**.
