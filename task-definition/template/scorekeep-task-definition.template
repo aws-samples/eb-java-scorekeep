@@ -5,7 +5,7 @@
          {
           "name": "scorekeep-frontend",                                                          
           "image": "$$ACCOUNT_ID$$.dkr.ecr.$$REGION$$.amazonaws.com/scorekeep-frontend",
-          "cpu": 256,
+          "cpu": 64,
           "memoryReservation": 512,
           "portMappings" : [
               {
@@ -24,7 +24,7 @@
          {
           "name": "scopekeep-api",                                                          
           "image": "$$ACCOUNT_ID$$.dkr.ecr.$$REGION$$.amazonaws.com/scorekeep-api",
-          "cpu": 768,
+          "cpu": 192,
           "memoryReservation": 512,
           "environment": [
               { "name" : "AWS_REGION", "value" : "$$REGION$$" },
