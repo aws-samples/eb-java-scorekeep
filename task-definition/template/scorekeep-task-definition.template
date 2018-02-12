@@ -22,7 +22,7 @@
           }
          },
          {
-          "name": "scopekeep-api",                                                          
+          "name": "scorekeep-api",                                                          
           "image": "$$ACCOUNT_ID$$.dkr.ecr.$$REGION$$.amazonaws.com/scorekeep-api",
           "cpu": 192,
           "memoryReservation": 512,
