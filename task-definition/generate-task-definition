@@ -6,7 +6,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 TASK_DEFINITION_INPUT_FILE="scorekeep-task-definition.template"
 TASK_DEFINITION_INPUT_PATH="${DIR}/template/${TASK_DEFINITION_INPUT_FILE}"
 
-TASK_DEFINITION_OUTPUT_FILE="scorekeep-task-definition.json"
+TASK_DEFINITION_OUTPUT_FILE="Dockerrun.aws.json"
 TASK_DEFINITION_OUTPUT_PATH="${DIR}/${TASK_DEFINITION_OUTPUT_FILE}"
 
 PARAMETERS_FILE="../aws.env"

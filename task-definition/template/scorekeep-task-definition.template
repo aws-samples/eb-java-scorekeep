@@ -1,16 +1,20 @@
 {
+    "AWSEBDockerrunVersion": 2,
     "family": "scorekeep",
-    "networkMode":"awsvpc",
-     "containerDefinitions": [
+    "containerDefinitions": [
          {
-          "name": "scorekeep-frontend",                                                          
+          "name": "scorekeep-frontend",
           "image": "$$ACCOUNT_ID$$.dkr.ecr.$$REGION$$.amazonaws.com/scorekeep-frontend",
-          "cpu": 256,
+          "cpu": 64,
           "memoryReservation": 512,
           "portMappings" : [
               {
-                  "containerPort": 8080
+                  "hostPort": 80,
+                  "containerPort": 80
               }
+          ],
+          "links": [
+            "scorekeep-api"
           ],
           "logConfiguration": {
               "logDriver": "awslogs",
@@ -22,9 +26,9 @@
           }
          },
          {
-          "name": "scopekeep-api",                                                          
+          "name": "scorekeep-api",
           "image": "$$ACCOUNT_ID$$.dkr.ecr.$$REGION$$.amazonaws.com/scorekeep-api",
-          "cpu": 768,
+          "cpu": 192,
           "memoryReservation": 512,
           "environment": [
               { "name" : "AWS_REGION", "value" : "$$REGION$$" },
@@ -32,6 +36,7 @@
           ],
           "portMappings" : [
               {
+                  "hostPort": 5000,
                   "containerPort": 5000
               }
           ],
@@ -47,9 +52,6 @@
     ],
     "executionRoleArn": "arn:aws:iam::$$ACCOUNT_ID$$:role/scorekeepExecutionRole",
     "taskRoleArn": "arn:aws:iam::$$ACCOUNT_ID$$:role/scorekeepRole",
-    "requiresCompatibilities": [
-        "FARGATE"
-    ],
     "cpu": ".25 vcpu",
     "memory": "1 gb"
 }
