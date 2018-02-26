@@ -17,6 +17,7 @@ Use the CloudFormation templates and [AWS CLI](http://docs.aws.amazon.com/cli/la
 - `_lambda/delete-scorekeep-worker.sh` - Script to delete the function
 
 Run the create scripts to create the roles and function:
+
     eb-java-scorekeep/_lambda$ ./create-lambda-role.sh
     eb-java-scorekeep/_lambda$ ./create-scorekeep-worker.sh
 
