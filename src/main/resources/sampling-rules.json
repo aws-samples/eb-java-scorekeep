@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "description": "Resource creation.",
+      "service_name": "*",
+      "http_method": "POST",
+      "url_path": "/api/*",
+      "fixed_target": 1,
+      "rate": 1.0
+    },
+    {
+      "description": "Session polling.",
+      "service_name": "*",
+      "http_method": "GET",
+      "url_path": "/api/session/*",
+      "fixed_target": 0,
+      "rate": 0.05
+    },
+    {
+      "description": "Game polling.",
+      "service_name": "*",
+      "http_method": "GET",
+      "url_path": "/api/game/*/*",
+      "fixed_target": 0,
+      "rate": 0.05
+    },
+    {
+      "description": "State polling.",
+      "service_name": "*",
+      "http_method": "GET",
+      "url_path": "/api/state/*/*/*",
+      "fixed_target": 0,
+      "rate": 0.05
+    }
+  ],
+  "default": {
+    "fixed_target": 1,
+    "rate": 0.1
+  }
+}

@@ -5,8 +5,8 @@
          {
           "name": "scorekeep-frontend",
           "image": "$$ACCOUNT_ID$$.dkr.ecr.$$REGION$$.amazonaws.com/scorekeep-frontend",
-          "cpu": 64,
-          "memoryReservation": 512,
+          "cpu": 32,
+          "memoryReservation": 256,
           "portMappings" : [
               {
                   "hostPort": 80,
@@ -26,19 +26,44 @@
           }
          },
          {
+          "name": "xray-daemon",
+          "image": "$$ACCOUNT_ID$$.dkr.ecr.$$REGION$$.amazonaws.com/xray-daemon",
+          "cpu": 32,
+          "memoryReservation": 256,
+          "portMappings" : [
+              {
+                  "hostPort": 2000,
+                  "containerPort": 2000,
+                  "protocol": "udp"
+              }
+          ],
+          "logConfiguration": {
+              "logDriver": "awslogs",
+              "options": {
+                  "awslogs-group": "scorekeep",
+                  "awslogs-region": "$$REGION$$",
+                  "awslogs-stream-prefix": "scorekeep/daemon"
+              }
+          }
+         },
+         {
           "name": "scorekeep-api",
           "image": "$$ACCOUNT_ID$$.dkr.ecr.$$REGION$$.amazonaws.com/scorekeep-api",
           "cpu": 192,
           "memoryReservation": 512,
           "environment": [
               { "name" : "AWS_REGION", "value" : "$$REGION$$" },
-              { "name" : "NOTIFICATION_TOPIC", "value" : "arn:aws:sns:$$REGION$$:$$ACCOUNT_ID$$:scorekeep-notifications" }
+              { "name" : "NOTIFICATION_TOPIC", "value" : "arn:aws:sns:$$REGION$$:$$ACCOUNT_ID$$:scorekeep-notifications" },
+              { "name" : "AWS_XRAY_DAEMON_ADDRESS", "value" : "xray-daemon:2000" }
           ],
           "portMappings" : [
               {
                   "hostPort": 5000,
                   "containerPort": 5000
               }
+          ],
+          "links": [
+            "xray-daemon"
           ],
           "logConfiguration": {
               "logDriver": "awslogs",

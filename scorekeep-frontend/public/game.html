@@ -19,4 +19,8 @@
       <div class="square" ng-click="move(9)">&nbsp;{{gamestate[9]}}</div>
     </div>
   </div>
+  <div id="xray-link">
+    <p><a href="https://console.aws.amazon.com/xray/home#/traces?filter=http.url%20CONTAINS%20%22{{ gameid }}%22&timeRange=PT1H" target="blank">View traces for this game</a></p>
+    <p><a href="https://console.aws.amazon.com/xray/home#/service-map&timeRange=PT1H" target="blank">View service map</a></p>
+  </div>
 </div>

@@ -5,6 +5,7 @@ function Session($scope, $http, $location, $interval, $routeParams, SessionServi
   $scope.session = new SessionService;
   $scope.user = UserService.get({ id: $routeParams.userid });
   $scope.allrules = RulesService.query();
+  $scope.sessionid = $routeParams.sessionid;
 
   $scope.loadSession = function() {
     GetSession = $scope.games.$promise.then(function(result) {

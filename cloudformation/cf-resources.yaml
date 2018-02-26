@@ -90,6 +90,10 @@ Resources:
     Type: AWS::ECR::Repository
     Properties:
       RepositoryName: "scorekeep-frontend"
+  XRayDaemonRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: "xray-daemon"
   ECSExecutionRole:
     Type: AWS::IAM::Role
     Properties:

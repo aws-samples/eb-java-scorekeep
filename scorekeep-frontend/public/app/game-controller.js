@@ -7,6 +7,7 @@ function Game($q, $scope, $http, $interval, $routeParams, SessionService, UserSe
   $scope.moving = 0;
   $scope.user = UserService.get({ id: $routeParams.userid });
   $scope.winner = '';
+  $scope.gameid = $routeParams.gameid;
 
   $scope.playgame = function(){
     return $q(function(resolve, reject) {
