@@ -7,5 +7,3 @@ build/*
 lib
 task-definition/scorekeep-task-definition.json
 .elasticbeanstalk/*
-
-aws.env
