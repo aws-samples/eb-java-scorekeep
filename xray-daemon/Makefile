@@ -18,7 +18,10 @@ check-region:
 check-env: check-repo check-region check-account
 
 run-local: package check-env
-	docker run -d --net=host xray-daemon
+	docker run --attach STDOUT -v ~/.aws/:/root/.aws/:ro --net=host -e AWS_REGION=$(AWS_REGION) --name xray-daemon xray-daemon -o
+
+stop-local:
+	docker stop xray-daemon && docker rm xray-daemon
 
 tag: package check-env
 	docker tag xray-daemon:latest $(ECR_REPO)

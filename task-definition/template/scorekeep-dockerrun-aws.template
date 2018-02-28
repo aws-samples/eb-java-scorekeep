@@ -1,4 +1,5 @@
 {
+    "AWSEBDockerrunVersion": 2,
     "family": "scorekeep",
     "containerDefinitions": [
          {
