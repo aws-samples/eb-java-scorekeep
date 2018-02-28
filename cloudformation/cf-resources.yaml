@@ -292,3 +292,19 @@ Resources:
       Type: "application"
       IpAddressType: "ipv4"
     DependsOn: ScorekeepLbSecurityGroup
+Outputs:
+  PubPrivateVPCID:
+    Description: VPC ID
+    Value: !Ref "PubPrivateVPC"
+    Export:
+      Name: ScorekeepVPCID
+  PrivateSubnet1ID:
+    Description: Private Subnet A ID
+    Value: !Ref "PrivateSubnet1"
+    Export:
+      Name: ScorekeepPrivateSubnet1ID
+  PrivateSubnet2ID:
+    Description: Private Subnet B ID
+    Value: !Ref "PrivateSubnet2"
+    Export:
+      Name: ScorekeepPrivateSubnet2ID
