@@ -16,8 +16,11 @@ check: check-region
 
 outputs: check-region
 	@aws --region $(AWS_REGION) cloudformation describe-stacks --stack-name scorekeep --query 'Stacks[0].Outputs[?OutputKey==`PubPrivateVPCID`].OutputValue' --output text
+	@aws --region $(AWS_REGION) cloudformation describe-stacks --stack-name scorekeep --query 'Stacks[0].Outputs[?OutputKey==`SecurityGroupID`].OutputValue' --output text
 	@aws --region $(AWS_REGION) cloudformation describe-stacks --stack-name scorekeep --query 'Stacks[0].Outputs[?OutputKey==`PrivateSubnet1ID`].OutputValue' --output text
 	@aws --region $(AWS_REGION) cloudformation describe-stacks --stack-name scorekeep --query 'Stacks[0].Outputs[?OutputKey==`PrivateSubnet2ID`].OutputValue' --output text
+	@aws --region $(AWS_REGION) cloudformation describe-stacks --stack-name scorekeep --query 'Stacks[0].Outputs[?OutputKey==`PublicSubnet1ID`].OutputValue' --output text
+	@aws --region $(AWS_REGION) cloudformation describe-stacks --stack-name scorekeep --query 'Stacks[0].Outputs[?OutputKey==`PublicSubnet2ID`].OutputValue' --output text
 
 clean: check-region
 	aws --region $(AWS_REGION) cloudformation delete-stack --stack-name scorekeep

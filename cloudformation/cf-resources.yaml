@@ -276,22 +276,6 @@ Resources:
       ToPort: '8080'
       SourceSecurityGroupId: !Ref ScorekeepLbSecurityGroup
     DependsOn: ScorekeepLbSecurityGroup
-  ScorekeepLoadBalancer:
-    Type: "AWS::ElasticLoadBalancingV2::LoadBalancer"
-    Properties:
-      Name: "scorekeep-lb"
-      Scheme: "internet-facing"
-      SecurityGroups:
-        - !Ref ScorekeepLbSecurityGroup
-      Subnets:
-        - !Ref PublicSubnet1
-        - !Ref PublicSubnet2
-      Tags:
-        - Key: Name
-          Value: !Join [_, [!Ref 'AWS::StackName']]
-      Type: "application"
-      IpAddressType: "ipv4"
-    DependsOn: ScorekeepLbSecurityGroup
 Outputs:
   PubPrivateVPCID:
     Description: VPC ID
@@ -308,3 +292,18 @@ Outputs:
     Value: !Ref "PrivateSubnet2"
     Export:
       Name: ScorekeepPrivateSubnet2ID
+  PublicSubnet1ID:
+    Description: Public Subnet A ID
+    Value: !Ref "PublicSubnet1"
+    Export:
+      Name: ScorekeepPublicSubnet1ID
+  PublicSubnet2ID:
+    Description: Public Subnet B ID
+    Value: !Ref "PublicSubnet2"
+    Export:
+      Name: ScorekeepPublicSubnet2ID
+  SecurityGroupID:
+    Description: Security Group ID
+    Value: !Ref "ScorekeepLbSecurityGroup"
+    Export:
+      Name: ScorekeepSecurityGroup2ID
