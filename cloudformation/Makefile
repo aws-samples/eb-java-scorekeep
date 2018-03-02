@@ -15,10 +15,12 @@ check: check-region
 	aws --region $(AWS_REGION) cloudformation describe-stack-events --stack-name scorekeep --max-items 4
 
 outputs: check-region
+	@echo "\nVPC"
 	@aws --region $(AWS_REGION) cloudformation describe-stacks --stack-name scorekeep --query 'Stacks[0].Outputs[?OutputKey==`PubPrivateVPCID`].OutputValue' --output text
-	@aws --region $(AWS_REGION) cloudformation describe-stacks --stack-name scorekeep --query 'Stacks[0].Outputs[?OutputKey==`SecurityGroupID`].OutputValue' --output text
+	@echo "\nPrivate subnets"
 	@aws --region $(AWS_REGION) cloudformation describe-stacks --stack-name scorekeep --query 'Stacks[0].Outputs[?OutputKey==`PrivateSubnet1ID`].OutputValue' --output text
 	@aws --region $(AWS_REGION) cloudformation describe-stacks --stack-name scorekeep --query 'Stacks[0].Outputs[?OutputKey==`PrivateSubnet2ID`].OutputValue' --output text
+	@echo "\nPublic subnets"
 	@aws --region $(AWS_REGION) cloudformation describe-stacks --stack-name scorekeep --query 'Stacks[0].Outputs[?OutputKey==`PublicSubnet1ID`].OutputValue' --output text
 	@aws --region $(AWS_REGION) cloudformation describe-stacks --stack-name scorekeep --query 'Stacks[0].Outputs[?OutputKey==`PublicSubnet2ID`].OutputValue' --output text
 

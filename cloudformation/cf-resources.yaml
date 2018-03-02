@@ -94,7 +94,7 @@ Resources:
     Type: AWS::ECR::Repository
     Properties:
       RepositoryName: "xray-daemon"
-  ECSExecutionRole:
+  InstanceProfileRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -104,30 +104,23 @@ Resources:
             Effect: "Allow"
             Principal: 
               Service: 
-                - "ecs-tasks.amazonaws.com"
-            Action: 
-              - "sts:AssumeRole"
-      ManagedPolicyArns:
-        - "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-        - "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
-      RoleName: "scorekeepExecutionRole"
-  ECSTaskRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement: 
-          - 
-            Effect: "Allow"
-            Principal: 
-              Service: 
-                - "ecs-tasks.amazonaws.com"
+                - "ec2.amazonaws.com"
             Action: 
               - "sts:AssumeRole"
       ManagedPolicyArns:
         - "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
         - "arn:aws:iam::aws:policy/AmazonSNSFullAccess"
-      RoleName: "scorekeepRole"
+        - "arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier"
+        - "arn:aws:iam::aws:policy/AWSElasticBeanstalkMulticontainerDocker"
+        - "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+        - "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
+      RoleName: "scorekeep-beanstalk-ecs-role"
+  InstanceProfile:
+    Type: "AWS::IAM::InstanceProfile"
+    Properties:
+      Roles:
+        - !Ref 'InstanceProfileRole'
+      InstanceProfileName: "scorekeep-beanstalk-ecs-role"
   PubPrivateVPC:
     Type: 'AWS::EC2::VPC'
     Properties:
