@@ -21,7 +21,7 @@ Install the following tools to create Docker images, upload them to ECR, and reg
 
         ~/eb-java-scorekeep$ make publish
         ~/eb-java-scorekeep/scorekeep-frontend$ make publish
-        ~/eb-java-scorekeep/~/eb-java-scorekeep/xray-daemon$ make publish
+        ~/eb-java-scorekeep/xray-daemon$ make publish
 
 4. Generate the task definition by running the `generate-dockerrun` script.
 
