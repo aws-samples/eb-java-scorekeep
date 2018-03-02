@@ -4,6 +4,7 @@ If you haven't used X-Ray with Scorekeep yet, try the [`xray-gettingstarted`](ht
 This branch shows an instrumented version of Scorekeep that runs in Amazon ECS, a service that lets you run Docker containers on Amazon EC2 instances. For ease of deployment, it uses a CloudFormation template to create all of the secondary resources used by Scorekeep, and Elastic Beanstalk to create the ECS cluster and deploy the containers.
 
 **Prerequisites**
+
 Install the following tools to create Docker images, upload them to ECR, and register task definitions with ECS.
 - Docker
 - AWS CLI v1.14.0+
@@ -14,29 +15,29 @@ Install the following tools to create Docker images, upload them to ECR, and reg
 1. Update `aws.env` in the root of the repo with your account ID and region.
 2. Create the CloudFormation stack by running **make stack** in the cloudformation directory. (If you already have a stack from the `ecs` or `fargate` branches, run **make update** instead.)
 
-    cloudformation$ make stack
+        cloudformation$ make stack
 
 3. Build and publish the Docker containers for the API, frontend, and X-Ray daemon by running `make publish` in each folder.
 
-    $ make publish
-    scorekeep-frontend$ make publish
-    xray-daemon$ make publish
+        $ make publish
+        scorekeep-frontend$ make publish
+        xray-daemon$ make publish
 
 4. Generate the task definition by running the `generate-dockerrun` script.
 
-    task-definition$ ./generate-dockerrun
+        task-definition$ ./generate-dockerrun
 
 5. Initialize an Elastic Beanstalk repo in the task-definition folder. If you have an SSH key, you can specify it with the -k option.
 
-    task-definition$ eb init -p multi-container-docker -r us-east-1 scorekeep-ecs
+        task-definition$ eb init -p multi-container-docker -r us-east-1 scorekeep-ecs
 
 6. Create a Multicontainer Docker environment.
 
-    task-definition$ eb create -d -i m5.large --sample --instance_profile scorekeep-beanstalk-ecs-role scorekeep
+        task-definition$ eb create -d -i m5.large --sample --instance_profile scorekeep-beanstalk-ecs-role scorekeep
 
 7. Deploy the task definition.
 
-    task-definition$ eb deploy
+        task-definition$ eb deploy
 
 # Scorekeep
 Scorekeep is a RESTful web API implemented in Java that uses Spring to provide an HTTP interface for creating and managing game sessions and users. This project includes the Scorekeep API and a front-end web app that consumes it. The front end and API can run on the same server and domain or separately, with the API running in Elastic Beanstalk and the front end served statically by a CDN.
