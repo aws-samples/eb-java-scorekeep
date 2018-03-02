@@ -1,43 +1,42 @@
-# AWS X-Ray
-Documentation: [X-Ray SDK for Java Sample Application](http://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-java-sample.html)
-
+# AWS X-Ray on Amazon EC2 Container Service
 If you haven't used X-Ray with Scorekeep yet, try the [`xray-gettingstarted`](https://github.com/awslabs/eb-java-scorekeep/tree/xray-gettingstarted) branch first.
 
-This branch shows advanced instrumentation with the AWS X-Ray SDK and includes features from other branches. Deploy this branch to see additional trace data in the X-Ray console. Then, follow the instructions below to add an instrumented AWS Lambda function and PostgreSQL database to the application.
+This branch shows an instrumented version of Scorekeep that runs in Amazon ECS, a service that lets you run Docker containers on Amazon EC2 instances. For ease of deployment, it uses a CloudFormation template to create all of the secondary resources used by Scorekeep, and Elastic Beanstalk to create the ECS cluster and deploy the containers.
 
-## AWS Lambda Integration
-From branch: [`lambda`](https://github.com/awslabs/eb-java-scorekeep/tree/lambda)
+**Prerequisites**
+Install the following tools to create Docker images, upload them to ECR, and register task definitions with ECS.
+- Docker
+- AWS CLI v1.14.0+
+- EB CLI
+- AWS user with permission for IAM, DynamoDB, SNS, ECS, CloudWatch Logs, and ECR
 
-In the [`UserFactory`](https://github.com/awslabs/eb-java-scorekeep/tree/xray/src/main/java/scorekeep/UserFactory.java) class, Scorekeep calls a Node.js AWS Lambda function to generate random usernames.  If the call to Lambda fails, Scorekeep falls back on a public API to generate names. 
+**To deploy this branch**
+1. Update `aws.env` in the root of the repo with your account ID and region.
+2. Create the CloudFormation stack by running **make stack** in the cloudformation directory. (If you already have a stack from the `ecs` or `fargate` branches, run **make update** instead.)
 
-Run the script in the `_lambda` folder to create the AWS Lambda function that Scorekeep calls to generate random names:
-    eb-java-scorekeep/_lambda$ ./create-random-name.sh
+    cloudformation$ make stack
 
-The script uses a CloudFormation template and the AWS CLI to create the function and its execution role:
-- `_lambda/random-name.yml`       - Template that defines the role and function
-- `_lambda/create-random-name.sh` - Script to create the role and function
-- `_lambda/delete-random-name.sh` - Script to delete the role and function
+3. Build and publish the Docker containers for the API, frontend, and X-Ray daemon by running `make publish` in each folder.
 
-If you don't have the AWS CLI, [install it](http://docs.aws.amazon.com/cli/latest/userguide/installing.html) or use the CloudFormation console to create a stack with the template.
+    $ make publish
+    scorekeep-frontend$ make publish
+    xray-daemon$ make publish
 
-Next, add Lambda permission to your instance profile ([aws-elasticbeanstalk-ec2-role](https://console.aws.amazon.com/iam/home#/roles/aws-elasticbeanstalk-ec2-role)) to let the environment update the Lambda function:
-- AWSLambdaFullAccess
+4. Generate the task definition by running the `generate-dockerrun` script.
 
-Note: In the `lambda` branch, Scorekeep creates the Lambda function with a configuration file. In this branch, you create the function independently with the same template that creates the role. This lets the `xray` branch work even if the Lambda function and role have not been created, whereas in the `lambda` branch, the deployment fails if you haven't created the required role.
+    task-definition$ ./generate-dockerrun
 
-Finally, redeploy this branch to your environment. During deployment, the [update script in `lambda-function.config`](https://github.com/awslabs/eb-java-scorekeep/blob/xray/.ebextensions/lambda-function.config#L31) builds the function and uploads the source code to Lambda.
+5. Initialize an Elastic Beanstalk repo in the task-definition folder. If you have an SSH key, you can specify it with the -k option.
 
-Create a new user in the web app and refresh your service map to see the two Lambda nodes.
+    task-definition$ eb init -p multi-container-docker -r us-east-1 scorekeep-ecs
 
-## Amazon RDS Integration
-From branch: [`sql`](https://github.com/awslabs/eb-java-scorekeep/tree/sql)
-Documentation: [Instrumenting Calls to a PostgreSQL Database](https://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-java-sample.html#xray-sdk-java-sample-postgresql)
+6. Create a Multicontainer Docker environment.
 
-In [`application-pgsql.properties`](https://github.com/awslabs/eb-java-scorekeep/tree/xray/src/main/resources/application-pgsql.properties), Scorekeep adds the X-Ray SDK tracing interceptor to the JDBC data source used by Hibernate.
+    task-definition$ eb create -d -i m5.large --sample --instance_profile scorekeep-beanstalk-ecs-role scorekeep
 
-[Add a PostgreSQL database](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features.managing.db.html) to your Elastic Beanstalk environment to enable SQL tracing on the X-Ray demo page (/#/xray).
+7. Deploy the task definition.
 
-Hibernate also calls the database during application startup. No segment is available to the X-Ray SDK during startup, so we create one manually in [`RdsWebConfig.java`](https://github.com/awslabs/eb-java-scorekeep/blob/xray/src/main/java/scorekeep/RdsWebConfig.java#L83) by overriding Hibernate's `SchemaExport` class.
+    task-definition$ eb deploy
 
 # Scorekeep
 Scorekeep is a RESTful web API implemented in Java that uses Spring to provide an HTTP interface for creating and managing game sessions and users. This project includes the Scorekeep API and a front-end web app that consumes it. The front end and API can run on the same server and domain or separately, with the API running in Elastic Beanstalk and the front end served statically by a CDN.
