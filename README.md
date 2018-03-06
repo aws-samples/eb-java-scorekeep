@@ -12,12 +12,14 @@ Other branches extend the application's functionality and show the use of other 
 **Branches**
 - [`cognito`](https://github.com/awslabs/eb-java-scorekeep/tree/cognito) - Support login and store users in an [Amazon Cognito](http://aws.amazon.com/cognito) user pool. Get AWS SDK credentials and make service calls with a Cognito identity pool.
 - [`cognito-basic`](https://github.com/awslabs/eb-java-scorekeep/tree/cognito-basic) - Use Cognito for user ID storage. User pool only, no identity pool.
+- [`ecs`](https://github.com/awslabs/eb-java-scorekeep/tree/ecs) - Run the frontend and API in separate Docker containers in Amazon EC2 Container Service (ECS). This branch is adapted from the `fargate` branch and uses the Elastic Beanstalk Multicontainer Docker platform to create an ECS cluster and deploy the task definition. Dynamo DB tables and other dependencies are created with a CloudFormation template instead of using configuration files.
 - [`fargate`](https://github.com/awslabs/eb-java-scorekeep/tree/fargate) - Use AWS Fargate to run Scorekeep in serverless containers. Build Docker images for API and frontend components, upload to Elastic Container Registry, and generate Elastic Container Service task definitions with included scripts. Use Fargate to run containers without provisioning EC2 instances.
 - [`lambda`](https://github.com/awslabs/eb-java-scorekeep/tree/lambda) - Call an [AWS Lambda](http://aws.amazon.com/lambda) function to generate random names.
 - [`lambda-worker`](https://github.com/awslabs/eb-java-scorekeep/tree/lambda-worker) - Run a Lambda function periodically to process game records and store the output in Amazon S3.
 - [`sql`](https://github.com/awslabs/eb-java-scorekeep/tree/sql) - Use JDBC to store game histories in an attached PostgreSQL database instance.
 - [`xray`](https://github.com/awslabs/eb-java-scorekeep/tree/xray) - Use the [AWS X-Ray SDK for Java](http://docs.aws.amazon.com/xray-sdk-for-java/latest/javadoc/) to instrument incoming requests, functions, SDK clients, SQL queries, HTTP clients, startup code, and AWS Lambda functions.
 - [`xray-cognito`](https://github.com/awslabs/eb-java-scorekeep/tree/xray-cognito) - Use AWS credentials obtained with Amazon Cognito to upload trace data to X-Ray from the browser.
+- [`xray-ecs`](https://github.com/awslabs/eb-java-scorekeep/tree/xray-ecs) - Instrumented version of the `ecs` branch. Run the X-Ray daemon in a docker container. Configure networking between containers both locally and on ECS.
 - [`xray-gettingstarted`](https://github.com/awslabs/eb-java-scorekeep/tree/xray-gettingstarted) ([tutorial](https://docs.aws.amazon.com/xray/latest/devguide/xray-gettingstarted.html)) - Use the AWS X-Ray SDK for Java to instrument incoming requests and SDK clients (no additional configuration required).
 - [`xray-worker`](https://github.com/awslabs/eb-java-scorekeep/tree/xray-worker) - Instrumented Python Lambda worker function from the `lambda-worker` branch.
 
