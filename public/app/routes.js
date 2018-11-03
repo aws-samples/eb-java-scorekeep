@@ -21,8 +21,12 @@ module.config(function($routeProvider) {
     templateUrl : "games.html",
     controller : "GamesController"
   })
-  .when("/game/:sessionid/:gameid/:userid", {
+  .when("/game/:sessionid/:gameid/:userid/TicTacToe", {
     templateUrl : "game.html",
     controller : "GameController"
+  })
+  .when("/game/:sessionid/:gameid/:userid/Rolit", {
+      templateUrl : "rolit.html",
+      controller : "RolitGameController"
   });
 });
