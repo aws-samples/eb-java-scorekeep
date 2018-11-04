@@ -1,19 +1,22 @@
 package scorekeep;
-import java.util.*;
+
+import java.util.Collection;
+import java.util.HashMap;
 
 public class RulesFactory {
-  private final HashMap<String, Rules> allRules = new HashMap<String, Rules>(1);
+    private final HashMap<String, Rules> allRules = new HashMap<String, Rules>(1);
 
-  public RulesFactory(){
-    Rules tictactoe = TicTacToe.getRules();
-    allRules.put(tictactoe.getId(), tictactoe);
-  }
+    public RulesFactory() {
+        Rules tictactoe = TicTacToe.getRules();
+        Rules rolit = Rolit.getRules();
+        allRules.put(tictactoe.getId(), tictactoe);
+    }
 
-  public Rules getRules(String id) {
-    return allRules.get(id);
-  }
+    public Rules getRules(String id) {
+        return allRules.get(id);
+    }
 
-  public Collection<Rules> getAllRules() {
-    return allRules.values();
-  }
+    public Collection<Rules> getAllRules() {
+        return allRules.values();
+    }
 }
