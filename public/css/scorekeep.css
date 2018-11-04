@@ -248,12 +248,11 @@ input {
   margin: 15px;
 }
 .row {
-  display: inline-flex;
-  height: auto;
+  height: 100px;
 }
 .square {
-  width: 50px;
-  height: 50px;
+  width: 100px;
+  height: 100px;
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -263,6 +262,29 @@ input {
   border: 1px solid #d35400;
   border-radius: 1px;
   color: #871d08;
+}
+.row_rolit {
+    display: inline-flex;
+    height: auto;
+}
+.square_rolit {
+    width: 50px;
+    height: 50px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin: -3px;
+    background-color: #FF851B;
+    font-size: 40px;
+    border: 1px solid #d35400;
+    border-radius: 1px;
+    color: #871d08;
+}
+.square_rolit:hover {
+     background-color: #FF4136;
+ }
+.square_rolit:active {
+    background-color: #85144b;
 }
 .square:hover {
   background-color: #FF4136;
