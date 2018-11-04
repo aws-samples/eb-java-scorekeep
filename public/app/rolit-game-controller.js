@@ -3,7 +3,7 @@ module.controller('RolitGameController', Game);
 function Game($q, $scope, $http, $interval, $routeParams, SessionService, UserService, GameService, GameCollection, RulesService, StateService, api) {
     $scope.game = new GameService;
     $scope.state = new StateService; // game state object
-    $scope.gamestate = []; // game state as Array
+    $scope.color = []; // game state as Array
     $scope.moving = 0;
     $scope.user = UserService.get({ id: $routeParams.userid });
     $scope.winner = '';
@@ -16,10 +16,10 @@ function Game($q, $scope, $http, $interval, $routeParams, SessionService, UserSe
                 return $scope.state.$get({ sessionid: $routeParams.sessionid, gameid: $routeParams.gameid, id: currentstate});
             })
             SetState = GetState.then(function(result){
-                $scope.gamestate = $scope.state.state.split('');
-                if ( $scope.gamestate[0] == 'A' ) {
+                $scope.color = $scope.state.state.split('');
+                if ( $scope.color[0] == 'A' ) {
                     $scope.winner = "X wins!";
-                } else if ( $scope.gamestate[0] == 'B') {
+                } else if ( $scope.color[0] == 'B') {
                     $scope.winner = "O wins!";
                 }
                 resolve();
@@ -43,20 +43,20 @@ function Game($q, $scope, $http, $interval, $routeParams, SessionService, UserSe
         $scope.promise.then(function(){
             $scope.promise = $q(function(resolve,reject){
                 console.log("MOVE on cell " + cellid);
-                $scope.gamestate = $scope.state.state.split('');
+                $scope.color = $scope.state.state.split('');
                 move = ""
                 // move is invalid
-                if ( $scope.gamestate[cellid] != " " ) {
+                if ( $scope.color[cellid] != " " ) {
                     return;
                 }
                 // temporarily update game board and determine move
-                if ($scope.gamestate[0] == "X") {
-                    $scope.gamestate[cellid] = "X";
-                    $scope.gamestate[0] = "O";
+                if ($scope.color[0] == "X") {
+                    $scope.color[cellid] = "X";
+                    $scope.color[0] = "O";
                     move = "X" + cellid;
                 } else {
-                    $scope.gamestate[cellid] = "O";
-                    $scope.gamestate[0] = "X";
+                    $scope.color[cellid] = "O";
+                    $scope.color[0] = "X";
                     move = "O" + cellid;
                 }
                 // send move
@@ -71,7 +71,7 @@ function Game($q, $scope, $http, $interval, $routeParams, SessionService, UserSe
                 });
                 // update game board
                 GetState.then(function(){
-                    $scope.gamestate = $scope.state.state.split('');
+                    $scope.color = $scope.state.state.split('');
                     $scope.moving = 0;
                     resolve();
                 });
