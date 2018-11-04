@@ -15,12 +15,12 @@ public class Rolit {
         String[] phases = {"Move"};
         String[] moves = {"Roll"};
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("X");
-        for (int i = 0; i < 64; i++) {
+        stringBuilder.append("1");
+        for (int i = 0; i < 65; i++) {
             stringBuilder.append(" ");
         }
         String initialState = stringBuilder.toString();
-        Rules tictactoe = new Rules().setId(id)
+        Rules rolit = new Rules().setId(id)
                 .setName(name)
                 .setCategories(categories)
                 .setUsers(users)
@@ -28,6 +28,91 @@ public class Rolit {
                 .setPhases(phases)
                 .setMoves(moves)
                 .setInitialState(initialState);
-        return tictactoe;
+        return rolit;
+    }
+
+    /* State is a string with one character that indicates the current turn
+     * (X or O), or win state (A or B). The remaining 9 characters map to spaces
+     * on the game board.
+     *        1 2 3
+     *        4 5 6
+     *        7 8 9
+     * A move is a two character string that indicates the moving player (X or O)
+     * and the space on the game board. After applying the move, the function
+     * converts the game state of the current player into an integer and compares
+     * it against known win states to check for victory.
+     */
+    public static String move(String oldState, String moveText) {
+        // current state in char[]
+        char[] oldchar = oldState.toCharArray();
+        // move in char[]
+        char[] movchar = moveText.toCharArray();
+        // validate move and update state
+        if (oldchar[1] != ' '){
+            logger.error("Game is ended");
+            return new String(oldchar);
+        }
+
+        if (movchar[0] == oldchar[0]) {
+            oldchar[Character.getNumericValue(movchar[1])] = movchar[0];
+            if (movchar[0] == '1') {
+                oldchar[0] = '2';
+            } else if (movchar[0] == '2') {
+                oldchar[0] = '1';
+            }
+//            else if (movchar[0] == '3') {
+//
+//            } else if (movchar[0] == '4') {
+//
+//            }
+        } else {
+            logger.error("Not your turn");
+        }
+
+
+
+        // check for victory
+        int winner = checkWin(oldchar);
+        if (winner != -1) {
+            oldchar[0] = Integer.toString(winner).charAt(0);
+        }
+        String newState = new String(oldchar);
+        return newState;
+    }
+
+    public static int checkWin(char[] state) {
+        boolean isAllOccupied = true;
+        for (int i = 0; i < 65; i++) {
+            if (state[i] == ' ') {
+                isAllOccupied = false;
+                break;
+            }
+        }
+        if (!isAllOccupied)
+            return -1;
+        int playersScores[] = new int[4];
+        for (int i = 0; i < 65; i++) {
+            if (state[i] == '1') {
+                playersScores[0]++;
+            }
+            if (state[i] == '2') {
+                playersScores[1]++;
+            }
+            if (state[i] == '3') {
+                playersScores[2]++;
+            }
+            if (state[i] == '4') {
+                playersScores[3]++;
+            }
+        }
+        int max = playersScores[0];
+        int winner = 1;
+        for (int i = 1; i < 4; i++) {
+            if (max < playersScores[i]) {
+                max = playersScores[i];
+                winner = i + 1;
+            }
+        }
+        return winner;
     }
 }
