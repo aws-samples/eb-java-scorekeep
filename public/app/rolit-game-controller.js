@@ -74,15 +74,11 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
                      return;
                  }
                  // temporarily update game board and determine move
-             //    if ($scope.color[0] === "0") {
-             //        $scope.color[cellid] = "0";
-             //        $scope.color[0] = "1";
-             //        move = "0" + cellid;
-             //    } else {
-             //        $scope.color[cellid] = "1";
-             //        $scope.color[0] = "0";
-             //        move = "1" + cellid;
-             //    }
+                if ($scope.gamestate[0] === "0") {
+                    move = "0" + cellid;
+                } else {
+                    move = "1" + cellid;
+                }
                  // send move
                  PostMove = $http.post(api + 'move/' + $routeParams.sessionid + "/" + $routeParams.gameid + "/" + $routeParams.userid, move);
                  // get new game state
