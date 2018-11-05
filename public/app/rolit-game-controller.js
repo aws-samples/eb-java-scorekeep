@@ -17,10 +17,10 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
             })
             SetState = GetState.then(function(result){
                 $scope.color = $scope.state.state.split('');
-                if ( $scope.color[0] === 'A' ) {
-                    $scope.winner = "X wins!";
-                } else if ( $scope.color[0] === 'B') {
-                    $scope.winner = "O wins!";
+                if ( $scope.color[1] === '1' ) {
+                    $scope.winner = "black color wins!";
+                } else if ( $scope.color[1] === '2') {
+                    $scope.winner = "white color wins!";
                 }
                 resolve();
             });
