@@ -49,6 +49,7 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
         $scope.color[id] = 1;
 
 
+
     }
     // $scope.move = function(cellid){
     //     if ( $scope.moving === 1 || $scope.winner !== '' ) {
