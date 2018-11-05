@@ -18,7 +18,7 @@ public class Rolit {
         String[] phases = {"Move"};
         String[] moves = {"Roll"};
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("1");
+        stringBuilder.append("0");
         for (int i = 0; i < 65; i++) {
             if (i == 27)
                 stringBuilder.append('0');
