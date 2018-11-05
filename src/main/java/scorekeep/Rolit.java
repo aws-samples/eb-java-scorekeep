@@ -20,13 +20,13 @@ public class Rolit {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("0");
         for (int i = 0; i < 65; i++) {
-            if (i == 27)
+            if (i == 28)
                 stringBuilder.append('0');
-            else if (i == 28)
-                stringBuilder.append('1');
-            else if (i == 35)
+            else if (i == 29)
                 stringBuilder.append('1');
             else if (i == 36)
+                stringBuilder.append('1');
+            else if (i == 37)
                 stringBuilder.append('0');
             else
                 stringBuilder.append(" ");
