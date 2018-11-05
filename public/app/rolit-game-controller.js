@@ -5,24 +5,9 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
     $scope.game = new GameService;
     $scope.state = new StateService; // game state object
     $scope.gamestate = []; // game state as Array
-    $scope.color = []; // cell colors
     $scope.moving = 0;
     $scope.user = UserService.get({id: $routeParams.userid});
     $scope.winner = '';
-
-
-    for (i = 0; i < 66; i++) {
-        if (i === 28)
-            $scope.color[i] = 0;
-        else if (i === 29)
-            $scope.color[i] = 1;
-        else if (i === 36)
-            $scope.color[i] = 1;
-        else if (i === 37)
-            $scope.color[i] = 0;
-        else
-            $scope.color[i] = 2;
-    }
 
     $scope.playgame = function () {
         return $q(function (resolve, reject) {
@@ -54,20 +39,20 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
     }, 5000);
 
     $scope.color_id = function (id) {
-        if ($scope.color[id] === 1) {
+        if ($scope.gamestate[id] === "1") {
             return "green"
         }
-        else if ($scope.color[id] === 0) {
+        else if ($scope.gamestate[id] === "0") {
             return "red"
         } else
             return "square_rolit";
     };
 
     $scope.gs = function () {
-        if ($scope.gamestate[0] === 1) {
+        if ($scope.gamestate[0] === "1") {
             return "green"
         }
-        else if ($scope.gamestate[0] === 0) {
+        else if ($scope.gamestate[0] === "0") {
             return "red"
         }
     };
@@ -111,13 +96,6 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
                 // update game board
                 GetState.then(function () {
                     $scope.gamestate = $scope.state.state.split('');
-                    //Update color
-                    if ($scope.gamestate[cellid] === "0")
-                        $scope.color[cellid] = 1;
-                    else if ($scope.gamestate[cellid] === "1")
-                        $scope.color[cellid] = 0;
-                    //else
-
                     $scope.moving = 0;
                     resolve();
                 });
