@@ -58,11 +58,11 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
             return "square_rolit";
     };
 
-    $scope.gs = function() {
-        if ($scope.gamestate[0] === 1) {
+    $scope.gs = function(i) {
+        if ($scope.gamestate[i] === 1) {
             return "green"
         }
-        else if ($scope.gamestate[0] === 0) {
+        else if ($scope.gamestate[i] === 0) {
             return "red"
         }
     }
