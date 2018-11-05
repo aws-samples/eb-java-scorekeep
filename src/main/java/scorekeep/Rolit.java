@@ -65,8 +65,6 @@ public class Rolit {
             return new String(oldchar);
         }
 
-        logger.warn(movchar.toString());
-
         char[][] gameMatrix = makeMatrix(oldchar);
 
         int cellId = 0;

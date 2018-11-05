@@ -15,10 +15,6 @@ import java.util.Map;
     Loads all state objects for a game
 **/
 public class StateModel {
-  /** AWS SDK credentials. */
-  private AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
-        .build();
-  private DynamoDBMapper mapper = new DynamoDBMapper(client);
   private final SessionModel sessionModel = new SessionModel();
   private final GameModel gameModel = new GameModel();
 
@@ -32,11 +28,11 @@ public class StateModel {
     if (gameModel.loadGame(gameId) == null ) {
       throw new GameNotFoundException(gameId);
     }
-    mapper.save(state);
+    Application.mapper.save(state);
   }
 
   public State loadState(String stateId) throws StateNotFoundException {
-    State state = mapper.load(State.class, stateId);
+    State state = Application.mapper.load(State.class, stateId);
     if ( state == null ) {
       throw new StateNotFoundException(stateId);
     }
@@ -63,15 +59,15 @@ public class StateModel {
         .withKeyConditionExpression("#key1 = :val1")
         .withConsistentRead(false);
 
-    List<State> gameStates = mapper.query(State.class, queryExpression);
+    List<State> gameStates = Application.mapper.query(State.class, queryExpression);
     return gameStates;
   }
 
   public void deleteState(String stateId) throws StateNotFoundException {
-    State state = mapper.load(State.class, stateId);
+    State state = Application.mapper.load(State.class, stateId);
     if ( state == null ) {
       throw new StateNotFoundException(stateId);
     }
-    mapper.delete(state);
+    Application.mapper.delete(state);
   }
 }

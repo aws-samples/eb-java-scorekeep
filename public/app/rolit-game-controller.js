@@ -9,7 +9,7 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
     $scope.user = UserService.get({id: $routeParams.userid});
     $scope.winner = '';
     $scope.error_message = "";
-    $scope.loading = true;
+    $scope.loading = false;
 
     // for (i = 0; i < 66; i++){
     //     if (i === 0){
@@ -55,7 +55,7 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
         $scope.promise.then(function () {
             $scope.promise = $scope.playgame();
         })
-    }, 5000);
+    }, 500);
 
     $scope.color_id = function (id) {
         if ($scope.gamestate[id + 1] === "1") {

@@ -15,12 +15,12 @@ public class WebConfig {
     return new SimpleCORSFilter();
   }
 
-  static {
-    if ( System.getenv("NOTIFICATION_EMAIL") != null ){
-      try { Sns.createSubscription(); }
-      catch (Exception e ) {
-        logger.warn("Failed to create subscription for email "+  System.getenv("NOTIFICATION_EMAIL"));
-      }
-    }
-  }
+//  static {
+//    if ( System.getenv("NOTIFICATION_EMAIL") != null ){
+//      try { Sns.createSubscription(); }
+//      catch (Exception e ) {
+//        logger.warn("Failed to create subscription for email "+  System.getenv("NOTIFICATION_EMAIL"));
+//      }
+//    }
+//  }
 }
