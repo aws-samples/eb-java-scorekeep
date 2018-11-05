@@ -89,6 +89,7 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
                 move = "";
                 // move is invalid
                 if ($scope.gamestate[cellid] !== " ") {
+                    $scope.error_message = "This cell is already occupied";
                     return;
                 }
                 // temporarily update game board and determine move
