@@ -35,8 +35,6 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
 
     $scope.red = false;
     $scope.green = false;
-    $scope.blue = false;
-    $scope.yellow = false;
     $scope.rolit = true;
 
     $scope.move = function(){

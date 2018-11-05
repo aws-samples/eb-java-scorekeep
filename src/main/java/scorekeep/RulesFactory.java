@@ -10,6 +10,7 @@ public class RulesFactory {
         Rules tictactoe = TicTacToe.getRules();
         Rules rolit = Rolit.getRules();
         allRules.put(tictactoe.getId(), tictactoe);
+        allRules.put(rolit.getId(), rolit);
     }
 
     public Rules getRules(String id) {
