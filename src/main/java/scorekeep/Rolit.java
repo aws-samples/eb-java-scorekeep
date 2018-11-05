@@ -94,6 +94,7 @@ public class Rolit {
 
         if (availableMoves.size() != 0) {
             gameMatrix = moveAndChange(gameMatrix, i, j, movchar[0]);
+            gameMatrix[i][j] = movchar[0];
             oldchar = makeCharArrayFromMatrix(oldchar[0], oldchar[1], gameMatrix);
         } else {
             oldchar[cellId] = movchar[0];
