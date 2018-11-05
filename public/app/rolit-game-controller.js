@@ -11,21 +11,21 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
     $scope.error_message = "";
     $scope.loading = true;
 
-    for (i = 0; i < 66; i++){
-        if (i === 0){
-            $scope.gamestate[i] = "0";
-        } else if (i === 28){
-            $scope.gamestate[i] = "0";
-        } else if (i === 29){
-            $scope.gamestate[i] = "1";
-        } else if (i === 36){
-            $scope.gamestate[i] = "1";
-        } else if (i === 37){
-            $scope.gamestate[i] = "0";
-        } else {
-            $scope.gamestate[i] = " ";
-        }
-    }
+    // for (i = 0; i < 66; i++){
+    //     if (i === 0){
+    //         $scope.gamestate[i] = "0";
+    //     } else if (i === 28){
+    //         $scope.gamestate[i] = "0";
+    //     } else if (i === 29){
+    //         $scope.gamestate[i] = "1";
+    //     } else if (i === 36){
+    //         $scope.gamestate[i] = "1";
+    //     } else if (i === 37){
+    //         $scope.gamestate[i] = "0";
+    //     } else {
+    //         $scope.gamestate[i] = " ";
+    //     }
+    // }
 
     $scope.playgame = function () {
         return $q(function (resolve, reject) {
@@ -40,6 +40,7 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
             });
             SetState = GetState.then(function (result) {
                 $scope.gamestate = $scope.state.state.split('');
+                $scope.loading = false;
                 if ($scope.gamestate[1] === '0') {
                     $scope.winner = "red wins!";
                 } else if ($scope.gamestate[1] === '1') {
