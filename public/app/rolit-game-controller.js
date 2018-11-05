@@ -95,7 +95,7 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
                  // update game board
                  GetState.then(function(){
                      $scope.gamestate = $scope.state.state.split('');
-
+                     //Update color
                      if ($scope.gamestate[cellid] === "0")
                         $scope.color[cellid] = 0;
                         else
