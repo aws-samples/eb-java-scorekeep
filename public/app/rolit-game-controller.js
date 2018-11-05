@@ -10,13 +10,13 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
     $scope.winner = '';
 
     for (i = 0; i < 66; i++) {
-        if (i === 29)
+        if (i === 28)
             $scope.color[i] = 0;
-        else if (i === 30)
+        else if (i === 29)
+            $scope.color[i] = 1;
+        else if (i === 36)
             $scope.color[i] = 1;
         else if (i === 37)
-            $scope.color[i] = 1;
-        else if (i === 38)
             $scope.color[i] = 0;
         else
             $scope.color[i] = 2;
