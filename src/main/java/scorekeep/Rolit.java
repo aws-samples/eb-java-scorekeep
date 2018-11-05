@@ -10,7 +10,7 @@ public class Rolit {
         String id = "Rolit";
         String name = "Rolit";
         String[] categories = {"head to head", "quick"};
-        Integer[] users = {2, 3, 4};
+        Integer[] users = {2};
         Integer teams = 0;
         String[] phases = {"Move"};
         String[] moves = {"Roll"};
@@ -48,7 +48,7 @@ public class Rolit {
         // move in char[]
         char[] movchar = moveText.toCharArray();
         // validate move and update state
-        if (oldchar[1] != ' '){
+        if (oldchar[1] != ' ') {
             logger.error("Game is ended");
             return new String(oldchar);
         }
@@ -60,29 +60,45 @@ public class Rolit {
             } else if (movchar[0] == '2') {
                 oldchar[0] = '1';
             }
-//            else if (movchar[0] == '3') {
-//
-//            } else if (movchar[0] == '4') {
-//
-//            }
         } else {
             logger.error("Not your turn");
         }
 
+        char[][] gameMatrix = makeMatrix(oldchar);
 
+        int cellId = 0;
+
+        if (movchar.length == 2){
+            cellId = Integer.parseInt(moveText.substring(1));
+        } else if (movchar.length == 3) {
+            cellId = Integer.parseInt(moveText.substring(1));
+        }
+
+        
 
         // check for victory
         int winner = checkWin(oldchar);
         if (winner != -1) {
+            oldchar[1] = Integer.toString(winner).charAt(0);
             oldchar[0] = Integer.toString(winner).charAt(0);
         }
         String newState = new String(oldchar);
         return newState;
     }
 
+    public static char[][] makeMatrix(char[] state) {
+        char[][] matrix = new char[8][8];
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                matrix[i][j] = state[i * (j + 1) + j + 2];
+            }
+        }
+        return matrix;
+    }
+
     public static int checkWin(char[] state) {
         boolean isAllOccupied = true;
-        for (int i = 0; i < 65; i++) {
+        for (int i = 2; i < 66; i++) {
             if (state[i] == ' ') {
                 isAllOccupied = false;
                 break;
@@ -91,7 +107,7 @@ public class Rolit {
         if (!isAllOccupied)
             return -1;
         int playersScores[] = new int[4];
-        for (int i = 0; i < 65; i++) {
+        for (int i = 2; i < 66; i++) {
             if (state[i] == '1') {
                 playersScores[0]++;
             }
