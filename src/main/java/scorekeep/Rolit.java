@@ -262,7 +262,6 @@ public class Rolit {
             if (matrix[i][y] == turn) {
                 if (n > 0) {
                     reColor.addAll(reColorLocal);
-                    reColorLocal.clear();
                 }
                 break;
             }
@@ -271,6 +270,8 @@ public class Rolit {
                 n++;
             }
         }
+
+        reColorLocal.clear();
         n = 0;
         for (int i = x - 1; i >= 0; i--) {
             if (matrix[i][y] == ' ') {
@@ -279,7 +280,6 @@ public class Rolit {
             if (matrix[i][y] == turn) {
                 if (n > 0) {
                     reColor.addAll(reColorLocal);
-                    reColorLocal.clear();
                 }
                 break;
             }
@@ -288,6 +288,8 @@ public class Rolit {
                 n++;
             }
         }
+
+        reColorLocal.clear();
         n = 0;
         for (int i = y + 1; i < length; i++) {
             if (matrix[x][i] == ' ') {
@@ -296,7 +298,6 @@ public class Rolit {
             if (matrix[x][i] == turn) {
                 if (n > 0) {
                     reColor.addAll(reColorLocal);
-                    reColorLocal.clear();
                 }
                 break;
             }
@@ -305,6 +306,8 @@ public class Rolit {
                 n++;
             }
         }
+
+        reColorLocal.clear();
         n = 0;
         for (int i = y - 1; i >= 0; i--) {
             if (matrix[x][i] == ' ') {
@@ -313,7 +316,6 @@ public class Rolit {
             if (matrix[x][i] == turn) {
                 if (n > 0) {
                     reColor.addAll(reColorLocal);
-                    reColorLocal.clear();
                 }
                 break;
             }
@@ -322,6 +324,8 @@ public class Rolit {
                 n++;
             }
         }
+
+        reColorLocal.clear();
         n = 0;
         for (int i = x - 1, j = y - 1; i >= 0 && j >= 0; i--, j--) {
             if (matrix[i][j] == ' ') {
@@ -330,7 +334,6 @@ public class Rolit {
             if (matrix[i][j] == turn) {
                 if (n > 0){
                     reColor.addAll(reColorLocal);
-                    reColorLocal.clear();
                 }
                 break;
             }
@@ -339,6 +342,8 @@ public class Rolit {
                 n++;
             }
         }
+
+        reColorLocal.clear();
         n = 0;
         for (int i = x + 1, j = y - 1; i < length && j >= 0; i++, j--) {
             if (matrix[i][j] == ' ') {
@@ -347,7 +352,6 @@ public class Rolit {
             if (matrix[i][j] == turn) {
                 if (n > 0){
                     reColor.addAll(reColorLocal);
-                    reColorLocal.clear();
                 }
                 break;
             }
@@ -356,6 +360,8 @@ public class Rolit {
                 n++;
             }
         }
+
+        reColorLocal.clear();
         n = 0;
         for (int i = x - 1, j = y + 1; i >= 0 && j < length; i--, j++) {
             if (matrix[i][j] == ' ') {
@@ -364,7 +370,6 @@ public class Rolit {
             if (matrix[i][j] == turn) {
                 if (n > 0){
                     reColor.addAll(reColorLocal);
-                    reColorLocal.clear();
                 }
                 break;
             }
@@ -373,6 +378,8 @@ public class Rolit {
                 n++;
             }
         }
+
+        reColorLocal.clear();
         n = 0;
         for (int i = x + 1, j = y + 1; i < length && j < length; i++, j++) {
             if (matrix[i][j] == ' ') {
@@ -381,7 +388,6 @@ public class Rolit {
             if (matrix[i][j] == turn) {
                 if (n > 0){
                     reColor.addAll(reColorLocal);
-                    reColorLocal.clear();
                 }
                 break;
             }
