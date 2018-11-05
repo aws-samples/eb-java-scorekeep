@@ -9,6 +9,18 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
     $scope.user = UserService.get({ id: $routeParams.userid });
     $scope.winner = '';
 
+    for (i = 0; i < 66; i++) {
+        if (i === 29)
+            $scope.color[i] = 0;
+        else if (i === 30)
+            $scope.color[i] = 1;
+        else if (i === 37)
+            $scope.color[i] = 1;
+        else if (i === 38)
+            $scope.color[i] = 0;
+        $scope.color[i] = 2;
+    }
+
     $scope.playgame = function(){
         return $q(function(resolve, reject) {
             GetGame = $scope.game.$get({ sessionid: $routeParams.sessionid, id: $routeParams.gameid });
@@ -33,28 +45,6 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
             $scope.promise = $scope.playgame();
         })
     }, 500);
-
-  //  $scope.red = false;
-  //  $scope.green = false;
-  //  $scope.rolit = true;
-
-  //  $scope.move = function(){
-  //      $scope.red = true;
-  //     $scope.rolit = false;
-
-  //  }
-
-    for (i = 0; i < 66; i++) {
-        if (i === 29)
-            $scope.color[i] = 0;
-        else if (i === 30)
-            $scope.color[i] = 1;
-        else if (i === 37)
-            $scope.color[i] = 1;
-        else if (i === 38)
-            $scope.color[i] = 0;
-        $scope.color[i] = 2;
-    }
 
     $scope.color_id = function(id) {
         if ($scope.color[id]=== 1){
@@ -119,8 +109,6 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
     
          });
      };
-
-
 
     $scope.$on('$destroy',function(){
         if($scope.interval)
