@@ -74,7 +74,7 @@ public class Rolit {
             cellId = Integer.parseInt(moveText.substring(1));
         }
 
-        
+
 
         // check for victory
         int winner = checkWin(oldchar);
