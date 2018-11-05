@@ -1,7 +1,11 @@
 package scorekeep;
 
+import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Rolit {
     private static final Logger logger = LoggerFactory.getLogger(Rolit.class);
@@ -54,7 +58,6 @@ public class Rolit {
         }
 
         if (movchar[0] == oldchar[0]) {
-            oldchar[Character.getNumericValue(movchar[1])] = movchar[0];
             if (movchar[0] == '1') {
                 oldchar[0] = '2';
             } else if (movchar[0] == '2') {
@@ -62,19 +65,40 @@ public class Rolit {
             }
         } else {
             logger.error("Not your turn");
+            return new String(oldchar);
         }
 
         char[][] gameMatrix = makeMatrix(oldchar);
 
         int cellId = 0;
 
-        if (movchar.length == 2){
+        if (movchar.length == 2) {
             cellId = Integer.parseInt(moveText.substring(1));
         } else if (movchar.length == 3) {
             cellId = Integer.parseInt(moveText.substring(1));
         }
 
+        int i = (cellId - 1) / 8;
+        int j = (cellId - 1) % 8;
 
+        if (!isMoveAllowed(gameMatrix, i, j)) {
+            logger.error("You can not move here");
+            return new String(oldchar);
+        }
+
+        List<Pair<Integer, Integer>> availableMoves = getAvailableMoves(gameMatrix, movchar[0]);
+
+        if (availableMoves.size() != 0 && !availableMoves.contains(new Pair<>(i, j))) {
+            logger.error("You can not choose these cell");
+            return new String(oldchar);
+        }
+
+        if (availableMoves.size() != 0) {
+            gameMatrix = moveAndChange(gameMatrix, i, j, movchar[0]);
+            oldchar = makeCharArrayFromMatrix(oldchar[0], oldchar[1], gameMatrix);
+        } else {
+            oldchar[cellId] = movchar[0];
+        }
 
         // check for victory
         int winner = checkWin(oldchar);
@@ -86,6 +110,286 @@ public class Rolit {
         return newState;
     }
 
+    public static List<Pair<Integer, Integer>> getAvailableMoves(char[][] matrix, char turn) {
+        List<Pair<Integer, Integer>> res = new ArrayList<>();
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (matrix[i][j] == ' ' && isMoveAllowed(matrix, i, j)) {
+                    if (isAvailable(matrix, i, j, turn))
+                        res.add(new Pair<>(i, j));
+                }
+            }
+        }
+        return res;
+    }
+
+    public static boolean isAvailable(char[][] matrix, int x, int y, char turn) {
+        int length = matrix.length;
+        int n = 0;
+        for (int i = x + 1; i < length; i++) {
+            if (matrix[i][y] == ' ') {
+                break;
+            }
+            if (matrix[i][y] == turn) {
+                if (n > 0)
+                    return true;
+                break;
+            }
+            if (matrix[i][y] != turn) {
+                n++;
+            }
+        }
+        n = 0;
+        for (int i = x - 1; i >= 0; i--) {
+            if (matrix[i][y] == ' ') {
+                break;
+            }
+            if (matrix[i][y] == turn) {
+                if (n > 0)
+                    return true;
+                break;
+            }
+            if (matrix[i][y] != turn) {
+                n++;
+            }
+        }
+        n = 0;
+        for (int i = y + 1; i < length; i++) {
+            if (matrix[x][i] == ' ') {
+                break;
+            }
+            if (matrix[x][i] == turn) {
+                if (n > 0)
+                    return true;
+                break;
+            }
+            if (matrix[x][i] != turn) {
+                n++;
+            }
+        }
+        n = 0;
+        for (int i = y - 1; i >= 0; i--) {
+            if (matrix[x][i] == ' ') {
+                break;
+            }
+            if (matrix[x][i] == turn) {
+                if (n > 0)
+                    return true;
+                break;
+            }
+            if (matrix[x][i] != turn) {
+                n++;
+            }
+        }
+        n = 0;
+        for (int i = x - 1, j = y - 1; i >= 0 && j >= 0; i--, j--) {
+            if (matrix[i][j] == ' ') {
+                break;
+            }
+            if (matrix[i][j] == turn) {
+                if (n > 0)
+                    return true;
+                break;
+            }
+            if (matrix[i][j] != turn) {
+                n++;
+            }
+        }
+        n = 0;
+        for (int i = x + 1, j = y - 1; i < length && j >= 0; i++, j--) {
+            if (matrix[i][j] == ' ') {
+                break;
+            }
+            if (matrix[i][j] == turn) {
+                if (n > 0)
+                    return true;
+                break;
+            }
+            if (matrix[i][j] != turn) {
+                n++;
+            }
+        }
+        n = 0;
+        for (int i = x - 1, j = y + 1; i >= 0 && j < length; i--, j++) {
+            if (matrix[i][j] == ' ') {
+                break;
+            }
+            if (matrix[i][j] == turn) {
+                if (n > 0)
+                    return true;
+                break;
+            }
+            if (matrix[i][j] != turn) {
+                n++;
+            }
+        }
+        n = 0;
+        for (int i = x + 1, j = y + 1; i < length && j < length; i++, j++) {
+            if (matrix[i][j] == ' ') {
+                break;
+            }
+            if (matrix[i][j] == turn) {
+                if (n > 0)
+                    return true;
+                break;
+            }
+            if (matrix[i][j] != turn) {
+                n++;
+            }
+        }
+        return false;
+    }
+
+    public static char[][] moveAndChange(char[][] matrix, int x, int y, char turn) {
+        int length = matrix.length;
+        int n = 0;
+        List<Pair<Integer, Integer>> reColor = new ArrayList<>();
+        List<Pair<Integer, Integer>> reColorLocal = new ArrayList<>();
+        for (int i = x + 1; i < length; i++) {
+            if (matrix[i][y] == ' ') {
+                break;
+            }
+            if (matrix[i][y] == turn) {
+                if (n > 0) {
+                    reColor.addAll(reColorLocal);
+                    reColorLocal.clear();
+                }
+                break;
+            }
+            if (matrix[i][y] != turn) {
+                reColorLocal.add(new Pair<>(i, y));
+                n++;
+            }
+        }
+        n = 0;
+        for (int i = x - 1; i >= 0; i--) {
+            if (matrix[i][y] == ' ') {
+                break;
+            }
+            if (matrix[i][y] == turn) {
+                if (n > 0) {
+                    reColor.addAll(reColorLocal);
+                    reColorLocal.clear();
+                }
+                break;
+            }
+            if (matrix[i][y] != turn) {
+                reColorLocal.add(new Pair<>(i, y));
+                n++;
+            }
+        }
+        n = 0;
+        for (int i = y + 1; i < length; i++) {
+            if (matrix[x][i] == ' ') {
+                break;
+            }
+            if (matrix[x][i] == turn) {
+                if (n > 0) {
+                    reColor.addAll(reColorLocal);
+                    reColorLocal.clear();
+                }
+                break;
+            }
+            if (matrix[x][i] != turn) {
+                reColorLocal.add(new Pair<>(x, i));
+                n++;
+            }
+        }
+        n = 0;
+        for (int i = y - 1; i >= 0; i--) {
+            if (matrix[x][i] == ' ') {
+                break;
+            }
+            if (matrix[x][i] == turn) {
+                if (n > 0) {
+                    reColor.addAll(reColorLocal);
+                    reColorLocal.clear();
+                }
+                break;
+            }
+            if (matrix[x][i] != turn) {
+                reColorLocal.add(new Pair<>(x, i));
+                n++;
+            }
+        }
+        n = 0;
+        for (int i = x - 1, j = y - 1; i >= 0 && j >= 0; i--, j--) {
+            if (matrix[i][j] == ' ') {
+                break;
+            }
+            if (matrix[i][j] == turn) {
+                if (n > 0){
+                    reColor.addAll(reColorLocal);
+                    reColorLocal.clear();
+                }
+                break;
+            }
+            if (matrix[i][j] != turn) {
+                reColorLocal.add(new Pair<>(i, j));
+                n++;
+            }
+        }
+        n = 0;
+        for (int i = x + 1, j = y - 1; i < length && j >= 0; i++, j--) {
+            if (matrix[i][j] == ' ') {
+                break;
+            }
+            if (matrix[i][j] == turn) {
+                if (n > 0){
+                    reColor.addAll(reColorLocal);
+                    reColorLocal.clear();
+                }
+                break;
+            }
+            if (matrix[i][j] != turn) {
+                reColorLocal.add(new Pair<>(i, j));
+                n++;
+            }
+        }
+        n = 0;
+        for (int i = x - 1, j = y + 1; i >= 0 && j < length; i--, j++) {
+            if (matrix[i][j] == ' ') {
+                break;
+            }
+            if (matrix[i][j] == turn) {
+                if (n > 0){
+                    reColor.addAll(reColorLocal);
+                    reColorLocal.clear();
+                }
+                break;
+            }
+            if (matrix[i][j] != turn) {
+                reColorLocal.add(new Pair<>(i, j));
+                n++;
+            }
+        }
+        n = 0;
+        for (int i = x + 1, j = y + 1; i < length && j < length; i++, j++) {
+            if (matrix[i][j] == ' ') {
+                break;
+            }
+            if (matrix[i][j] == turn) {
+                if (n > 0){
+                    reColor.addAll(reColorLocal);
+                    reColorLocal.clear();
+                }
+                break;
+            }
+            if (matrix[i][j] != turn) {
+                reColorLocal.add(new Pair<>(i, j));
+                n++;
+            }
+        }
+
+        for (Pair<Integer, Integer> pair: reColor) {
+            int i = pair.getKey();
+            int j = pair.getValue();
+            matrix[i][j] = turn;
+        }
+
+        return matrix;
+    }
+
     public static char[][] makeMatrix(char[] state) {
         char[][] matrix = new char[8][8];
         for (int i = 0; i < 8; i++) {
@@ -94,6 +398,55 @@ public class Rolit {
             }
         }
         return matrix;
+    }
+
+    public static char[] makeCharArrayFromMatrix(char c1, char c2, char[][] matrix) {
+        char[] res = new char[66];
+        res[0] = c1;
+        res[1] = c2;
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                res[i * (j + 1) + j + 2] = matrix[i][j];
+            }
+        }
+        return res;
+    }
+
+    private static boolean isMoveAllowed(char[][] matrix, int i, int j) {
+        int length = matrix.length;
+        if (isInRange1(i - 1, length) && matrix[i - 1][j] != ' ') {
+            return true;
+        }
+        if (isInRange1(j - 1, length) && matrix[i][j - 1] != ' ') {
+            return true;
+        }
+        if (isInRange1(i + 1, length) && matrix[i + 1][j] != ' ') {
+            return true;
+        }
+        if (isInRange1(j + 1, length) && matrix[i][j + 1] != ' ') {
+            return true;
+        }
+        if (isInRange(i - 1, j - 1, length) && matrix[i - 1][j - 1] != ' ') {
+            return true;
+        }
+        if (isInRange(i + 1, j + 1, length) && matrix[i + 1][j + 1] != ' ') {
+            return true;
+        }
+        if (isInRange(i - 1, j + 1, length) && matrix[i - 1][j + 1] != ' ') {
+            return true;
+        }
+        if (isInRange(i + 1, j - 1, length) && matrix[i + 1][j - 1] != ' ') {
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean isInRange(int i, int j, int length) {
+        return i >= 0 && i < length && j >= 0 && j < length;
+    }
+
+    private static boolean isInRange1(int i, int length) {
+        return i >= 0 && i < length;
     }
 
     public static int checkWin(char[] state) {
