@@ -15,7 +15,7 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
             GetState = GetGame.then(function(){
                 currentstate = $scope.game.states[$scope.game.states.length-1];
                 return $scope.state.$get({ sessionid: $routeParams.sessionid, gameid: $routeParams.gameid, id: currentstate});
-            })
+            });
             SetState = GetState.then(function(result){
                 $scope.gamestate = $scope.state.state.split('');
                 if ( $scope.gamestate[1] === '0' ) {
@@ -26,7 +26,7 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
                 resolve();
             });
         });
-    }
+    };
     $scope.promise = $scope.playgame();
     $scope.interval = $interval(function(){
         $scope.promise.then(function() {
@@ -56,7 +56,7 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
             return "red"
         } else
             return "square_rolit";
-    }
+    };
 
     $scope.move = function(cellid){
          if ( $scope.moving === 1 || $scope.winner !== '' ) {
@@ -69,7 +69,7 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
              $scope.promise = $q(function(resolve,reject){
                  console.log("MOVE on cell " + cellid);
                  $scope.gamestate = $scope.state.state.split('');
-                 move = ""
+                 move = "";
                  // move is invalid
                  if ( $scope.gamestate[cellid] !== " " ) {
                      return;
@@ -89,7 +89,7 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
                  // get new game state
                  GetGame = PostMove.then(function(){
                      return $scope.game.$get({ sessionid: $routeParams.sessionid, id: $routeParams.gameid });
-                 })
+                 });
                  GetState = GetGame.then(function(GetGameResult){
                      stateid = $scope.game.states[$scope.game.states.length-1];
                      return $scope.state.$get({ sessionid: $routeParams.sessionid, gameid: $routeParams.gameid, id: stateid});
@@ -110,7 +110,7 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
              });
     
          });
-     }
+     };
 
 
 
