@@ -410,7 +410,7 @@ public class Rolit {
         char[][] matrix = new char[8][8];
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                matrix[i][j] = state[(i * 8) + j + 1];
+                matrix[i][j] = state[(i * 8) + j + 2];
             }
         }
         return matrix;
@@ -422,7 +422,7 @@ public class Rolit {
         res[1] = c2;
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                res[(i * 8) + j + 1] = matrix[i][j];
+                res[(i * 8) + j + 2] = matrix[i][j];
             }
         }
         return res;
@@ -491,11 +491,11 @@ public class Rolit {
             }
         }
         int max = playersScores[0];
-        int winner = 1;
+        int winner = 0;
         for (int i = 1; i < 4; i++) {
             if (max < playersScores[i]) {
                 max = playersScores[i];
-                winner = i + 1;
+                winner = i;
             }
         }
         return winner;
