@@ -489,11 +489,11 @@ public class Rolit {
             }
         }
         int max = playersScores[0];
-        int winner = 1;
+        int winner = 0;
         for (int i = 1; i < 4; i++) {
             if (max < playersScores[i]) {
                 max = playersScores[i];
-                winner = i + 1;
+                winner = i;
             }
         }
         return winner;
