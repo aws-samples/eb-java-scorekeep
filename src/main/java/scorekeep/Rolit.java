@@ -20,7 +20,16 @@ public class Rolit {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("1");
         for (int i = 0; i < 65; i++) {
-            stringBuilder.append(" ");
+            if (i == 27)
+                stringBuilder.append('0');
+            else if (i == 28)
+                stringBuilder.append('1');
+            else if (i == 35)
+                stringBuilder.append('1');
+            else if (i == 36)
+                stringBuilder.append('0');
+            else
+                stringBuilder.append(" ");
         }
         String initialState = stringBuilder.toString();
         Rules rolit = new Rules().setId(id)
