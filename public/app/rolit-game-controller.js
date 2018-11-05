@@ -44,7 +44,15 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
 
   //  }
 
-    for (i = 0; i<66; i++) {
+    for (i = 0; i < 66; i++) {
+        if (i === 29)
+            $scope.color[i] = 0;
+        else if (i === 30)
+            $scope.color[i] = 1;
+        else if (i === 37)
+            $scope.color[i] = 1;
+        else if (i === 38)
+            $scope.color[i] = 0;
         $scope.color[i] = 2;
     }
 
