@@ -18,7 +18,8 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
             $scope.color[i] = 1;
         else if (i === 38)
             $scope.color[i] = 0;
-        $scope.color[i] = 2;
+        else
+            $scope.color[i] = 2;
     }
 
     $scope.playgame = function(){
