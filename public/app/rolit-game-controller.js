@@ -33,13 +33,17 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
         })
     }, 500);
 
-    $scope.red = false;
-    $scope.green = false;
-    $scope.rolit = true;
+    for (i = 0; i<65; i++) {
+        $scope.color[i] = "square_rolit";
+    }
 
-    $scope.move = function(){
-        $scope.red = true;
-        $scope.rolit = false;
+
+    $scope.color_id = function(id) {
+            return $scope.color[id];
+    }
+    $scope.move = function(id){
+        $scope.color[id] = "red";
+
 
     }
     // $scope.move = function(cellid){
