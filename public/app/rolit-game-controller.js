@@ -9,6 +9,7 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
     $scope.user = UserService.get({ id: $routeParams.userid });
     $scope.winner = '';
 
+
     for (i = 0; i < 66; i++) {
         if (i === 28)
             $scope.color[i] = 0;
@@ -56,6 +57,15 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
         } else
             return "square_rolit";
     };
+
+    $scope.gs = function() {
+        if ($scope.gamestate[0] === 1) {
+            return "green"
+        }
+        else if ($scope.gamestate[0] === 0) {
+            return "red"
+        }
+    }
 
     $scope.move = function(cellid){
          if ( $scope.moving === 1 || $scope.winner !== '' ) {
