@@ -403,7 +403,7 @@ public class Rolit {
         char[][] matrix = new char[8][8];
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                matrix[i][j] = state[i * (j + 1) + j + 2];
+                matrix[i][j] = state[(i * 8) + j + 1];
             }
         }
         return matrix;
