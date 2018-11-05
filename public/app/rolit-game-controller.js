@@ -8,6 +8,7 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
     $scope.moving = 0;
     $scope.user = UserService.get({id: $routeParams.userid});
     $scope.winner = '';
+    $scope.error_message = "";
 
     for (i = 0; i < 66; i++){
         if (i === 0){
@@ -112,6 +113,10 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
                 // update game board
                 GetState.then(function () {
                     $scope.gamestate = $scope.state.state.split('');
+                    if ($scope.gamestate[cellid] === " ")
+                        $scope.error_message = "You can not move here";
+                    else
+                        $scope.error_message = "";
                     $scope.moving = 0;
                     resolve();
                 });
