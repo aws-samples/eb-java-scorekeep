@@ -95,7 +95,7 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
                      //Update color
                      if ($scope.gamestate[cellid] === "0")
                         $scope.color[cellid] = 0;
-                     else
+                     else if ($scope.gamestate[cellid] === "1")
                          $scope.color[cellid] = 1;
 
                      $scope.moving = 0;

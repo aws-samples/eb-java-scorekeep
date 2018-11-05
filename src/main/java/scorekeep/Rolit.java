@@ -65,6 +65,8 @@ public class Rolit {
             return new String(oldchar);
         }
 
+        logger.warn(movchar.toString());
+
         if (movchar[0] == oldchar[0]) {
             if (movchar[0] == '0') {
                 oldchar[0] = '1';
@@ -114,8 +116,7 @@ public class Rolit {
             oldchar[1] = Integer.toString(winner).charAt(0);
             oldchar[0] = Integer.toString(winner).charAt(0);
         }
-        String newState = new String(oldchar);
-        return newState;
+        return new String(oldchar);
     }
 
     public static List<Pair<Integer, Integer>> getAvailableMoves(char[][] matrix, char turn) {
