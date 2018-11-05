@@ -55,7 +55,7 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
         $scope.promise.then(function () {
             $scope.promise = $scope.playgame();
         })
-    }, 500);
+    }, 5000);
 
     $scope.color_id = function (id) {
         if ($scope.gamestate[id + 1] === "1") {
