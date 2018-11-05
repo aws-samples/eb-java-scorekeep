@@ -67,17 +67,6 @@ public class Rolit {
 
         logger.warn(movchar.toString());
 
-        if (movchar[0] == oldchar[0]) {
-            if (movchar[0] == '0') {
-                oldchar[0] = '1';
-            } else if (movchar[0] == '1') {
-                oldchar[0] = '0';
-            }
-        } else {
-            logger.error("Not your turn");
-            return new String(oldchar);
-        }
-
         char[][] gameMatrix = makeMatrix(oldchar);
 
         int cellId = 0;
@@ -108,6 +97,17 @@ public class Rolit {
             oldchar = makeCharArrayFromMatrix(oldchar[0], oldchar[1], gameMatrix);
         } else {
             oldchar[cellId] = movchar[0];
+        }
+
+        if (movchar[0] == oldchar[0]) {
+            if (movchar[0] == '0') {
+                oldchar[0] = '1';
+            } else if (movchar[0] == '1') {
+                oldchar[0] = '0';
+            }
+        } else {
+            logger.error("Not your turn");
+            return new String(oldchar);
         }
 
         // check for victory
