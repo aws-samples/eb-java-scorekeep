@@ -80,6 +80,8 @@ function Game($q, $scope, $http, $interval, $routeParams, SessionService, UserSe
 
     });
   }
+
+
   $scope.$on('$destroy',function(){
     if($scope.interval)
         $interval.cancel($scope.interval);

@@ -17,9 +17,9 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
             })
             SetState = GetState.then(function(result){
                 $scope.color = $scope.state.state.split('');
-                if ( $scope.color[0] == 'A' ) {
+                if ( $scope.color[0] === 'A' ) {
                     $scope.winner = "X wins!";
-                } else if ( $scope.color[0] == 'B') {
+                } else if ( $scope.color[0] === 'B') {
                     $scope.winner = "O wins!";
                 }
                 resolve();
@@ -33,53 +33,67 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
         })
     }, 500);
 
-    $scope.move = function(cellid){
-        if ( $scope.moving == 1 || $scope.winner != '' ) {
-            return;
-        }
+    $scope.red = false;
+    $scope.green = false;
+    $scope.blue = false;
+    $scope.yellow = false;
+    $scope.rolit = true;
 
-        $scope.moving = 1;
+    $scope.move = function(){
+        $scope.red = true;
+        $scope.rolit = false;
 
-        $scope.promise.then(function(){
-            $scope.promise = $q(function(resolve,reject){
-                console.log("MOVE on cell " + cellid);
-                $scope.color = $scope.state.state.split('');
-                move = ""
-                // move is invalid
-                if ( $scope.color[cellid] != " " ) {
-                    return;
-                }
-                // temporarily update game board and determine move
-                if ($scope.color[0] == "X") {
-                    $scope.color[cellid] = "X";
-                    $scope.color[0] = "O";
-                    move = "X" + cellid;
-                } else {
-                    $scope.color[cellid] = "O";
-                    $scope.color[0] = "X";
-                    move = "O" + cellid;
-                }
-                // send move
-                PostMove = $http.post(api + 'move/' + $routeParams.sessionid + "/" + $routeParams.gameid + "/" + $routeParams.userid, move);
-                // get new game state
-                GetGame = PostMove.then(function(){
-                    return $scope.game.$get({ sessionid: $routeParams.sessionid, id: $routeParams.gameid });
-                })
-                GetState = GetGame.then(function(GetGameResult){
-                    stateid = $scope.game.states[$scope.game.states.length-1];
-                    return $scope.state.$get({ sessionid: $routeParams.sessionid, gameid: $routeParams.gameid, id: stateid});
-                });
-                // update game board
-                GetState.then(function(){
-                    $scope.color = $scope.state.state.split('');
-                    $scope.moving = 0;
-                    resolve();
-                });
-
-            });
-
-        });
     }
+    // $scope.move = function(cellid){
+    //     if ( $scope.moving === 1 || $scope.winner !== '' ) {
+    //         return;
+    //     }
+    //
+    //     $scope.moving = 1;
+    //
+    //     $scope.promise.then(function(){
+    //         $scope.promise = $q(function(resolve,reject){
+    //             console.log("MOVE on cell " + cellid);
+    //             $scope.color = $scope.state.state.split('');
+    //             move = ""
+    //             // move is invalid
+    //             if ( $scope.color[cellid] !== " " ) {
+    //                 return;
+    //             }
+    //             // temporarily update game board and determine move
+    //             if ($scope.color[0] === "X") {
+    //                 $scope.color[cellid] = "X";
+    //                 $scope.color[0] = "O";
+    //                 move = "X" + cellid;
+    //             } else {
+    //                 $scope.color[cellid] = "O";
+    //                 $scope.color[0] = "X";
+    //                 move = "O" + cellid;
+    //             }
+    //             // send move
+    //             PostMove = $http.post(api + 'move/' + $routeParams.sessionid + "/" + $routeParams.gameid + "/" + $routeParams.userid, move);
+    //             // get new game state
+    //             GetGame = PostMove.then(function(){
+    //                 return $scope.game.$get({ sessionid: $routeParams.sessionid, id: $routeParams.gameid });
+    //             })
+    //             GetState = GetGame.then(function(GetGameResult){
+    //                 stateid = $scope.game.states[$scope.game.states.length-1];
+    //                 return $scope.state.$get({ sessionid: $routeParams.sessionid, gameid: $routeParams.gameid, id: stateid});
+    //             });
+    //             // update game board
+    //             GetState.then(function(){
+    //                 $scope.color = $scope.state.state.split('');
+    //                 $scope.moving = 0;
+    //                 resolve();
+    //             });
+    //
+    //         });
+    //
+    //     });
+    // }
+
+
+
     $scope.$on('$destroy',function(){
         if($scope.interval)
             $interval.cancel($scope.interval);

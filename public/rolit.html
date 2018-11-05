@@ -1,10 +1,12 @@
-```<div id="game_rolit">
+<div id="game_rolit">
     <div id="user"><h6>{{ user.name}}</h6></div>
     <div class="sub-header">{{game.name}}</div>
     <div id="win message">{{ winner }}</div>
     <div class="gameboard" display="inline" float="left">
         <div class="row_rolit">
-            <div class="square_rolit" ng-click="move(1)" [style.background-color]=${color[1]}">&nbsp;</div>
+            <div ng-if ="red" class="red" ng-click="move(1)" [style.background-color]=${color[1]}">&nbsp;</div>
+            <div ng-if ="rolit" class="square_rolit" ng-click="move(1)" [style.background-color]=${color[1]}">&nbsp;</div>
+            <div ng-if ="blue" class="blue" ng-click="move(1)" [style.background-color]=${color[1]}">&nbsp;</div>
             <div class="square_rolit" ng-click="move(2)" [style.background-color]=${color[2]}>&nbsp;</div>
             <div class="square_rolit" ng-click="move(3)" [style.background-color]=${color[3]}>&nbsp;</div>
             <div class="square_rolit" ng-click="move(4)" [style.background-color]=${color[4]}>&nbsp;</div>
