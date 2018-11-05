@@ -9,6 +9,7 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
     $scope.user = UserService.get({id: $routeParams.userid});
     $scope.winner = '';
     $scope.error_message = "";
+    $scope.loading = true;
 
     for (i = 0; i < 66; i++){
         if (i === 0){
