@@ -415,7 +415,7 @@ public class Rolit {
         res[1] = c2;
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                res[i * (j + 1) + j + 2] = matrix[i][j];
+                res[(i * 8) + j + 1] = matrix[i][j];
             }
         }
         return res;
