@@ -58,10 +58,10 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
     }, 5000);
 
     $scope.color_id = function (id) {
-        if ($scope.gamestate[id] === "1") {
+        if ($scope.gamestate[id + 1] === "1") {
             return "green"
         }
-        else if ($scope.gamestate[id] === "0") {
+        else if ($scope.gamestate[id + 1] === "0") {
             return "red"
         } else
             return "square_rolit";
@@ -89,7 +89,7 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
                 $scope.gamestate = $scope.state.state.split('');
                 move = "";
                 // move is invalid
-                if ($scope.gamestate[cellid] !== " ") {
+                if ($scope.gamestate[cellid + 1] !== " ") {
                     $scope.error_message = "Error: This cell is already occupied";
                     return;
                 }
@@ -116,7 +116,7 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
                 // update game board
                 GetState.then(function () {
                     $scope.gamestate = $scope.state.state.split('');
-                    if ($scope.gamestate[cellid] === " ")
+                    if ($scope.gamestate[cellid + 1] === " ")
                         $scope.error_message = "Error: You can not move here";
                     else
                         $scope.error_message = "";
