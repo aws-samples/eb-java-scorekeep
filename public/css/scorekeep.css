@@ -356,3 +356,9 @@ input {
      minus half of the width and minus half of the height
     */
 }
+#inner-circle:active{
+    background-color: lightgray;
+}
+#inner-circle:hover{
+    background-color: gray;
+}
