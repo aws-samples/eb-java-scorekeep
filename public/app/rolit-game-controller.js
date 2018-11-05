@@ -1,6 +1,6 @@
 var module = angular.module('scorekeep');
-module.controller('RolitGameController', Game);
-function Game($q, $scope, $http, $interval, $routeParams, SessionService, UserService, GameService, GameCollection, RulesService, StateService, api) {
+module.controller('RolitGameController', Rolit);
+function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserService, GameService, GameCollection, RulesService, StateService, api) {
     $scope.game = new GameService;
     $scope.state = new StateService; // game state object
     $scope.color = []; // game state as Array
