@@ -50,9 +50,11 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
 
     $scope.color_id = function(id) {
         if ($scope.color[id]=== 1){
-            return "green"} else
-        if ($scope.color[id]=== 0){
-            return "red"} else
+            return "green"
+        }
+        else if ($scope.color[id]=== 0){
+            return "red"
+        } else
             return "square_rolit";
     }
 
@@ -98,8 +100,8 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
                      //Update color
                      if ($scope.gamestate[cellid] === "0")
                         $scope.color[cellid] = 0;
-                        else
-                            $scope.color[cellid] = 1;
+                     else
+                         $scope.color[cellid] = 1;
 
                      $scope.moving = 0;
                      resolve();
