@@ -66,10 +66,10 @@ public class Rolit {
         }
 
         if (movchar[0] == oldchar[0]) {
-            if (movchar[0] == '1') {
-                oldchar[0] = '2';
-            } else if (movchar[0] == '2') {
+            if (movchar[0] == '0') {
                 oldchar[0] = '1';
+            } else if (movchar[0] == '1') {
+                oldchar[0] = '0';
             }
         } else {
             logger.error("Not your turn");
@@ -469,16 +469,16 @@ public class Rolit {
             return -1;
         int playersScores[] = new int[4];
         for (int i = 2; i < 66; i++) {
-            if (state[i] == '1') {
+            if (state[i] == '0') {
                 playersScores[0]++;
             }
-            if (state[i] == '2') {
+            if (state[i] == '1') {
                 playersScores[1]++;
             }
-            if (state[i] == '3') {
+            if (state[i] == '2') {
                 playersScores[2]++;
             }
-            if (state[i] == '4') {
+            if (state[i] == '3') {
                 playersScores[3]++;
             }
         }
