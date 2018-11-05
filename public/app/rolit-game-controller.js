@@ -70,7 +70,7 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
         else if ($scope.gamestate[0] === 0) {
             return "red"
         }
-    }
+    };
 
     $scope.move = function (cellid) {
         if ($scope.moving === 1 || $scope.winner !== '') {
@@ -113,9 +113,9 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
                     $scope.gamestate = $scope.state.state.split('');
                     //Update color
                     if ($scope.gamestate[cellid] === "0")
-                        $scope.color[cellid] = 0;
-                    else if ($scope.gamestate[cellid] === "1")
                         $scope.color[cellid] = 1;
+                    else if ($scope.gamestate[cellid] === "1")
+                        $scope.color[cellid] = 0;
                     //else
 
                     $scope.moving = 0;
