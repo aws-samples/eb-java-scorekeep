@@ -34,15 +34,19 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
     }, 500);
 
     for (i = 0; i<65; i++) {
-        $scope.color[i] = "square_rolit";
+        $scope.color[i] = 2;
     }
 
 
     $scope.color_id = function(id) {
-            return $scope.color[id];
+        if ($scope.color[id]=== 1){
+            return "green"} else
+        if ($scope.color[id]=== 0){
+            return "red"} else
+            return "square_rolit";
     }
     $scope.move = function(id){
-        $scope.color[id] = "red";
+        $scope.color[id] = 1;
 
 
     }
