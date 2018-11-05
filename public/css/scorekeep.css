@@ -274,21 +274,76 @@ input {
     justify-content: center;
     align-items: center;
     margin: -3px;
-    background-color: #FF851B;
+    background-color: lightgray;
     font-size: 40px;
-    border: 1px solid #d35400;
+    border: 1px solid black;
     border-radius: 1px;
     color: #871d08;
 }
-.square_rolit:hover {
+.square:hover {
      background-color: #FF4136;
  }
-.square_rolit:active {
+.square:active {
     background-color: #85144b;
 }
-.square:hover {
-  background-color: #FF4136;
+.square_rolit:hover {
+  background-color:red;
 }
-.square:active {
-  background-color: #85144b;
+.square_rolit:active {
+  background-color: darkred;
+}
+
+.red{
+    width: 50px;
+    height: 50px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin: -3px;
+    background-color: red;
+    font-size: 40px;
+    border: 1px solid black;
+    border-radius: 1px;
+    color: #871d08;
+}
+
+.green{
+    width: 50px;
+    height: 50px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin: -3px;
+    background-color: green;
+    font-size: 40px;
+    border: 1px solid black;
+    border-radius: 1px;
+    color: #871d08;
+}
+
+.blue{
+    width: 50px;
+    height: 50px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin: -3px;
+    background-color: blue;
+    font-size: 40px;
+    border: 1px solid black;
+    border-radius: 1px;
+    color: #871d08;
+}
+.yellow{
+    width: 50px;
+    height: 50px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin: -3px;
+    background-color: yellow;
+    font-size: 40px;
+    border: 1px solid black;
+    border-radius: 1px;
+    color: #871d08;
 }
