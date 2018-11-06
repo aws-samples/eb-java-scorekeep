@@ -25,9 +25,9 @@ public class Rolit {
             else if (i == 29)
                 stringBuilder.append('1');
             else if (i == 36)
-                stringBuilder.append('1');
+                stringBuilder.append('2');
             else if (i == 37)
-                stringBuilder.append('0');
+                stringBuilder.append('3');
             else
                 stringBuilder.append(" ");
         }
