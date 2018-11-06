@@ -13,22 +13,6 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
     $scope.loading = false;
     $scope.color = '';
 
-    // for (i = 0; i < 66; i++){
-    //     if (i === 0){
-    //         $scope.gamestate[i] = "0";
-    //     } else if (i === 28){
-    //         $scope.gamestate[i] = "0";
-    //     } else if (i === 29){
-    //         $scope.gamestate[i] = "1";
-    //     } else if (i === 36){
-    //         $scope.gamestate[i] = "1";
-    //     } else if (i === 37){
-    //         $scope.gamestate[i] = "0";
-    //     } else {
-    //         $scope.gamestate[i] = " ";
-    //     }
-    // }
-
     $scope.playgame = function () {
         return $q(function (resolve, reject) {
             GetGame = $scope.game.$get({sessionid: $routeParams.sessionid, id: $routeParams.gameid});
@@ -49,6 +33,10 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
                     $scope.winner = "red wins!";
                 } else if ($scope.gamestate[1] === '1') {
                     $scope.winner = "green wins!";
+                }else if ($scope.gamestate[1] === '3') {
+                    $scope.winner = "yellow wins!";
+                }else if ($scope.gamestate[1] === '4') {
+                    $scope.winner = "blue wins!";
                 }
                 resolve();
             });
@@ -78,7 +66,11 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
         }
         else if ($scope.gamestate[id + 1] === "0") {
             return "red"
-        } else
+        } else if ($scope.gamestate[id + 1] === "3") {
+            return "yellow"
+        } else if ($scope.gamestate[id + 1] === "4") {
+            return "blue"
+            }else
             return "square_rolit";
     };
 
@@ -89,7 +81,28 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
         else if ($scope.color === 0) {
             return "red"
         }
+        else if ($scope.color === 3) {
+            return "yellow"
+        }
+        else if ($scope.color === 4) {
+            return "blue"
+        }
     };
+    $scope.now = function () {
+        if ($scope.gamestate[0] === '1') {
+            return "green"
+        }
+        else if ($scope.gamestate[0] === '0') {
+            return "red"
+        }
+        else if ($scope.gamestate[0] === '3') {
+            return "yellow"
+        }
+        else if ($scope.gamestate[0] === '4') {
+            return "green"
+        }
+    };
+
 
     $scope.move = function (cellid) {
         if ($scope.moving === 1 || $scope.winner !== '') {

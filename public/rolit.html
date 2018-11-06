@@ -2,7 +2,7 @@
     <div id="user"><h6>{{ user.name}}</h6></div>
     <div class="sub-header">{{game.name}}</div>
     <div id="win message">{{ winner }}</div>
-    <div ng-hide = {{loading}} class="gameboard" display="inline" float="left">
+    <div class="gameboard" display="inline" float="left">
         <div class="row_rolit">
             <div class="rolit_square" ng-click="move(1)"><div id = "inner-circle" class = "{{color_id(1)}}">&nbsp;</div></div>
             <div class="rolit_square" ng-click="move(2)"><div id = "inner-circle" class = "{{color_id(2)}}">&nbsp;</div></div>
@@ -95,17 +95,18 @@
         <div></div>
 
     </div>
-
-    <div ng-hide = {{!loading}} class="bubblingG">
-	<span id="bubblingG_1">
-	</span>
-        <span id="bubblingG_2">
-	</span>
-        <span id="bubblingG_3">
-	</span>
+<div>
+    <div>
+        <h3>Your colour is: </h3>
+        <div class="{{gs(0)}}"></div>
     </div>
-    <div ng-hide = {{loading}} >Your colour is: </div>
-    <div ng-hide = {{loading}} class="{{gs(0)}}"></div>
-    <div ng-hide = {{loading}} >{{error_message}}</div>
+    <div>
+        <h3>Now</h3>
+        <div class="{{now(0}}"></div>
+    </div>
+</div>
+    <div class="error">
+        {{error_message}}
+    </div>
 
 </div>
