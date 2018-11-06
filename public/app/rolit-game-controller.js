@@ -33,9 +33,9 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
                     $scope.winner = "red wins!";
                 } else if ($scope.gamestate[1] === '1') {
                     $scope.winner = "green wins!";
-                }else if ($scope.gamestate[1] === '3') {
+                }else if ($scope.gamestate[1] === '2') {
                     $scope.winner = "yellow wins!";
-                }else if ($scope.gamestate[1] === '4') {
+                }else if ($scope.gamestate[1] === '3') {
                     $scope.winner = "blue wins!";
                 }
                 resolve();
@@ -66,9 +66,9 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
         }
         else if ($scope.gamestate[id + 1] === "0") {
             return "red"
-        } else if ($scope.gamestate[id + 1] === "3") {
+        } else if ($scope.gamestate[id + 1] === "2") {
             return "yellow"
-        } else if ($scope.gamestate[id + 1] === "4") {
+        } else if ($scope.gamestate[id + 1] === "3") {
             return "blue"
             }else
             return "square_rolit";
@@ -81,10 +81,10 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
         else if ($scope.color === 0) {
             return "red"
         }
-        else if ($scope.color === 3) {
+        else if ($scope.color === 2) {
             return "yellow"
         }
-        else if ($scope.color === 4) {
+        else if ($scope.color === 3) {
             return "blue"
         }
     };
@@ -95,10 +95,10 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
         else if ($scope.gamestate[0] === '0') {
             return "red"
         }
-        else if ($scope.gamestate[0] === '3') {
+        else if ($scope.gamestate[0] === '2') {
             return "yellow"
         }
-        else if ($scope.gamestate[0] === '4') {
+        else if ($scope.gamestate[0] === '3') {
             return "green"
         }
     };
