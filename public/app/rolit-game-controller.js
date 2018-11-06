@@ -103,6 +103,7 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
     };
 
 
+
     $scope.move = function (cellid) {
         if ($scope.moving === 1 || $scope.winner !== '') {
             return;

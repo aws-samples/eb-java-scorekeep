@@ -1,7 +1,7 @@
 <div id="game_rolit">
-    <div id="user"><h6>{{ user.name}}</h6></div>
+    <div id="user"><h6>{{user.name}}</h6></div>
     <div class="sub-header">{{game.name}}</div>
-    <div id="win message">{{ winner }}</div>
+    <div id="win message">{{winner}}</div>
     <div class="gameboard" display="inline" float="left">
         <div class="row_rolit">
             <div class="rolit_square" ng-click="move(1)"><div id = "inner-circle" class = "{{color_id(1)}}">&nbsp;</div></div>
@@ -92,15 +92,11 @@
             <div class="rolit_square" ng-click="move(64)"><div id = "inner-circle" class = "{{color_id(64)}}">&nbsp;</div></div>
 
         </div>
-        <div></div>
-
     </div>
-
-    <div display="table-cell">
-        <div title=" Your colour is: " class="{{gs(0)}}"></div>
-        <div title=" Now turn of color: " class="{{now(0}}"></div>
-    </div>
+    <h7> Your colour is: </h7>
+    <div class="{{gs()}}"></div>
+    <h7> Now turn of color: </h7>
+    <div  class="{{now()}}"></div>
 
     <div class="error">{{error_message}}</div>
-
 </div>
