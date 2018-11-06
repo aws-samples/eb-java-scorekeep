@@ -63,7 +63,11 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
         }
         else if ($scope.gamestate[id + 1] === "0") {
             return "red"
-        } else
+        } else if ($scope.gamestate[id + 1] === "3") {
+            return "yellow"
+        } else if ($scope.gamestate[id + 1] === "4") {
+            return "blue"
+            }else
             return "square_rolit";
     };
 
@@ -74,6 +78,9 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
         else if ($scope.gamestate[0] === "0") {
             return "red"
         }
+    };
+    $scope.er = function() {
+        return $scope.error_message === "";
     };
 
     $scope.move = function (cellid) {
