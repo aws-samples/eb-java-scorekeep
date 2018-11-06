@@ -63,14 +63,13 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
     $scope.color_id = function (id) {
         if ($scope.gamestate[id + 1] === "1") {
             return "green"
-        }
-        else if ($scope.gamestate[id + 1] === "0") {
+        } else if ($scope.gamestate[id + 1] === "0") {
             return "red"
         } else if ($scope.gamestate[id + 1] === "2") {
             return "yellow"
         } else if ($scope.gamestate[id + 1] === "3") {
             return "blue"
-            }else
+        } else
             return "square_rolit";
     };
 
@@ -99,7 +98,7 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
             return "yellow"
         }
         else if ($scope.gamestate[0] === '3') {
-            return "green"
+            return "blue"
         }
     };
 
@@ -114,7 +113,7 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
             return;
         }
 
-        if ($scope.gamestate[0] !== $scope.color) {
+        if ($scope.gamestate[0] !== $scope.color.toString()) {
             $scope.error_message = "Error: This is not your turn";
             return;
         }
