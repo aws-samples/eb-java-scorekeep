@@ -8,8 +8,10 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
     $scope.moving = 0;
     $scope.user = UserService.get({id: $routeParams.userid});
     $scope.winner = '';
+    $scope.users = [];
     $scope.error_message = "";
     $scope.loading = false;
+    $scope.color = '';
 
     // for (i = 0; i < 66; i++){
     //     if (i === 0){
@@ -40,6 +42,8 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
             });
             SetState = GetState.then(function (result) {
                 $scope.gamestate = $scope.state.state.split('');
+                $scope.users = $scope.game.users;
+                $scope.set_color();
                 $scope.loading = false;
                 if ($scope.gamestate[1] === '0') {
                     $scope.winner = "red wins!";
@@ -55,7 +59,18 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
         $scope.promise.then(function () {
             $scope.promise = $scope.playgame();
         })
-    }, 500);
+    }, 1500);
+
+    $scope.set_color = function () {
+        for (i = 0; i < $scope.users.length; i++) {
+            console.log($scope.users[i]);
+            if ($scope.users[i] === $scope.user.id) {
+                $scope.color = i;
+                console.log("Your color is " + i);
+            }
+        }
+        $scope.gs();
+    };
 
     $scope.color_id = function (id) {
         if ($scope.gamestate[id + 1] === "1") {
@@ -68,10 +83,10 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
     };
 
     $scope.gs = function () {
-        if ($scope.gamestate[0] === "1") {
+        if ($scope.color === 1) {
             return "green"
         }
-        else if ($scope.gamestate[0] === "0") {
+        else if ($scope.color === 0) {
             return "red"
         }
     };
