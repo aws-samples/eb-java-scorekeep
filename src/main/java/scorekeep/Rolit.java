@@ -13,7 +13,7 @@ public class Rolit {
         String id = "Rolit";
         String name = "Rolit";
         String[] categories = {"head to head", "quick"};
-        Integer[] users = {2};
+        Integer[] users = {2, 3, 4};
         Integer teams = 0;
         String[] phases = {"Move"};
         String[] moves = {"Roll"};
