@@ -13,6 +13,8 @@ import java.util.Set;
 
 public class GameModel {
   /** AWS SDK credentials. */
+  private AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard().build();
+  private DynamoDBMapper mapper = new DynamoDBMapper(client);
   private final SessionModel sessionModel = new SessionModel();
 
   public void saveGame(Game game) throws SessionNotFoundException {
@@ -21,11 +23,11 @@ public class GameModel {
     if (sessionModel.loadSession(sessionId) == null ) {
       throw new SessionNotFoundException(sessionId);
     }
-    Application.mapper.save(game);
+    mapper.save(game);
   }
 
   public Game loadGame(String gameId) throws GameNotFoundException {
-    Game game = Application.mapper.load(Game.class, gameId);
+    Game game = mapper.load(Game.class, gameId);
     if ( game == null ) {
       throw new GameNotFoundException(gameId);
     }
@@ -49,18 +51,18 @@ public class GameModel {
         .withKeyConditionExpression("#key1 = :val1")
         .withConsistentRead(false);
 
-    List<Game> sessionGames = Application.mapper.query(Game.class, queryExpression);
+    List<Game> sessionGames = mapper.query(Game.class, queryExpression);
     return sessionGames;
   }
 
   public void deleteGame(String sessionId, String gameId) throws GameNotFoundException {
-    Game game = Application.mapper.load(Game.class, gameId);
+    Game game = mapper.load(Game.class, gameId);
     if ( game == null ) {
       throw new GameNotFoundException(gameId);
     }
-    Application.mapper.delete(game);
+    mapper.delete(game);
     //delete game from session
-    Session session = Application.mapper.load(Session.class, sessionId);
+    Session session = mapper.load(Session.class, sessionId);
     Set<String> sessionGames = session.getGames();
     sessionGames.remove(gameId);
     if (sessionGames.size() == 0) {
@@ -68,6 +70,6 @@ public class GameModel {
     } else {
       session.setGames(sessionGames);
     }
-    Application.mapper.save(session);
+    mapper.save(session);
   }
 }

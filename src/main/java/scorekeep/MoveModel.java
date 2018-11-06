@@ -12,6 +12,8 @@ import java.util.Map;
 
 public class MoveModel {
   /** AWS SDK credentials. */
+  private AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard().build();
+  private DynamoDBMapper mapper = new DynamoDBMapper(client);
   private final SessionModel sessionModel = new SessionModel();
   private final GameModel gameModel = new GameModel();
 
@@ -25,11 +27,11 @@ public class MoveModel {
     if (gameModel.loadGame(gameId) == null ) {
       throw new GameNotFoundException(gameId);
     }
-    Application.mapper.save(move);
+    mapper.save(move);
   }
 
   public Move loadMove(String moveId) throws MoveNotFoundException {
-    Move move = Application.mapper.load(Move.class, moveId);
+    Move move = mapper.load(Move.class, moveId);
     if ( move == null ) {
       throw new MoveNotFoundException(moveId);
     }
@@ -56,15 +58,15 @@ public class MoveModel {
     .withKeyConditionExpression("#key1 = :val1")
     .withConsistentRead(false);
 
-    List<Move> gameMoves = Application.mapper.query(Move.class, queryExpression);
+    List<Move> gameMoves = mapper.query(Move.class, queryExpression);
     return gameMoves;
   }
 
   public void deleteMove(String moveId) throws MoveNotFoundException {
-    Move move = Application.mapper.load(Move.class, moveId);
+    Move move = mapper.load(Move.class, moveId);
     if ( move == null ) {
       throw new MoveNotFoundException(moveId);
     }
-    Application.mapper.delete(move);
+    mapper.delete(move);
   }
 }
