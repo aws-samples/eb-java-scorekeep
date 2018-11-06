@@ -31,7 +31,7 @@ function Game($q, $scope, $http, $interval, $routeParams, SessionService, UserSe
     $scope.promise.then(function() {
       $scope.promise = $scope.playgame();
     })
-  }, 500);
+  }, 1500);
 
   $scope.move = function(cellid){
     if ( $scope.moving == 1 || $scope.winner != '' ) {
@@ -80,6 +80,8 @@ function Game($q, $scope, $http, $interval, $routeParams, SessionService, UserSe
 
     });
   }
+
+
   $scope.$on('$destroy',function(){
     if($scope.interval)
         $interval.cancel($scope.interval);

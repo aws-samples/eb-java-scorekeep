@@ -1,7 +1,4 @@
 var module = angular.module('scorekeep');
-//Game matrix
-//var gameMatrix: string[][];
-//var oldchar: string[];
 module.controller('RolitGameController', Rolit);
 
 function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserService, GameService, GameCollection, RulesService, StateService, api) {
@@ -11,82 +8,10 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
     $scope.moving = 0;
     $scope.user = UserService.get({id: $routeParams.userid});
     $scope.winner = '';
+    $scope.users = [];
     $scope.error_message = "";
-    $scope.loading = true;
-
-    // for (i = 0; i < 66; i++){
-    //     if (i === 0){
-    //         $scope.gamestate[i] = "0";
-    //     } else if (i === 28){
-    //         $scope.gamestate[i] = "0";
-    //     } else if (i === 29){
-    //         $scope.gamestate[i] = "1";
-    //     } else if (i === 36){
-    //         $scope.gamestate[i] = "1";
-    //     } else if (i === 37){
-    //         $scope.gamestate[i] = "0";
-    //     } else {
-    //         $scope.gamestate[i] = " ";
-    //     }
-    // }
-
-    //make matrix
- //   $scope.makeMatrix = function(){
- //    for (int i = 0; i < 8; i++) {
- //           for (int j = 0; j < 8; j++) {
- //               gameMatrix[i][j] = gamestate[(i * 8) + j + 2];
- //           }
- //       }
- //   }
-
- //make char array from matrix
-
-//    $scope.makeCharArrayFromMatrix = function(c1, c2) {
-//        oldchar[0] = c1;
-//        oldchar[1] = c2;
-//        for (int i = 0; i < 8; i++) {
-//            for (int j = 0; j < 8; j++) {
-//                oldchar[(i * 8) + j + 2] = gameMatrix[i][j];
-//            }
-//        }
-//    }
-
-//    $scope.isMoveAllowed = function(i, j) {
-//        length = 66;
-//        if ($scope.isInRange1(i - 1, 66) && matrix[i - 1][j] != ' ') {
-//            return true;
-//        }
-//        if ($scope.isInRange1(j - 1, 66) && matrix[i][j - 1] != ' ') {
-//            return true;
-//        }
-//        if ($scope.isInRange1(i + 1, 66) && matrix[i + 1][j] != ' ') {
-//            return true;
-//        }
-//        if ($scope.isInRange1(j + 1, 66) && matrix[i][j + 1] != ' ') {
-//            return true;
-//        }
-//        if ($scope.isInRange(i - 1, j - 1, 66) && matrix[i - 1][j - 1] != ' ') {
-//            return true;
-//        }
-//        if ($scope.isInRange(i + 1, j + 1, 66) && matrix[i + 1][j + 1] != ' ') {
-//            return true;
-//        }
-//        if ($scope.isInRange(i - 1, j + 1, 66) && matrix[i - 1][j + 1] != ' ') {
-//            return true;
-//        }
-//        if ($scope.isInRange(i + 1, j - 1, 66) && matrix[i + 1][j - 1] != ' ') {
-//            return true;
-//        }
-//        return false;
-//    }
-
-//      $scope.isInRange = function(i, j, length) {
-//        if(i >= 0 && i < length && j >= 0 && j < length)
-//        return true;
-//        else
-//        return false;
-//        }
-    
+    $scope.loading = false;
+    $scope.color = '';
 
     $scope.playgame = function () {
         return $q(function (resolve, reject) {
@@ -101,11 +26,17 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
             });
             SetState = GetState.then(function (result) {
                 $scope.gamestate = $scope.state.state.split('');
+                $scope.users = $scope.game.users;
+                $scope.set_color();
                 $scope.loading = false;
                 if ($scope.gamestate[1] === '0') {
                     $scope.winner = "red wins!";
                 } else if ($scope.gamestate[1] === '1') {
                     $scope.winner = "green wins!";
+                }else if ($scope.gamestate[1] === '2') {
+                    $scope.winner = "yellow wins!";
+                }else if ($scope.gamestate[1] === '3') {
+                    $scope.winner = "blue wins!";
                 }
                 resolve();
             });
@@ -116,29 +47,75 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
         $scope.promise.then(function () {
             $scope.promise = $scope.playgame();
         })
-    }, 5000);
+    }, 1500);
+
+    $scope.set_color = function () {
+        for (i = 0; i < $scope.users.length; i++) {
+            console.log($scope.users[i]);
+            if ($scope.users[i] === $scope.user.id) {
+                $scope.color = i;
+                console.log("Your color is " + i);
+            }
+        }
+        $scope.gs();
+    };
 
     $scope.color_id = function (id) {
-        if ($scope.gamestate[id] === "1") {
+        if ($scope.gamestate[id + 1] === "1") {
             return "green"
-        }
-        else if ($scope.gamestate[id] === "0") {
+        } else if ($scope.gamestate[id + 1] === "0") {
             return "red"
+        } else if ($scope.gamestate[id + 1] === "2") {
+            return "yellow"
+        } else if ($scope.gamestate[id + 1] === "3") {
+            return "blue"
         } else
             return "square_rolit";
     };
 
     $scope.gs = function () {
-        if ($scope.gamestate[0] === "1") {
+        if ($scope.color === 1) {
             return "green"
         }
-        else if ($scope.gamestate[0] === "0") {
+        else if ($scope.color === 0) {
             return "red"
+        }
+        else if ($scope.color === 2) {
+            return "yellow"
+        }
+        else if ($scope.color === 3) {
+            return "blue"
+        }
+    };
+    $scope.now = function () {
+        if ($scope.gamestate[0] === '1') {
+            return "green"
+        }
+        else if ($scope.gamestate[0] === '0') {
+            return "red"
+        }
+        else if ($scope.gamestate[0] === '2') {
+            return "yellow"
+        }
+        else if ($scope.gamestate[0] === '3') {
+            return "blue"
         }
     };
 
+
+
     $scope.move = function (cellid) {
         if ($scope.moving === 1 || $scope.winner !== '') {
+            return;
+        }
+
+        if ($scope.gamestate[cellid + 1] !== " ") {
+            $scope.error_message = "Error: This cell is already occupied";
+            return;
+        }
+
+        if ($scope.gamestate[0] !== $scope.color.toString()) {
+            $scope.error_message = "Error: This is not your turn";
             return;
         }
 
@@ -149,11 +126,7 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
                 console.log("MOVE on cell " + cellid);
                 $scope.gamestate = $scope.state.state.split('');
                 move = "";
-                // move is invalid
-                if ($scope.gamestate[cellid] !== " ") {
-                    $scope.error_message = "Error: This cell is already occupied";
-                    return;
-                }
+
                 // temporarily update game board and determine move
                 if ($scope.gamestate[0] === "0") {
                     move = "0" + cellid;
@@ -177,7 +150,7 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
                 // update game board
                 GetState.then(function () {
                     $scope.gamestate = $scope.state.state.split('');
-                    if ($scope.gamestate[cellid] === " ")
+                    if ($scope.gamestate[cellid + 1] === " ")
                         $scope.error_message = "Error: You can not move here";
                     else
                         $scope.error_message = "";

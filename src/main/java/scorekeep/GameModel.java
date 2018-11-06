@@ -13,8 +13,7 @@ import java.util.Set;
 
 public class GameModel {
   /** AWS SDK credentials. */
-  private AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
-        .build();
+  private AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard().build();
   private DynamoDBMapper mapper = new DynamoDBMapper(client);
   private final SessionModel sessionModel = new SessionModel();
 

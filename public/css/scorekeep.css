@@ -19,6 +19,8 @@
  * Base structure
  */
 
+
+
 html,
 body {
   height: 100%;
@@ -264,9 +266,139 @@ input {
   border-radius: 1px;
   color: #871d08;
 }
-.square:hover {
-  background-color: #FF4136;
+.row_rolit {
+    display: inline-flex;
+    height: auto;
 }
+.square_rolit {
+    width: 50px;
+    height: 50px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin: -3px;
+    background-color: lightgray;
+    font-size: 40px;
+    color: #871d08;
+}
+.rolit_square {
+    width: 50px;
+    height: 50px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin: -3px;
+    background-color: lightgray;
+    font-size: 40px;
+    border: 1px solid black;
+    border-radius: 1px;
+    color: #871d08;
+}
+.square:hover {
+     background-color: gray;
+ }
 .square:active {
-  background-color: #85144b;
+    background-color: lightgray;
+}
+.square_rolit:hover {
+  background-color: gray;
+}
+.square_rolit:active {
+  background-color: lightgray;
+}
+.rolit_square:hover {
+    background-color: gray;
+}
+.rolit_square:active {
+    background-color: lightgray;
+}
+.red{
+    width: 50px;
+    height: 50px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin: -3px;
+    background-color: red;
+    font-size: 40px;
+    border: 1px solid black;
+    border-radius: 1px;
+    color: #871d08;
+}
+
+
+.green{
+    width: 50px;
+    height: 50px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin: -3px;
+    background-color: green;
+    font-size: 40px;
+    border: 1px solid black;
+    border-radius: 1px;
+    color: #871d08;
+}
+
+.blue{
+    width: 50px;
+    height: 50px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin: -3px;
+    background-color: blue;
+    font-size: 40px;
+    border: 1px solid black;
+    border-radius: 1px;
+    color: #871d08;
+}
+
+.yellow{
+    width: 50px;
+    height: 50px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin: -3px;
+    background-color: yellow;
+    font-size: 40px;
+    border: 1px solid black;
+    border-radius: 1px;
+    color: #871d08;
+}
+
+#inner-circle {
+    position: relative;
+    border-radius: 50%;
+    height: 43px;
+    width: 43px;
+    /*
+     Put top edge and left edge in the center
+    */
+    top: -5%;
+    left: -5%;
+    /*margin: -3px -100px 0px -150px;*/
+    /*
+     Offset the position correctly with
+     minus half of the width and minus half of the height
+    */
+}
+#inner-circle:active{
+    background-color: lightgray;
+}
+#inner-circle:hover{
+    background-color: gray;
+}
+.error{
+    height: auto;
+    width: content-box;
+    justify-content: center;
+    align-items: center;
+    margin: -3px;
+    background-color: #fff9f9;
+    font-size: 20px;
+    border: 1px solid #921513;
+    border-radius: 3px;
 }

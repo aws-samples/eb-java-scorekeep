@@ -18,8 +18,7 @@ public class State {
   private String state;
   private Set<String> turn;
 
-  public State() {
-  }
+  public State() { }
 
   public State(String id, String session, String game, String state, Set<String> turn) {
     this.id = id;

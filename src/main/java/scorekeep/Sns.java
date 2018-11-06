@@ -16,20 +16,20 @@ public class Sns {
    * Send a notification email.
    */
   public static void sendNotification(String subject, String body) {
-    String topicarn = System.getenv("NOTIFICATION_TOPIC");
-    PublishRequest publishRequest = new PublishRequest(topicarn, body, subject);
-    PublishResult publishResult = snsclient.publish(publishRequest);
-    logger.info("Email sent: " + publishResult.getMessageId());
+//    String topicarn = System.getenv("NOTIFICATION_TOPIC");
+//    PublishRequest publishRequest = new PublishRequest(topicarn, body, subject);
+//    PublishResult publishResult = snsclient.publish(publishRequest);
+//    logger.info("Email sent: " + publishResult.getMessageId());
   }
 
   /*
    * Create an SNS subscription.
    */
   public static void createSubscription() {
-    String topicarn = System.getenv("NOTIFICATION_TOPIC");
-    String emailaddress = System.getenv("NOTIFICATION_EMAIL");
-    SubscribeRequest subRequest = new SubscribeRequest(topicarn, "email", emailaddress);
-    snsclient.subscribe(subRequest);
+//    String topicarn = System.getenv("NOTIFICATION_TOPIC");
+//    String emailaddress = System.getenv("NOTIFICATION_EMAIL");
+//    SubscribeRequest subRequest = new SubscribeRequest(topicarn, "email", emailaddress);
+//    snsclient.subscribe(subRequest);
   }
 
 }

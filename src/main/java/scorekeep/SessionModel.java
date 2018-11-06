@@ -9,9 +9,7 @@ import java.util.List;
 
 public class SessionModel {
 
-  /** AWS SDK credentials. */
-  private AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
-        .build();
+  private AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard().build();
   private DynamoDBMapper mapper = new DynamoDBMapper(client);
 
   public void saveSession(Session session) {

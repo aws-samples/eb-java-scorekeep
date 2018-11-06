@@ -13,6 +13,7 @@
     <script src="app/sessions-controller.js"></script>
     <script src="app/games-controller.js"></script>
     <script src="app/game-controller.js"></script>
+    <script src="app/rolit-game-controller.js"></script>
     <script src="app/user-controller.js"></script>
     <script src="app/user-collection.js"></script>
     <script src="app/session-collection.js"></script>
@@ -50,7 +51,7 @@
             </div>
           </div>
           <div class="inner cover" id="instructions">
-            <h3 class="cover-heading">Using the web app</h1>
+            <h1 class="cover-heading">Using the web app</h1>
             <p>Use the form below to create a user and session. When you click <b>Create</b>, the web app calls the Scorekeep API to create a user and a session, and joins the session lobby. If you don't enter a username, Scorekeep calls a separate web API to generate a random name.</p>
             <p>To create and join a second user to the session, open the web app in a second tab, enter the session ID shown in the lobby, and click <b>Join</b>.</p>
             <p>In the session lobby, enter a game name, and set the rules to <b>Tic Tac Toe</b>. Click <b>Create</b> to create a game. Open the networking tab in your browser's developer tools to see the calls that the web app makes to the API to keep the list of games up-to-date.</p>

@@ -15,9 +15,7 @@ import java.util.Map;
     Loads all state objects for a game
 **/
 public class StateModel {
-  /** AWS SDK credentials. */
-  private AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
-        .build();
+  private AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard().build();
   private DynamoDBMapper mapper = new DynamoDBMapper(client);
   private final SessionModel sessionModel = new SessionModel();
   private final GameModel gameModel = new GameModel();
