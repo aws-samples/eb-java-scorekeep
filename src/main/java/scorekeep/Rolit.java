@@ -95,7 +95,7 @@ public class Rolit {
             gameMatrix[i][j] = movchar[0];
             oldchar = makeCharArrayFromMatrix(oldchar[0], oldchar[1], gameMatrix);
         } else {
-            oldchar[cellId] = movchar[0];
+            oldchar[cellId + 1] = movchar[0];
         }
 
         if (movchar[0] == oldchar[0]) {
