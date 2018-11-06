@@ -98,7 +98,12 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
 
         if ($scope.gamestate[cellid + 1] !== " ") {
             $scope.error_message = "Error: This cell is already occupied";
-            return ;
+            return;
+        }
+
+        if ($scope.gamestate[0] !== $scope.color) {
+            $scope.error_message = "Error: This is not your turn";
+            return;
         }
 
         $scope.moving = 1;
