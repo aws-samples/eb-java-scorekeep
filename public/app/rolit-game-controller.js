@@ -81,6 +81,11 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
             return;
         }
 
+        if ($scope.gamestate[cellid + 1] !== " ") {
+            $scope.error_message = "Error: This cell is already occupied";
+            return ;
+        }
+
         $scope.moving = 1;
 
         $scope.promise.then(function () {
@@ -88,11 +93,7 @@ function Rolit($q, $scope, $http, $interval, $routeParams, SessionService, UserS
                 console.log("MOVE on cell " + cellid);
                 $scope.gamestate = $scope.state.state.split('');
                 move = "";
-                // move is invalid
-                if ($scope.gamestate[cellid + 1] !== " ") {
-                    $scope.error_message = "Error: This cell is already occupied";
-                    return;
-                }
+
                 // temporarily update game board and determine move
                 if ($scope.gamestate[0] === "0") {
                     move = "0" + cellid;
