@@ -92,8 +92,8 @@ The API uses SNS to send a notification email when a game ends. To enable notifi
 
 1. Open your environment's page in the [environment management console](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/environments-console.html).
 2. Choose **Configuration**.
-3. Choose **Software Configuration**
-4. Under **Environment Properties**, set **NOTIFICATION_TOPIC** to your email address.
+3. Under **Software**, choose **Modify**.
+4. Under **Environment properties**, set **NOTIFICATION_EMAIL** to your email address.
 5. Check your email for a subscription confirmation.
 6. Complete a game to trigger a notification.
 
