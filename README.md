@@ -11,6 +11,7 @@ From branch: [`lambda`](https://github.com/awslabs/eb-java-scorekeep/tree/lambda
 In the [`UserFactory`](https://github.com/awslabs/eb-java-scorekeep/tree/xray/src/main/java/scorekeep/UserFactory.java) class, Scorekeep calls a Node.js AWS Lambda function to generate random usernames.  If the call to Lambda fails, Scorekeep falls back on a public API to generate names. 
 
 Run the script in the `_lambda` folder to create the AWS Lambda function that Scorekeep calls to generate random names:
+
     eb-java-scorekeep/_lambda$ ./create-random-name.sh
 
 The script uses a CloudFormation template and the AWS CLI to create the function and its execution role:
