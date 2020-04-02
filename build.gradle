@@ -43,6 +43,3 @@ dependencyManagement {
         mavenBom("com.amazonaws:aws-java-sdk-bom:1.11.67")
     }
 }
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.3'
-}
