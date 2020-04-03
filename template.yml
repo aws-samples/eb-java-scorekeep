@@ -86,3 +86,59 @@ Resources:
           ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
           Projection: { ProjectionType: ALL }
       ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
+  environment:
+    Type: AWS::ElasticBeanstalk::Environment
+    Properties: 
+      ApplicationName: !Ref application
+      EnvironmentName: BETA
+      OptionSettings: 
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: AWS_REGION
+          Value: !Ref AWS::Region
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: NOTIFICATION_TOPIC
+          Value: !Ref notificationTopic
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: NOTIFICATION_EMAIL
+          Value: !Ref emailAddress
+        - Namespace: 'aws:autoscaling:launchconfiguration'
+          OptionName: IamInstanceProfile
+          Value: !Ref instanceProfile
+      PlatformArn: arn:aws:elasticbeanstalk:ca-central-1::platform/Java 8 running on 64bit Amazon Linux
+      VersionLabel: !Ref version
+  instanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: /
+      Roles:
+        - !Ref role
+  role:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Sid: BucketAccess
+                Action:
+                  - 's3:Get*'
+                  - 's3:List*'
+                  - 's3:PutObject'
+                Effect: Allow
+                Resource: arn:aws:s3:::elasticbeanstalk*
+              - Sid: MetricsAccess
+                Action:
+                  - 'cloudwatch:PutMetricData'
+                Effect: Allow
+                Resource: '*'
+      Path: /
