@@ -1,22 +1,37 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: An AWS Elastic application that uses DynamoDB.
+Parameters:
+  emailAddress:
+    Type: String
+    Default: UPDATEME
 Resources:
-  UserTable:
+  application:
+    Type: AWS::ElasticBeanstalk::Application
+    Properties: 
+      ApplicationName: Scorekeep
+      Description: RESTful web API in Java with Spring that provides an HTTP interface for creating and managing game sessions and users.
+  version:
+    Type: AWS::ElasticBeanstalk::ApplicationVersion
+    Properties: 
+      ApplicationName: !Ref application
+      SourceBundle: src/.
+  notificationTopic:
+    Type: AWS::SNS::Topic
+  userTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: scorekeep-user
       KeySchema:
         HashKeyElement: {AttributeName: id, AttributeType: S}
       ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
-  SessionTable:
+  sessionTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: scorekeep-session
       KeySchema:
         HashKeyElement: {AttributeName: id, AttributeType: S}
       ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
-  GameTable:
+  gameTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: scorekeep-game
       AttributeDefinitions:
         - AttributeName: "id"
           AttributeType: "S"
@@ -33,10 +48,9 @@ Resources:
           ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
           Projection: { ProjectionType: ALL }
       ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
-  MoveTable:
+  moveTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: scorekeep-move
       AttributeDefinitions:
         - AttributeName: "id"
           AttributeType: "S"
@@ -53,10 +67,9 @@ Resources:
           ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
           Projection: { ProjectionType: ALL }
       ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
-  StateTable:
+  stateTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: scorekeep-state
       AttributeDefinitions:
         - AttributeName: "id"
           AttributeType: "S"
