@@ -129,7 +129,7 @@ Set the environment variable and then use [Gradle](https://gradle.org/) to build
     ~/eb-java-scorekeep$ export AWS_REGION=us-west-2
     ~/eb-java-scorekeep$ gradle bootrun
 
-The application needs AWS credentials to communicate with DynamoDB. In Elastic Beanstalk, Scorekeep gets credentials from the instance profile, which is the IAM role that is attached to the EC2 instance that runs the code. When you run the application locally, the AWS SDK for Java can retrieve credentials from files in ~/.aws/ or environment variables.
+The application needs AWS credentials to communicate with DynamoDB. In Elastic Beanstalk, Scorekeep gets credentials from the instance profile, which is the IAM role that is attached to the EC2 instance that runs the code. When you run the application locally, the AWS SDK for Java can retrieve credentials from files in `~/.aws/` or environment variables.
 
 Follow the instructions in the *AWS SDK for Java Developer Guide* to provide access keys to the application: [Set up AWS Credentials for Development](http://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/setup-credentials.html).
 
