@@ -14,7 +14,7 @@ Resources:
     Type: AWS::ElasticBeanstalk::ApplicationVersion
     Properties: 
       ApplicationName: !Ref application
-      SourceBundle: src/.
+      SourceBundle: ./package.zip
   notificationTopic:
     Type: AWS::SNS::Topic
   userTable:
@@ -101,7 +101,7 @@ Resources:
         - Namespace: aws:elasticbeanstalk:application:environment
           OptionName: NOTIFICATION_EMAIL
           Value: !Ref emailAddress
-        - Namespace: 'aws:autoscaling:launchconfiguration'
+        - Namespace: aws:autoscaling:launchconfiguration
           OptionName: IamInstanceProfile
           Value: !Ref instanceProfile
       PlatformArn: arn:aws:elasticbeanstalk:ca-central-1::platform/Java 8 running on 64bit Amazon Linux
@@ -125,7 +125,18 @@ Resources:
             Action:
               - 'sts:AssumeRole'
       Policies:
-        - PolicyName: root
+        - PolicyName: resources
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Sid: ResourceAccess
+                Action:
+                  - '*'
+                Effect: Allow
+                Resource:
+                  - 'arn:aws:dynamodb:*:*:table/scorekeep-*'
+                  - 'arn:aws:sns:*:*:scorekeep-*'
+        - PolicyName: beanstalk
           PolicyDocument:
             Version: 2012-10-17
             Statement:
