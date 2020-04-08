@@ -20,6 +20,8 @@ public class GameModel {
   private DynamoDBMapperConfig mapperConfig = new DynamoDBMapperConfig(new TableNameOverride(System.getenv("GAME_TABLE")));
   private DynamoDBMapper mapper = new DynamoDBMapper(client, mapperConfig);
   private final SessionModel sessionModel = new SessionModel();
+  private DynamoDBMapperConfig sessionMapperConfig = new DynamoDBMapperConfig(new TableNameOverride(System.getenv("SESSION_TABLE")));
+  private DynamoDBMapper sessionMapper = new DynamoDBMapper(client, sessionMapperConfig);
 
   public void saveGame(Game game) throws SessionNotFoundException {
     // check session
@@ -66,7 +68,7 @@ public class GameModel {
     }
     mapper.delete(game);
     //delete game from session
-    Session session = mapper.load(Session.class, sessionId);
+    Session session = sessionMapper.load(Session.class, sessionId);
     Set<String> sessionGames = session.getGames();
     sessionGames.remove(gameId);
     if (sessionGames.size() == 0) {
