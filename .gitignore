@@ -6,6 +6,7 @@ build/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
 *.zip
-*.sh
+bucket-name.txt
 !bin/*.sh
 lib
+out.yml

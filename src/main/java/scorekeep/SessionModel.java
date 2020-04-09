@@ -3,6 +3,8 @@ package scorekeep;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.TableNameOverride;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 
 import java.util.List;
@@ -12,7 +14,8 @@ public class SessionModel {
   /** AWS SDK credentials. */
   private AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
         .build();
-  private DynamoDBMapper mapper = new DynamoDBMapper(client);
+  private DynamoDBMapperConfig mapperConfig = new DynamoDBMapperConfig(new TableNameOverride(System.getenv("SESSION_TABLE")));
+  private DynamoDBMapper mapper = new DynamoDBMapper(client, mapperConfig);
 
   public void saveSession(Session session) {
     try {
