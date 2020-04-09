@@ -41,17 +41,14 @@ dependencies {
     compile("com.amazonaws:aws-xray-recorder-sdk-apache-http")
     compile("com.amazonaws:aws-xray-recorder-sdk-sql-postgres")
     compile("org.postgresql:postgresql:9.4.1211.jre7")
-    compile("com.fasterxml.jackson.core:jackson-databind:2.8.4")
-    testCompile("org.junit.jupiter:junit-jupiter-api:5.0.0")
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.0")
+    compile("com.fasterxml.jackson.core:jackson-databind:2.8.11")
+    testCompile("org.junit.jupiter:junit-jupiter-api:5.0.3")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.3")
 }
 
 dependencyManagement {
     imports {
-        mavenBom("com.amazonaws:aws-java-sdk-bom:1.11.67")
+        mavenBom("com.amazonaws:aws-java-sdk-bom:1.11.761")
         mavenBom("com.amazonaws:aws-xray-recorder-sdk-bom:1.3.1")
     }
-}
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.3'
 }

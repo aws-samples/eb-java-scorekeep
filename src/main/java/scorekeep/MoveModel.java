@@ -3,6 +3,8 @@ package scorekeep;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.TableNameOverride;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 
@@ -14,7 +16,8 @@ public class MoveModel {
   /** AWS SDK credentials. */
   private AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
         .build();
-  private DynamoDBMapper mapper = new DynamoDBMapper(client);
+  private DynamoDBMapperConfig mapperConfig = new DynamoDBMapperConfig(new TableNameOverride(System.getenv("MOVE_TABLE")));
+  private DynamoDBMapper mapper = new DynamoDBMapper(client, mapperConfig);
   private final SessionModel sessionModel = new SessionModel();
   private final GameModel gameModel = new GameModel();
 

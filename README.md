@@ -54,11 +54,14 @@ Other branches extend the application's functionality and show the use of other 
 **Branches**
 - [`cognito`](https://github.com/awslabs/eb-java-scorekeep/tree/cognito) - Support login and store users in an [Amazon Cognito](http://aws.amazon.com/cognito) user pool. Get AWS SDK credentials and make service calls with a Cognito identity pool.
 - [`cognito-basic`](https://github.com/awslabs/eb-java-scorekeep/tree/cognito-basic) - Use Cognito for user ID storage. User pool only, no identity pool.
+- [`ecs`](https://github.com/awslabs/eb-java-scorekeep/tree/ecs) - Run the frontend and API in separate Docker containers in Amazon EC2 Container Service (ECS). This branch is adapted from the `fargate` branch and uses the Elastic Beanstalk Multicontainer Docker platform to create an ECS cluster and deploy the task definition. Dynamo DB tables and other dependencies are created with a CloudFormation template instead of using configuration files.
+- [`fargate`](https://github.com/awslabs/eb-java-scorekeep/tree/fargate) - Use AWS Fargate to run Scorekeep in serverless containers. Build Docker images for API and frontend components, upload to Elastic Container Registry, and generate Elastic Container Service task definitions with included scripts. Use Fargate to run containers without provisioning EC2 instances.
 - [`lambda`](https://github.com/awslabs/eb-java-scorekeep/tree/lambda) - Call an [AWS Lambda](http://aws.amazon.com/lambda) function to generate random names.
 - [`lambda-worker`](https://github.com/awslabs/eb-java-scorekeep/tree/lambda-worker) - Run a Lambda function periodically to process game records and store the output in Amazon S3.
 - [`sql`](https://github.com/awslabs/eb-java-scorekeep/tree/sql) - Use JDBC to store game histories in an attached PostgreSQL database instance.
 - [`xray`](https://github.com/awslabs/eb-java-scorekeep/tree/xray) - Use the [AWS X-Ray SDK for Java](http://docs.aws.amazon.com/xray-sdk-for-java/latest/javadoc/) to instrument incoming requests, functions, SDK clients, SQL queries, HTTP clients, startup code, and AWS Lambda functions.
 - [`xray-cognito`](https://github.com/awslabs/eb-java-scorekeep/tree/xray-cognito) - Use AWS credentials obtained with Amazon Cognito to upload trace data to X-Ray from the browser.
+- [`xray-ecs`](https://github.com/awslabs/eb-java-scorekeep/tree/xray-ecs) - Instrumented version of the `ecs` branch. Run the X-Ray daemon in a docker container. Configure networking between containers both locally and on ECS.
 - [`xray-gettingstarted`](https://github.com/awslabs/eb-java-scorekeep/tree/xray-gettingstarted) ([tutorial](https://docs.aws.amazon.com/xray/latest/devguide/xray-gettingstarted.html)) - Use the AWS X-Ray SDK for Java to instrument incoming requests and SDK clients (no additional configuration required).
 - [`xray-worker`](https://github.com/awslabs/eb-java-scorekeep/tree/xray-worker) - Instrumented Python Lambda worker function from the `lambda-worker` branch.
 
@@ -114,7 +117,7 @@ Deploy the source code for the project to your Elastic Beanstalk environment.
 **To deploy the source code**
 
 1. Download the source bundle: [eb-java-scorekeep-v1.zip](https://github.com/awslabs/eb-java-scorekeep/releases/download/v1.5/eb-java-scorekeep-v1.zip)
-2. Open the [Elastic Beanstalk console](console.aws.amazon.com/elasticbeanstalk/home).
+2. Open the [Elastic Beanstalk console](https://console.aws.amazon.com/elasticbeanstalk/home).
 3. Choose your environment's name to open the Dashboard.
 4. Choose **Upload and Deploy**.
 5. Upload **eb-java-scorekeep-v1.zip** and choose **Deploy**.
@@ -131,8 +134,8 @@ The API uses SNS to send a notification email when a game ends. To enable notifi
 
 1. Open your environment's page in the [environment management console](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/environments-console.html).
 2. Choose **Configuration**.
-3. Choose **Software Configuration**
-4. Under **Environment Properties**, set **NOTIFICATION_TOPIC** to your email address.
+3. Under **Software**, choose **Modify**.
+4. Under **Environment properties**, set **NOTIFICATION_EMAIL** to your email address.
 5. Check your email for a subscription confirmation.
 6. Complete a game to trigger a notification.
 
@@ -168,7 +171,7 @@ Set the environment variable and then use [Gradle](https://gradle.org/) to build
     ~/eb-java-scorekeep$ export AWS_REGION=us-west-2
     ~/eb-java-scorekeep$ gradle bootrun
 
-The application needs AWS credentials to communicate with DynamoDB. In Elastic Beanstalk, Scorekeep gets credentials from the instance profile, which is the IAM role that is attached to the EC2 instance that runs the code. When you run the application locally, the AWS SDK for Java can retrieve credentials from files in ~/.aws/ or environment variables.
+The application needs AWS credentials to communicate with DynamoDB. In Elastic Beanstalk, Scorekeep gets credentials from the instance profile, which is the IAM role that is attached to the EC2 instance that runs the code. When you run the application locally, the AWS SDK for Java can retrieve credentials from files in `~/.aws/` or environment variables.
 
 Follow the instructions in the *AWS SDK for Java Developer Guide* to provide access keys to the application: [Set up AWS Credentials for Development](http://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/setup-credentials.html).
 

@@ -6,8 +6,9 @@ build/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
 *.zip
-*.sh
+bucket-name.txt
 !bin/*.sh
 !_lambda/*.sh
 lib
 _lambda/random-name/node_modules/*
+out.yml
