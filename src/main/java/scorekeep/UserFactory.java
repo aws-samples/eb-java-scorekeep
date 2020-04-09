@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class UserFactory {
   private final UserModel model = new UserModel();
@@ -36,22 +38,21 @@ public class UserFactory {
     return user;
   }
 
-  public String randomName() throws IOException {
-    CloseableHttpClient httpclient = HttpClientBuilder.create().build();
-    HttpGet httpGet = new HttpGet("http://uinames.com/api/");
-    CloseableHttpResponse response = httpclient.execute(httpGet);
-    try {
-      HttpEntity entity = response.getEntity();
-      InputStream inputStream = entity.getContent();
-      ObjectMapper mapper = new ObjectMapper();
-      Map<String, String> jsonMap = mapper.readValue(inputStream, Map.class);
-      String name = jsonMap.get("name");
-      EntityUtils.consume(entity);
-      Sns.sendNotification("Scorekeep user created", "Name: " + name);
-      return name;
-    } finally {
-      response.close();
-    }
+  public String randomName() {
+    List<String> names = new ArrayList<String>();
+    
+    names.add("Billy");
+    names.add("Jake");
+    names.add("Emma");
+    names.add("Ralph");
+    names.add("Lucy");
+    
+    Random random = new Random();
+    int index = random.nextInt(names.size());
+    String name = names.get(index);
+
+    Sns.sendNotification("Scorekeep user created", "Name: " + name);
+    return name;
   }
 
   public User getUser(String userId) throws UserNotFoundException {
