@@ -33,13 +33,13 @@ dependencies {
     testCompile("org.springframework.boot:spring-boot-starter-test")
     compile("com.amazonaws:aws-java-sdk-dynamodb")
     compile("com.amazonaws:aws-java-sdk-sns")
-    compile("com.fasterxml.jackson.core:jackson-databind:2.8.4")
-    testCompile("org.junit.jupiter:junit-jupiter-api:5.0.0")
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.0")
+    compile("com.fasterxml.jackson.core:jackson-databind:2.8.11")
+    testCompile("org.junit.jupiter:junit-jupiter-api:5.0.3")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.3")
 }
 
 dependencyManagement {
     imports {
-        mavenBom("com.amazonaws:aws-java-sdk-bom:1.11.67")
+        mavenBom("com.amazonaws:aws-java-sdk-bom:1.11.761")
     }
 }
