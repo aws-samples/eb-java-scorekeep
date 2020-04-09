@@ -3,9 +3,7 @@
   "version": "1.0.0",
   "description": "Name generator",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "eb-java-scorekeep"

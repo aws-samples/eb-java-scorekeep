@@ -1,10 +1,29 @@
 AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
 Description: An AWS Elastic application that uses DynamoDB.
 Parameters:
   emailAddress:
     Type: String
     Default: UPDATEME
 Resources:
+  function:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: random-name
+      Handler: index.handler
+      Runtime: nodejs12.x
+      CodeUri: function/.
+      Description: Generate random names
+      Timeout: 10
+      # Function's execution role
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSXrayWriteOnlyAccess
+        - AmazonSNSFullAccess
+      Tracing: Active
+      Environment:
+        Variables:
+          TOPIC_ARN: !Ref notificationTopic
   application:
     Type: AWS::ElasticBeanstalk::Application
     Properties:

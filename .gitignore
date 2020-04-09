@@ -12,3 +12,5 @@ bucket-name.txt
 lib
 _lambda/random-name/node_modules/*
 out.yml
+node_modules
+package-lock.json
