@@ -82,6 +82,7 @@ Resources:
                 Resource:
                   - 'arn:aws:dynamodb:*:*:table/scorekeep-*'
                   - 'arn:aws:sns:*:*:scorekeep-*'
+                  - 'arn:aws:lambda:*:*:function/random-name'
         - PolicyName: beanstalk
           PolicyDocument:
             Version: 2012-10-17
