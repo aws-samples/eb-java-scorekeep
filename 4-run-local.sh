@@ -1,3 +1,5 @@
+#!/bin/bash
+set -eo pipefail
 export AWS_REGION=$(aws configure get region)
 export NOTIFICATION_TOPIC=$(aws cloudformation describe-stack-resource --stack-name scorekeep --logical-resource-id notificationTopic --query 'StackResourceDetail.PhysicalResourceId' --output text)
 export GAME_TABLE=$(aws cloudformation describe-stack-resource --stack-name scorekeep --logical-resource-id gameTable --query 'StackResourceDetail.PhysicalResourceId' --output text)
