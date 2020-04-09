@@ -12,6 +12,6 @@
   "license": "Apache-2.0",
   "dependencies": {
     "chance": "^1.0.4",
-    "aws-xray-sdk-core": "1.1.2"
+    "aws-xray-sdk-core": "2.4.0"
   }
 }
