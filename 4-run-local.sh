@@ -7,5 +7,6 @@ export MOVE_TABLE=$(aws cloudformation describe-stack-resource --stack-name scor
 export SESSION_TABLE=$(aws cloudformation describe-stack-resource --stack-name scorekeep --logical-resource-id sessionTable --query 'StackResourceDetail.PhysicalResourceId' --output text)
 export STATE_TABLE=$(aws cloudformation describe-stack-resource --stack-name scorekeep --logical-resource-id stateTable --query 'StackResourceDetail.PhysicalResourceId' --output text)
 export USER_TABLE=$(aws cloudformation describe-stack-resource --stack-name scorekeep --logical-resource-id userTable --query 'StackResourceDetail.PhysicalResourceId' --output text)
+export AWS_XRAY_TRACING_NAME="Scorekeep"
 
 ./gradlew bootrun

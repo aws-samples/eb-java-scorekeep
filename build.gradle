@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.4.0.RELEASE")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.22.RELEASE")
         classpath("io.spring.gradle:dependency-management-plugin:0.5.4.RELEASE")
         classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0'
     }
@@ -12,34 +12,43 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
-apply plugin: 'spring-boot'
+apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'org.junit.platform.gradle.plugin'
 
 jar {
-    baseName = 'scorekeep-api'
-    version =  '1.0.0'
+    archiveBaseName.set('scorekeep-api')
+    archiveVersion.set('1.0.0')
 }
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+String xrayVer = "2.7.1"
+String discoVer = "0.10.1"
+
 dependencies {
+    compile("com.amazonaws:aws-xray-recorder-sdk-core")
+    compile("com.amazonaws:aws-xray-recorder-sdk-slf4j")
+    compile("com.amazonaws:aws-xray-agent-plugin:${xrayVer}")
+    compile("com.amazonaws:aws-xray-agent-aws-sdk-v1:${xrayVer}")
+
+    compile("software.amazon.disco:disco-java-agent")
+    compile("software.amazon.disco:disco-java-agent-aws-plugin")
+    compile("software.amazon.disco:disco-java-agent-sql-plugin")
+    compile("software.amazon.disco:disco-java-agent-web-plugin")
+
     compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.springframework.boot:spring-boot-starter-data-jpa")
     testCompile("org.springframework.boot:spring-boot-starter-test")
     compile("com.amazonaws:aws-java-sdk-dynamodb")
     compile("com.amazonaws:aws-java-sdk-lambda")
     compile("com.amazonaws:aws-java-sdk-sns")
-    compile("com.amazonaws:aws-xray-recorder-sdk-core")
-    compile("com.amazonaws:aws-xray-recorder-sdk-aws-sdk")
-    compile("com.amazonaws:aws-xray-recorder-sdk-aws-sdk-instrumentor")
-    compile("com.amazonaws:aws-xray-recorder-sdk-apache-http")
-    compile("com.amazonaws:aws-xray-recorder-sdk-sql-postgres")
     compile("org.postgresql:postgresql:9.4.1211.jre7")
     compile("com.fasterxml.jackson.core:jackson-databind:2.8.11")
     testCompile("org.junit.jupiter:junit-jupiter-api:5.0.3")
@@ -49,6 +58,38 @@ dependencies {
 dependencyManagement {
     imports {
         mavenBom("com.amazonaws:aws-java-sdk-bom:1.11.761")
-        mavenBom("com.amazonaws:aws-xray-recorder-sdk-bom:1.3.1")
+        mavenBom("com.amazonaws:aws-xray-recorder-sdk-bom:${xrayVer}")
+        mavenBom("software.amazon.disco:disco-toolkit-bom:${discoVer}")
     }
 }
+
+// Copies agent JAR to disco directory
+task copyAgent(type: Copy, dependsOn: configurations.compileClasspath) {
+    from configurations.compileClasspath {
+        include "disco-java-agent-${discoVer}.jar"
+    }
+
+    into "$buildDir/libs/disco"
+}
+
+// Copies plugin JARs to disco-plugins directory
+task copyPlugins(type: Copy, dependsOn: configurations.compileClasspath) {
+    from configurations.compileClasspath {
+        include "disco-java-agent-*-plugin-${discoVer}.jar"
+        include "aws-xray-agent-plugin-${xrayVer}.jar"
+    }
+
+    into "$buildDir/libs/disco/disco-plugins"
+}
+
+// Ensure agent and plugins are created when building
+build {
+    dependsOn 'copyAgent'
+    dependsOn 'copyPlugins'
+}
+
+// For local Agent enabling
+bootRun {
+    jvmArgs = ["-javaagent:$buildDir/libs/disco/disco-java-agent-${discoVer}.jar=pluginPath=$buildDir/libs/disco/disco-plugins"]
+}
+

@@ -11,12 +11,10 @@ import java.util.List;
 
 import com.amazonaws.xray.AWSXRay;
 import com.amazonaws.xray.entities.Subsegment;
-import com.amazonaws.xray.handlers.TracingHandler;
 
 public class UserModel {
   /** AWS SDK credentials. */
   private AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
-        .withRequestHandlers(new TracingHandler())
         .build();
   private DynamoDBMapperConfig mapperConfig = new DynamoDBMapperConfig(new TableNameOverride(System.getenv("USER_TABLE")));
   private DynamoDBMapper mapper = new DynamoDBMapper(client, mapperConfig);

@@ -67,16 +67,23 @@ public class MoveFactory {
     State newState = new State(stateId, sessionId, gameId, newStateText, newTurn);
     // send notification on game end
     if ( newStateText.startsWith("A") || newStateText.startsWith("B")) {
-      Entity segment = recorder.getTraceEntity();
+
       Thread comm = new Thread() {
         public void run() {
-          recorder.setTraceEntity(segment);
-          Subsegment subsegment = AWSXRay.beginSubsegment("## Send notification");
+          // X-Ray Segment context is automatically propagated into this thread by the agent
+          AWSXRay.beginSubsegment("## Send notification");
           Sns.sendNotification("Scorekeep game completed", "Winner: " + userId);
           AWSXRay.endSubsegment();
         }
       };
       comm.start();
+
+      // We cannot close the segment until all subsegments, including those in background threads, are finished.
+      try {
+        comm.join();
+      } catch (InterruptedException e) {
+        logger.error("Notification sending was interrupted", e);
+      }
     }
     // register state and move id to game
     gameController.setGameMove(sessionId, gameId, moveId);

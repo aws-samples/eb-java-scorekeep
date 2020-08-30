@@ -64,6 +64,9 @@ Resources:
         - Namespace: aws:elasticbeanstalk:application:environment
           OptionName: STATE_TABLE
           Value: !Ref stateTable
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: AWS_XRAY_TRACING_NAME
+          Value: !Ref application
         - Namespace: aws:autoscaling:launchconfiguration
           OptionName: IamInstanceProfile
           Value: !Ref instanceProfile

@@ -1,27 +1,14 @@
 package scorekeep;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.util.EntityUtils;
-
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
-import java.util.Map;
 import java.util.ArrayList;
 import java.util.Random;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.amazonaws.services.lambda.AWSLambda;
 import com.amazonaws.services.lambda.AWSLambdaClientBuilder;
 import com.amazonaws.services.lambda.invoke.LambdaInvokerFactory;
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.lambda.model.ResourceNotFoundException;
-
-import com.amazonaws.xray.proxies.apache.http.HttpClientBuilder;
 
 public class UserFactory {
   private final UserModel model = new UserModel();

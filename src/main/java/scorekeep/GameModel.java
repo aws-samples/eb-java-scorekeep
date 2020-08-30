@@ -16,12 +16,10 @@ import java.util.Set;
 import com.amazonaws.xray.AWSXRay;
 import com.amazonaws.xray.entities.Segment;
 import com.amazonaws.xray.entities.Subsegment;
-import com.amazonaws.xray.handlers.TracingHandler;
 
 public class GameModel {
   /** AWS SDK credentials. */
   private AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
-        .withRequestHandlers(new TracingHandler())
         .build();
   private DynamoDBMapperConfig mapperConfig = new DynamoDBMapperConfig(new TableNameOverride(System.getenv("GAME_TABLE")));
   private DynamoDBMapper mapper = new DynamoDBMapper(client, mapperConfig);
