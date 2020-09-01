@@ -1,42 +1,19 @@
-# AWS X-Ray
-Documentation: [X-Ray SDK for Java Sample Application](http://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-java-sample.html)
+# AWS X-Ray Auto-Instrumentation Agent
+Documentation: [X-Ray Auto-Instrumentation Agent]() and [X-Ray SDK for Java Sample Application](http://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-java-sample.html)
 
-If you haven't used X-Ray with Scorekeep yet, try the [`xray-gettingstarted`](https://github.com/awslabs/eb-java-scorekeep/tree/xray-gettingstarted) branch first.
-
-This branch shows advanced instrumentation with the AWS X-Ray SDK and includes features from other branches. Deploy this branch to see additional trace data in the X-Ray console. Then, follow the instructions below to add an instrumented AWS Lambda function and PostgreSQL database to the application.
-
-## AWS Lambda Integration
-From branch: [`lambda`](https://github.com/awslabs/eb-java-scorekeep/tree/lambda)
-
-In the [`UserFactory`](https://github.com/awslabs/eb-java-scorekeep/tree/xray/src/main/java/scorekeep/UserFactory.java) class, Scorekeep calls a Node.js AWS Lambda function to generate random usernames.  If the call to Lambda fails, Scorekeep falls back on a public API to generate names. 
-
-Run the script in the `_lambda` folder to create the AWS Lambda function that Scorekeep calls to generate random names:
-
-    eb-java-scorekeep/_lambda$ ./create-random-name.sh
-
-The script uses a CloudFormation template and the AWS CLI to create the function and its execution role:
-- `_lambda/random-name.yml`       - Template that defines the role and function
-- `_lambda/create-random-name.sh` - Script to create the role and function
-- `_lambda/delete-random-name.sh` - Script to delete the role and function
-
-If you don't have the AWS CLI, [install it](http://docs.aws.amazon.com/cli/latest/userguide/installing.html) or use the CloudFormation console to create a stack with the template.
-
-Next, add Lambda permission to your instance profile ([aws-elasticbeanstalk-ec2-role](https://console.aws.amazon.com/iam/home#/roles/aws-elasticbeanstalk-ec2-role)) to let the environment update the Lambda function:
-- AWSLambdaFullAccess
-
-Note: In the `lambda` branch, Scorekeep creates the Lambda function with a configuration file. In this branch, you create the function independently with the same template that creates the role. This lets the `xray` branch work even if the Lambda function and role have not been created, whereas in the `lambda` branch, the deployment fails if you haven't created the required role.
-
-Finally, redeploy this branch to your environment. During deployment, the [update script in `lambda-function.config`](https://github.com/awslabs/eb-java-scorekeep/blob/xray/.ebextensions/lambda-function.config#L31) builds the function and uploads the source code to Lambda.
-
-Create a new user in the web app and refresh your service map to see the two Lambda nodes.
+This branch shows how to use the AWS X-Ray Auto-Instrumentation agent for Java in conjunction with manual instrumentation via the AWS X-Ray SDK and includes features from other branches.
+Deploy this branch to see additional trace data in the X-Ray console. Then, follow the instructions below to add an instrumented PostgreSQL database to the application.
+On this app, you can see examples of the X-Ray Agent automatically capturing AWS SDK requests, downstream HTTP requests made with Apache clients, SQL queries
+using a JDBC-based driver, and requests made in separate threads without the need for manual context propagation.
 
 ## Amazon RDS Integration
 From branch: [`sql`](https://github.com/awslabs/eb-java-scorekeep/tree/sql)
-Documentation: [Instrumenting Calls to a PostgreSQL Database](https://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-java-sample.html#xray-sdk-java-sample-postgresql)
 
-In [`application-pgsql.properties`](https://github.com/awslabs/eb-java-scorekeep/tree/xray/src/main/resources/application-pgsql.properties), Scorekeep adds the X-Ray SDK tracing interceptor to the JDBC data source used by Hibernate.
+The X-Ray Auto-Instrumentation Agent can trace all queries made with a JDBC connection. Also note that
+the [agent configuration](https://github.com/aws-samples/eb-java-scorekeep/blob/xray-agent/src/main/resources/xray-agent.json) file allows X-Ray to
+record SQL queries 
 
-[Add a PostgreSQL database](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features.managing.db.html) to your Elastic Beanstalk environment to enable SQL tracing on the X-Ray demo page (/#/xray).
+[Add a PostgreSQL database](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features.managing.db.html) to your Elastic Beanstalk environment to enable SQL tracing on the X-Ray demo page, reachable by pressing "Powered by AWS X-Ray" on the sample app UI.
 
 Hibernate also calls the database during application startup. No segment is available to the X-Ray SDK during startup, so we create one manually in [`RdsWebConfig.java`](https://github.com/awslabs/eb-java-scorekeep/blob/xray/src/main/java/scorekeep/RdsWebConfig.java#L83) by overriding Hibernate's `SchemaExport` class.
 
@@ -60,6 +37,7 @@ Other branches extend the application's functionality and show the use of other 
 - [`lambda-worker`](https://github.com/aws-samples/eb-java-scorekeep/tree/lambda-worker) - Run a Lambda function periodically to process game records and store the output in Amazon S3.
 - [`sql`](https://github.com/aws-samples/eb-java-scorekeep/tree/sql) - Use JDBC to store game histories in an attached PostgreSQL database instance.
 - [`xray`](https://github.com/aws-samples/eb-java-scorekeep/tree/xray) - Use the [AWS X-Ray SDK for Java](http://docs.aws.amazon.com/xray-sdk-for-java/latest/javadoc/) to instrument incoming requests, functions, SDK clients, SQL queries, HTTP clients, startup code, and AWS Lambda functions.
+- [`xray-agent`](https://github.com/aws-samples/eb-java-scorekeep/tree/xray-agent) - Use the [X-Ray Auto-Instrumentation Agent]() to automatically instrument incoming Servlet requests and downstream AWS SDK, SQL, and HTTP requests with no added source code.
 - [`xray-cognito`](https://github.com/aws-samples/eb-java-scorekeep/tree/xray-cognito) - Use AWS credentials obtained with Amazon Cognito to upload trace data to X-Ray from the browser.
 - [`xray-ecs`](https://github.com/aws-samples/eb-java-scorekeep/tree/xray-ecs) - Instrumented version of the `ecs` branch. Run the X-Ray daemon in a docker container. Configure networking between containers both locally and on ECS.
 - [`xray-gettingstarted`](https://github.com/aws-samples/eb-java-scorekeep/tree/xray-gettingstarted) ([tutorial](https://docs.aws.amazon.com/xray/latest/devguide/xray-gettingstarted.html)) - Use the AWS X-Ray SDK for Java to instrument incoming requests and SDK clients (no additional configuration required).
@@ -109,6 +87,7 @@ Download or clone this repository.
 
     $ git clone git@github.com:aws-samples/eb-java-scorekeep.git
     $ cd eb-java-scorekeep
+    $ git checkout xray-agent
 
 To create a new bucket for deployment artifacts, run `1-create-bucket.sh`. Or, if you already have a bucket, create a file named `bucket-name.txt` that contains the name of your bucket.
 
