@@ -1,5 +1,5 @@
 # AWS X-Ray Auto-Instrumentation Agent
-Documentation: [X-Ray Auto-Instrumentation Agent]() and [X-Ray SDK for Java Sample Application](http://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-java-sample.html)
+Documentation: [X-Ray Auto-Instrumentation Agent](https://docs.aws.amazon.com/xray/latest/devguide/aws-x-ray-auto-instrumentation-agent-for-java.html) and [X-Ray SDK for Java Sample Application](http://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-java-sample.html)
 
 This branch shows how to use the AWS X-Ray Auto-Instrumentation agent for Java in conjunction with manual instrumentation via the AWS X-Ray SDK and includes features from other branches.
 Deploy this branch to see additional trace data in the X-Ray console. Then, follow the instructions below to add an instrumented PostgreSQL database to the application.
@@ -37,7 +37,7 @@ Other branches extend the application's functionality and show the use of other 
 - [`lambda-worker`](https://github.com/aws-samples/eb-java-scorekeep/tree/lambda-worker) - Run a Lambda function periodically to process game records and store the output in Amazon S3.
 - [`sql`](https://github.com/aws-samples/eb-java-scorekeep/tree/sql) - Use JDBC to store game histories in an attached PostgreSQL database instance.
 - [`xray`](https://github.com/aws-samples/eb-java-scorekeep/tree/xray) - Use the [AWS X-Ray SDK for Java](http://docs.aws.amazon.com/xray-sdk-for-java/latest/javadoc/) to instrument incoming requests, functions, SDK clients, SQL queries, HTTP clients, startup code, and AWS Lambda functions.
-- [`xray-agent`](https://github.com/aws-samples/eb-java-scorekeep/tree/xray-agent) - Use the [X-Ray Auto-Instrumentation Agent]() to automatically instrument incoming Servlet requests and downstream AWS SDK, SQL, and HTTP requests with no added source code.
+- [`xray-agent`](https://github.com/aws-samples/eb-java-scorekeep/tree/xray-agent) - Use the [X-Ray Auto-Instrumentation Agent](https://docs.aws.amazon.com/xray/latest/devguide/aws-x-ray-auto-instrumentation-agent-for-java.html) to automatically instrument incoming Servlet requests and downstream AWS SDK, SQL, and HTTP requests with no added source code.
 - [`xray-cognito`](https://github.com/aws-samples/eb-java-scorekeep/tree/xray-cognito) - Use AWS credentials obtained with Amazon Cognito to upload trace data to X-Ray from the browser.
 - [`xray-ecs`](https://github.com/aws-samples/eb-java-scorekeep/tree/xray-ecs) - Instrumented version of the `ecs` branch. Run the X-Ray daemon in a docker container. Configure networking between containers both locally and on ECS.
 - [`xray-gettingstarted`](https://github.com/aws-samples/eb-java-scorekeep/tree/xray-gettingstarted) ([tutorial](https://docs.aws.amazon.com/xray/latest/devguide/xray-gettingstarted.html)) - Use the AWS X-Ray SDK for Java to instrument incoming requests and SDK clients (no additional configuration required).
