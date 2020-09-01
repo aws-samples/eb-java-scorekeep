@@ -9,6 +9,7 @@ import com.amazonaws.services.lambda.AWSLambda;
 import com.amazonaws.services.lambda.AWSLambdaClientBuilder;
 import com.amazonaws.services.lambda.invoke.LambdaInvokerFactory;
 import com.amazonaws.services.lambda.model.ResourceNotFoundException;
+import com.amazonaws.xray.AWSXRay;
 
 public class UserFactory {
   private final UserModel model = new UserModel();

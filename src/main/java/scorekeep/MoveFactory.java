@@ -1,5 +1,6 @@
 package scorekeep;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -8,6 +9,9 @@ import java.lang.Thread;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +29,6 @@ public class MoveFactory {
   private final GameController gameController = new GameController();
   private final StateController stateController = new StateController();
   private final RulesFactory rulesFactory = new RulesFactory();
-  private final AWSXRayRecorder recorder = AWSXRay.getGlobalRecorder();
 
   public MoveFactory(){
   }
@@ -67,6 +70,15 @@ public class MoveFactory {
     State newState = new State(stateId, sessionId, gameId, newStateText, newTurn);
     // send notification on game end
     if ( newStateText.startsWith("A") || newStateText.startsWith("B")) {
+
+      // Test auto-instrumentation of Apache HTTP requests, only when the game ends for performance
+      HttpClient httpClient = HttpClients.createDefault();
+      HttpGet httpGet = new HttpGet("http://aws.amazon.com");
+      try {
+        httpClient.execute(httpGet);
+      } catch (IOException e) {
+        AWSXRay.getCurrentSegmentOptional().ifPresent(seg -> seg.addException(e));
+      }
 
       Thread comm = new Thread() {
         public void run() {

@@ -30,27 +30,19 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 String xrayVer = "2.7.1"
-String discoVer = "0.10.1"
 
 dependencies {
     compile("com.amazonaws:aws-xray-recorder-sdk-core")
-    compile("com.amazonaws:aws-xray-recorder-sdk-slf4j")
-    compile("com.amazonaws:aws-xray-agent-plugin:${xrayVer}")
-    compile("com.amazonaws:aws-xray-agent-aws-sdk-v1:${xrayVer}")
-
-    compile("software.amazon.disco:disco-java-agent")
-    compile("software.amazon.disco:disco-java-agent-aws-plugin")
-    compile("software.amazon.disco:disco-java-agent-sql-plugin")
-    compile("software.amazon.disco:disco-java-agent-web-plugin")
-
+    compile("org.apache.httpcomponents:httpclient:4.5.9")
     compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.springframework.boot:spring-boot-starter-data-jpa")
-    testCompile("org.springframework.boot:spring-boot-starter-test")
     compile("com.amazonaws:aws-java-sdk-dynamodb")
     compile("com.amazonaws:aws-java-sdk-lambda")
     compile("com.amazonaws:aws-java-sdk-sns")
     compile("org.postgresql:postgresql:9.4.1211.jre7")
     compile("com.fasterxml.jackson.core:jackson-databind:2.8.11")
+
+    testCompile("org.springframework.boot:spring-boot-starter-test")
     testCompile("org.junit.jupiter:junit-jupiter-api:5.0.3")
     testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.3")
 }
@@ -59,37 +51,11 @@ dependencyManagement {
     imports {
         mavenBom("com.amazonaws:aws-java-sdk-bom:1.11.761")
         mavenBom("com.amazonaws:aws-xray-recorder-sdk-bom:${xrayVer}")
-        mavenBom("software.amazon.disco:disco-toolkit-bom:${discoVer}")
     }
 }
 
-// Copies agent JAR to disco directory
-task copyAgent(type: Copy, dependsOn: configurations.compileClasspath) {
-    from configurations.compileClasspath {
-        include "disco-java-agent-${discoVer}.jar"
-    }
-
-    into "$buildDir/libs/disco"
-}
-
-// Copies plugin JARs to disco-plugins directory
-task copyPlugins(type: Copy, dependsOn: configurations.compileClasspath) {
-    from configurations.compileClasspath {
-        include "disco-java-agent-*-plugin-${discoVer}.jar"
-        include "aws-xray-agent-plugin-${xrayVer}.jar"
-    }
-
-    into "$buildDir/libs/disco/disco-plugins"
-}
-
-// Ensure agent and plugins are created when building
-build {
-    dependsOn 'copyAgent'
-    dependsOn 'copyPlugins'
-}
-
-// For local Agent enabling
+// For enabling the agent when running locally
 bootRun {
-    jvmArgs = ["-javaagent:$buildDir/libs/disco/disco-java-agent-${discoVer}.jar=pluginPath=$buildDir/libs/disco/disco-plugins"]
+    String disco = "${System.getProperty("user.dir")}/disco"
+    jvmArgs = ["-javaagent:$disco/disco-java-agent.jar=pluginPath=$disco/disco-plugins"]
 }
-

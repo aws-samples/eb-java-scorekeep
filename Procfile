@@ -1,1 +1,1 @@
-web: java -Dserver.port=5000 -jar build/libs/scorekeep-api-1.0.0.jar
+web: java -javaagent:/var/app/current/disco/disco-java-agent.jar=pluginPath=/var/app/current/disco/disco-plugins -Dserver.port=5000 -jar build/libs/scorekeep-api-1.0.0.jar
