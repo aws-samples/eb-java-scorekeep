@@ -21,34 +21,10 @@ Resources:
       ApplicationName: !Ref application
       EnvironmentName: BETA
       OptionSettings:
-        - Namespace: aws:elasticbeanstalk:application:environment
-          OptionName: AWS_REGION
-          Value: !Ref AWS::Region
-        - Namespace: aws:elasticbeanstalk:application:environment
-          OptionName: NOTIFICATION_TOPIC
-          Value: !Ref notificationTopic
-        - Namespace: aws:elasticbeanstalk:application:environment
-          OptionName: NOTIFICATION_EMAIL
-          Value: !Ref emailAddress
-        - Namespace: aws:elasticbeanstalk:application:environment
-          OptionName: USER_TABLE
-          Value: !Ref userTable
-        - Namespace: aws:elasticbeanstalk:application:environment
-          OptionName: SESSION_TABLE
-          Value: !Ref sessionTable
-        - Namespace: aws:elasticbeanstalk:application:environment
-          OptionName: GAME_TABLE
-          Value: !Ref gameTable
-        - Namespace: aws:elasticbeanstalk:application:environment
-          OptionName: MOVE_TABLE
-          Value: !Ref moveTable
-        - Namespace: aws:elasticbeanstalk:application:environment
-          OptionName: STATE_TABLE
-          Value: !Ref stateTable
         - Namespace: aws:autoscaling:launchconfiguration
           OptionName: IamInstanceProfile
           Value: !Ref instanceProfile
-      PlatformArn: arn:aws:elasticbeanstalk:::platform/Java 8 running on 64bit Amazon Linux
+      PlatformArn: arn:aws:elasticbeanstalk:::platform/Corretto 8 running on 64bit Amazon Linux 2
       VersionLabel: !Ref version
   instanceProfile:
     Type: AWS::IAM::InstanceProfile
@@ -99,77 +75,6 @@ Resources:
                 Effect: Allow
                 Resource: '*'
       Path: /
-  notificationTopic:
-    Type: AWS::SNS::Topic
-  userTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      KeySchema:
-        HashKeyElement: {AttributeName: id, AttributeType: S}
-      ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
-  sessionTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      KeySchema:
-        HashKeyElement: {AttributeName: id, AttributeType: S}
-      ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
-  gameTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      AttributeDefinitions:
-        - AttributeName: "id"
-          AttributeType: "S"
-        - AttributeName: "session"
-          AttributeType: "S"
-      KeySchema:
-        - AttributeName: "id"
-          KeyType: "HASH"
-      GlobalSecondaryIndexes:
-        - IndexName: "session-index"
-          KeySchema:
-            - AttributeName: "session"
-              KeyType: "HASH"
-          ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
-          Projection: { ProjectionType: ALL }
-      ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
-  moveTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      AttributeDefinitions:
-        - AttributeName: "id"
-          AttributeType: "S"
-        - AttributeName: "game"
-          AttributeType: "S"
-      KeySchema:
-        - AttributeName: "id"
-          KeyType: "HASH"
-      GlobalSecondaryIndexes:
-        - IndexName: "game-index"
-          KeySchema:
-            - AttributeName: "game"
-              KeyType: "HASH"
-          ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
-          Projection: { ProjectionType: ALL }
-      ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
-  stateTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      AttributeDefinitions:
-        - AttributeName: "id"
-          AttributeType: "S"
-        - AttributeName: "game"
-          AttributeType: "S"
-      KeySchema:
-        - AttributeName: "id"
-          KeyType: "HASH"
-      GlobalSecondaryIndexes:
-        - IndexName: "game-index"
-          KeySchema:
-            - AttributeName: "game"
-              KeyType: "HASH"
-          ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
-          Projection: { ProjectionType: ALL }
-      ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
 Outputs:
   endpoint:
     Description: Website URL
