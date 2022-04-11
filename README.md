@@ -57,7 +57,7 @@ The backend and frontend are both built using `docker` and `make`. Docker images
 
 The pre-requisite resources can be setup using Cloudformation. 
 
-The Cloudformation template requires no paramaters and can be ran by executing `make publish` from the directory. It will use the `AWS_REGION` configured in `aws.env` in the root of the package, and the default credentials from the AWS CLI. IAM permissions are needed for the Cloudformation stack to run successfully.
+The Cloudformation template requires no paramaters and can be ran by executing `make stack` from the directory. It will use the `AWS_REGION` configured in `aws.env` in the root of the package, and the default credentials from the AWS CLI. IAM permissions are needed for the Cloudformation stack to run successfully.
 
 # Building the Java application
 
