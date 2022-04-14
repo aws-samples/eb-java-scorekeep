@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eo pipefail
 aws cloudformation delete-stack --stack-name scorekeep
-echo "Deleted function stack"
+echo "Deleted application stack"
 if [ -f bucket-name.txt ]; then
     ARTIFACT_BUCKET=$(cat bucket-name.txt)
     while true; do

@@ -1,11 +1,12 @@
 #!/bin/bash
 set -eo pipefail
 export AWS_REGION=$(aws configure get region)
-export NOTIFICATION_TOPIC=$(aws cloudformation describe-stack-resource --stack-name scorekeep --logical-resource-id notificationTopic --query 'StackResourceDetail.PhysicalResourceId' --output text)
-export GAME_TABLE=$(aws cloudformation describe-stack-resource --stack-name scorekeep --logical-resource-id gameTable --query 'StackResourceDetail.PhysicalResourceId' --output text)
-export MOVE_TABLE=$(aws cloudformation describe-stack-resource --stack-name scorekeep --logical-resource-id moveTable --query 'StackResourceDetail.PhysicalResourceId' --output text)
-export SESSION_TABLE=$(aws cloudformation describe-stack-resource --stack-name scorekeep --logical-resource-id sessionTable --query 'StackResourceDetail.PhysicalResourceId' --output text)
-export STATE_TABLE=$(aws cloudformation describe-stack-resource --stack-name scorekeep --logical-resource-id stateTable --query 'StackResourceDetail.PhysicalResourceId' --output text)
-export USER_TABLE=$(aws cloudformation describe-stack-resource --stack-name scorekeep --logical-resource-id userTable --query 'StackResourceDetail.PhysicalResourceId' --output text)
+export TOPICS=$(aws sns list-topics --output text | grep scorekeep-sns-topic)
+export NOTIFICATION_TOPIC=$(echo $TOPICS | cut -d' ' -f 2)
+export GAME_TABLE=scorekeep-game
+export MOVE_TABLE=scorekeep-move
+export SESSION_TABLE=scorekeep-session
+export STATE_TABLE=scorekeep-state
+export USER_TABLE=scorekeep-user
 
 ./gradlew bootrun
