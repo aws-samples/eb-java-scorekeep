@@ -101,7 +101,16 @@ Resources:
                 Resource:
                   - 'arn:aws:dynamodb:*:*:table/scorekeep-*'
                   - 'arn:aws:sns:*:*:scorekeep-*'
-                  - 'arn:aws:lambda:*:*:function/random-name'
+        - PolicyName: invoke
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Sid: InvokeFunction
+                Action:
+                  - 'lambda:InvokeFunction'
+                Effect: Allow
+                Resource:
+                  - !GetAtt function.Arn
         - PolicyName: beanstalk
           PolicyDocument:
             Version: 2012-10-17
