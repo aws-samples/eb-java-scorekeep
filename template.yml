@@ -67,7 +67,7 @@ Resources:
         - Namespace: aws:autoscaling:launchconfiguration
           OptionName: IamInstanceProfile
           Value: !Ref instanceProfile
-      PlatformArn: arn:aws:elasticbeanstalk:::platform/Java 8 running on 64bit Amazon Linux
+      PlatformArn: arn:aws:elasticbeanstalk:::platform/Corretto 8 running on 64bit Amazon Linux 2
       VersionLabel: !Ref version
   instanceProfile:
     Type: AWS::IAM::InstanceProfile
