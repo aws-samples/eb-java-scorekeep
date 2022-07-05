@@ -3,6 +3,8 @@ package scorekeep;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.TableNameOverride;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 
@@ -15,8 +17,11 @@ public class GameModel {
   /** AWS SDK credentials. */
   private AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
         .build();
-  private DynamoDBMapper mapper = new DynamoDBMapper(client);
+  private DynamoDBMapperConfig mapperConfig = new DynamoDBMapperConfig(new TableNameOverride(System.getenv("GAME_TABLE")));
+  private DynamoDBMapper mapper = new DynamoDBMapper(client, mapperConfig);
   private final SessionModel sessionModel = new SessionModel();
+  private DynamoDBMapperConfig sessionMapperConfig = new DynamoDBMapperConfig(new TableNameOverride(System.getenv("SESSION_TABLE")));
+  private DynamoDBMapper sessionMapper = new DynamoDBMapper(client, sessionMapperConfig);
 
   public void saveGame(Game game) throws SessionNotFoundException {
     // check session
@@ -63,7 +68,7 @@ public class GameModel {
     }
     mapper.delete(game);
     //delete game from session
-    Session session = mapper.load(Session.class, sessionId);
+    Session session = sessionMapper.load(Session.class, sessionId);
     Set<String> sessionGames = session.getGames();
     sessionGames.remove(gameId);
     if (sessionGames.size() == 0) {

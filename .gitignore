@@ -5,6 +5,5 @@ build/*
 *.sh
 !bin/*.sh
 lib
-task-definition/scorekeep-task-definition.json
 .elasticbeanstalk/*
 

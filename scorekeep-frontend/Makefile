@@ -18,13 +18,13 @@ check-region:
 check-env: check-repo check-region check-account
 
 run-local: package check-env
-	docker run -d --net=host scorekeep-frontend
+	docker run -d -p 8080:8080 scorekeep-frontend
 
 tag: package check-env
 	docker tag scorekeep-frontend:latest $(ECR_REPO)
 
 login: check-region
-	@$(shell aws ecr get-login --no-include-email --region $(AWS_REGION))
+	aws ecr get-login-password --region $(AWS_REGION) | docker login --username AWS --password-stdin $(ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
 
 publish: tag login check-env
 	docker push $(ECR_REPO)

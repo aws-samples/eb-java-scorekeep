@@ -33,14 +33,21 @@ dependencies {
     testCompile("org.springframework.boot:spring-boot-starter-test")
     compile("com.amazonaws:aws-java-sdk-dynamodb")
     compile("com.amazonaws:aws-java-sdk-sns")
-    compile("com.fasterxml.jackson.core:jackson-databind:2.8.4")
-    testCompile("org.junit.jupiter:junit-jupiter-api:5.0.0")
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.0")
+    compile("com.fasterxml.jackson.core:jackson-databind:2.8.11")
+    testCompile("org.junit.jupiter:junit-jupiter-api:5.0.3")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.3")
+    compile("com.amazonaws:aws-xray-recorder-sdk-core")
+    compile("com.amazonaws:aws-xray-recorder-sdk-aws-sdk")
+    compile("com.amazonaws:aws-xray-recorder-sdk-aws-sdk-instrumentor")
+    compile("com.amazonaws:aws-xray-recorder-sdk-apache-http")
+    compile("com.amazonaws:aws-xray-recorder-sdk-sql-postgres")
+    compile("com.amazonaws:aws-xray-recorder-sdk-sql-mysql")
 }
 
 dependencyManagement {
     imports {
-        mavenBom("com.amazonaws:aws-java-sdk-bom:1.11.67")
+        mavenBom("com.amazonaws:aws-java-sdk-bom:1.11.761")
+        mavenBom('com.amazonaws:aws-xray-recorder-sdk-bom:2.11.0')
     }
 }
 task wrapper(type: Wrapper) {
