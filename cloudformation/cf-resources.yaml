@@ -10,10 +10,10 @@ Parameters:
     Default: UPDATE_ME
   FrontendImageUri:
     Type: String
-    Default: <SCOREKEEP-FRONTEND-IMAGE-URL>
+    Default: public.ecr.aws/z3x2s2f1/scorekeep-frontend:latest  #Placeholder
   BackendImageUri:
     Type: String
-    Default: <SCOREKEEP-API-IMAGE-URL>
+    Default: public.ecr.aws/z3x2s2f1/scorekeep-api:latest       #Placeholder
   EcsClusterName:
     Type: String
     Description: >
@@ -260,7 +260,7 @@ Resources:
             HostPort: '2000'
             Protocol: udp
       Cpu: '1024'
-      ExecutionRoleArn: scorekeepExecutionRole
+      ExecutionRoleArn: !Ref ECSExecutionRole
       Family: scorekeep
       Memory: '900'
       NetworkMode: host
@@ -662,17 +662,6 @@ Resources:
       Port: 80
       Protocol: HTTP
 Outputs:
-  EcsInstanceAsgName:
-    Condition: CreateWithASG
-    Description: Auto Scaling Group Name for ECS Instances
-    Value: !Ref EcsInstanceAsg
-  EcsSpotFleetRequestId:
-      Condition: CreateWithSpot
-      Description: Spot Fleet Request for ECS Instances
-      Value: !Ref EcsSpotFleet
-  LoadBalancer:
-    Description: A reference to the Application Load Balancer
-    Value: !Ref ScorekeepLoadBalancer
   LoadBalancerUrl:
     Description: The URL of the ALB
     Value: !GetAtt ScorekeepLoadBalancer.DNSName

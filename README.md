@@ -42,10 +42,10 @@ Use the procedures in the following sections to run the project on ECS through C
 
 To deploy the sample application, you will need the following:
 
-- AWS user with permissions - IAMFullAccess, AmazonEC2FullAccess, AmazonEC2ContainerRegistryFullAccess, AmazonDynamoDBFullAccess, AmazonECS_FullAccess, AmazonSSMReadOnlyAccess, AmazonSNSFullAccess, AWSCloudFormationFullAccess
+- AWS user with permissions - AWSCloudFormationFullAccess, IAMFullAccess, AmazonEC2FullAccess, AmazonDynamoDBFullAccess, AmazonECS_FullAccess, AmazonSNSFullAccess, AWSXrayReadOnlyAccess
 - The Bash shell. For Linux and macOS, this is included by default. In Windows 10, you can install the [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10) to get a Windows-integrated version of Ubuntu and Bash.
 - [The AWS CLI (v2.7.9+)](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html).
-- Docker (to create docker images and upload them to ECR)
+- Docker (only needed if you want to modify the project and create and use your own docker images instead of those provided)
 
 ## Get permission to use AWS Cloudformation
 If you're using an IAM user with limited permissions, good work! Add permissions to your user account to get started.
@@ -56,7 +56,7 @@ If you're using an IAM user with limited permissions, good work! Add permissions
 2. Open the [users page](https://console.aws.amazon.com/iam/home#/users) of the IAM console.
 3. Choose a user.
 4. Choose **Add permissions**.
-5. Add the following policies: **IAMFullAccess**, **AmazonEC2FullAccess**, **AmazonEC2ContainerRegistryFullAccess**, **AmazonDynamoDBFullAccess**, **AmazonECS_FullAccess**, **AmazonSSMReadOnlyAccess**, **AmazonSNSFullAccess**, **AWSCloudFormationFullAccess**.
+5. Add the following policies: **AWSCloudFormationFullAccess**, **IAMFullAccess**, **AmazonEC2FullAccess**, **AmazonDynamoDBFullAccess**, **AmazonECS_FullAccess**, **AmazonSNSFullAccess**, **AWSXrayReadOnlyAccess**.
 
 The CloudFormation template for this project creates resources that requires these policies. If you don't have IAM permissions, check with your account owner about getting temporary access with an IAM role.
 
@@ -86,7 +86,7 @@ Download or clone this repository.
 Building the project is not necessary to setup the project on Cloudformation. The Cloudformation uses container images of both the frontend and api of scorekeep from a public container repository.
 If you would like to modify the project, you can [build and publish new container images of the frontend and API](#building-your-own-docker-images-of-scorekeep), and replace the image repository urls in the parameter section of the Cloudformation template.
 
-The Java application is built using the gradle Docker container so it does not rely on your local Java or Gradle setup. The output of the build process appears in the `build/` folder of the project. After you build the application you will want to package it into a docker container so it can be executed. The docker container packaging takes the JAR produced from the build step and adds it to a Java base image. It then configures the environment, ports, and entry point. The docker can be ran locally with valid AWS credentials, or ran on ECS.
+The Java application is built using the gradle Docker container so it does not rely on your local Java or Gradle setup. The output of the build process appears in the `build/` folder of the project. After you build the application you will want to package it into a docker container so it can be executed. The docker container packaging takes the JAR produced from the build step and adds it to a Java base image. It then configures the environment, ports, and entry point. The docker containers can be ran locally with valid AWS credentials, or ran on ECS.
 
 # Deploying the application
 
@@ -101,7 +101,7 @@ The Cloudformation template requires no paramaters and can be ran by executing t
 Login into the AWS CLI with a user with permissions listed in the [requirements section](#Requirements).
 In the `/cloudformation` directory, run the following command (replacing `<AWS_REGION>` with your AWS Region):
 
-    aws --region <AWS_REGION> cloudformation create-stack --stack-name scorekeep --capabilities "CAPABILITY_NAMED_IAM" --template-body file://cf-resources.yam
+    aws --region <AWS_REGION> cloudformation create-stack --stack-name scorekeep --capabilities "CAPABILITY_NAMED_IAM" --template-body file://cf-resources.yaml
 
 This command will create a Cloudformation stack that creates the resources for the scorekeep application to run on ECS via the EC2 launch type.
 
@@ -130,7 +130,7 @@ Open the [cloud formation console](https://console.aws.amazon.com/cloudformation
 3. Click **Next** at the bottom of the page.
 4. At the bottom of the page, check the acknowledgement and then click **Update stack**.
 
-Once the stack has been updated, run the following the command to restart the service with notifications sent to the provided email:
+Once the stack has been updated, run the following command to restart the service with notifications sent to the provided email:
 
     aws ecs update-service --force-new-deployment --service scorekeep-service --cluster scorekeep-cluster --task-definition scorekeep
 
@@ -139,7 +139,7 @@ To delete the application and resources setup through Cloudformation, run the fo
 
     aws --region <AWS_REGION> cloudformation delete-stack --stack-name scorekeep
 
-Alternatively, open the [cloud formation console](https://console.aws.amazon.com/cloudformation/home), select the `scorekeep` stack and click delete.
+Alternatively, open the [Cloudformation console](https://console.aws.amazon.com/cloudformation/home), select the `scorekeep` stack and click delete.
 
 # How it works
 
@@ -153,6 +153,11 @@ The frontend is an Angular 1.5 web app that uses `$resource` objects to perform 
 
 The frontend is served statically by an Nginx container. The [nginx.conf](https://github.com/aws-samples/eb-java-scorekeep/blob/xray-gettingstarted/scorekeep-frontend/nginx.conf) file in the source code sets up Nginx to serve the frontend html pages from root, and forward requests starting with /api to the API backend running on port 5000. 
 
+## X-Ray Daemon
+The X-Ray daemon listens and gathers raw segment data on port 2000, and sends it towards the AWS X-Ray API.
+
+The X-Ray daemon runs in a container that is deployed alongside the Scorekeep application. Check out the [AWS X-Ray Developer Guide](https://docs.aws.amazon.com/xray/latest/devguide/xray-daemon.html) for more details about the X-Ray Daemon.
+
 # Building your own Docker Images of Scorekeep
 
 If you would like to modify the project or test locally, you must build the docker images of scorekeep.
@@ -161,6 +166,8 @@ To test your changes on ECS, you will need to upload the images to a container i
 Build your API container by executing `make package` in the root folder
 
 Build your Frontend container by executing `make package` in the `scorekeep-frontend/` folder
+
+You can upload your images to AWS Elastic Container Registry (ECR). Your user will need the `AmazonEC2ContainerRegistryFullAccess` policy to access it. [See how to push a Docker image to ECR here.](https://docs.aws.amazon.com/AmazonECR/latest/userguide/docker-push-ecr-image.html)
 
 ## Using your own Docker Images of Scorekeep on ECS in the [`Deploying the application`](#Deploying-the-application) section
 To test the scorekeep application with your own docker images, replace the image repository URLs in the parameter section of the Cloudformation template with your docker image repository URLs.
@@ -195,11 +202,11 @@ The script targets `localhost:5000`. However, you can point it at the API runnin
 
 ## Run the Scorekeep Frontend with Docker
 
-In the scorekeep-frontend/public/app/scorekeep.js file, comment out the `module.value('api', '/api/');` line and uncomment the `// module.value('api', 'http://localhost:5000/api/');` line.
+In the scorekeep-frontend/public/app/scorekeep.js file, comment out the `module.value('api', '/api/');` line and uncomment the `// module.value('api', 'http://localhost:5000/api/');` line. This will point the Frontend towards the API that is run locally.
 
 In the scorekeep-frontend/nginx.conf file, change the port that the server listens to from 80 to 8080.
 
-You can run the frontend container locally by executing `make run-local` from the `scorekeep-frontend` directory. You should be able to hit it locally with a web browser or curl on [localhost:8080](http://localhost:8080)
+You can run the frontend container locally by executing `make run-local` from the `scorekeep-frontend/` directory. You should be able to hit it locally with a web browser or curl on [localhost:8080](http://localhost:8080)
 
 ## Run the X-Ray Daemon locally
 
@@ -231,6 +238,7 @@ This sample application could be better with your help!
   - Security with [Amazon VPC](http://aws.amazon.com/vpc)
   - Performance with [Amazon ElastiCache](http://aws.amazon.com/elasticache)
   - Scalability with [Amazon CloudFront](http://aws.amazon.com/cloudfront)
+  - Portability with [Amazon ECS](http://aws.amazon.com/ecs) or CloudFormation
   - Accessibility with [Amazon Polly](https://aws.amazon.com/documentation/polly/)
 - Write tests!
   - Unit tests
