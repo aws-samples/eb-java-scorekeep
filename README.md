@@ -130,9 +130,7 @@ Open the [cloud formation console](https://console.aws.amazon.com/cloudformation
 3. Click **Next** at the bottom of the page.
 4. At the bottom of the page, check the acknowledgement and then click **Update stack**.
 
-Once the stack has been updated, run the following command to restart the service with notifications sent to the provided email:
-
-    aws ecs update-service --force-new-deployment --service scorekeep-service --cluster scorekeep-cluster --task-definition scorekeep
+Once the stack has been updated, the service is restarted with notifications sent to the provided email.
 
 # Cleanup
 To delete the application and resources setup through Cloudformation, run the following command (replacing `<AWS_REGION>` with your AWS Region):

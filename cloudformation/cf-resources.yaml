@@ -7,7 +7,7 @@ Description: >
 Parameters:
   Email:
     Type: String
-    Default: UPDATE_ME
+    Default: UPDATE_ME  # <- change to a valid "abc@def.xyz" email
   FrontendImageUri:
     Type: String
     Default: public.ecr.aws/z3x2s2f1/scorekeep-frontend:latest  #Placeholder
@@ -360,7 +360,6 @@ Resources:
               - "sts:AssumeRole"
       ManagedPolicyArns:
         - "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-        - "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
       RoleName: "scorekeepExecutionRole"
   ECSTaskRole:
     Type: AWS::IAM::Role
@@ -379,7 +378,6 @@ Resources:
         - "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
         - "arn:aws:iam::aws:policy/AmazonSNSFullAccess"
         - "arn:aws:iam::aws:policy/AWSXrayFullAccess"
-        - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
       RoleName: "scorekeepRole"
   ScorekeepECSRole:
     Type: AWS::IAM::Role
@@ -398,11 +396,10 @@ Resources:
     DependsOn: ScorekeepECSRole
     Type: AWS::IAM::InstanceProfile
     Properties: 
-      InstanceProfileName: ScorekeepInstanceProfile
+      InstanceProfileName: !Ref IamRoleInstanceProfile
       Roles: 
         - ScorekeepECSRole
   ScorekeepECSCluster:
-    DependsOn: ECSTaskRole
     Type: AWS::ECS::Cluster
     Properties: 
       ClusterName: !Ref EcsClusterName
@@ -523,8 +520,8 @@ Resources:
         Fn::Base64: !Ref UserData
   EcsInstanceAsg:
     DependsOn:
-    - ScorekeepECSCluster
     - ScorekeepTargetGroup
+    - EcsInstanceLc
     Type: AWS::AutoScaling::AutoScalingGroup
     Condition: CreateWithASG
     Properties:
@@ -553,47 +550,6 @@ Resources:
           PropagateAtLaunch: true
       TargetGroupARNs:
       - !Ref ScorekeepTargetGroup
-  EcsSpotFleet:
-    DependsOn:
-    - ScorekeepECSCluster
-    - ScorekeepInstanceProfile
-    Condition: CreateWithSpot
-    Type: AWS::EC2::SpotFleet
-    Properties:
-      SpotFleetRequestConfigData:
-        AllocationStrategy: !Ref SpotAllocationStrategy
-        IamFleetRole: !Ref IamSpotFleetRoleArn
-        TargetCapacity: !Ref AsgMaxSize
-        SpotPrice: !If [ CreateWithSpotPrice, !Ref SpotPrice, !Ref 'AWS::NoValue' ]
-        TerminateInstancesWithExpiration: true
-        LaunchSpecifications: 
-            -
-              IamInstanceProfile:
-                Arn: !Ref IamRoleInstanceProfile
-              ImageId: !Ref EcsAmiId
-              InstanceType: !Select [ 0, !If [ UseT2MicroInstance, !Ref EcsInstanceTypeT2, !Ref EcsInstanceTypeT3 ] ]
-              KeyName: !If [ CreateEC2LCWithKeyPair, !Ref KeyName, !Ref "AWS::NoValue" ]
-              Monitoring:
-                Enabled: true
-              SecurityGroups:
-                - GroupId: !If [ CreateNewSecurityGroup, !Ref EcsSecurityGroup, !Ref SecurityGroupId ]
-              SubnetId: !If
-                      - CreateSubnet1
-                      - !If
-                        - CreateSubnet2
-                        - !If
-                          - CreateSubnet3
-                          - !Join [ "," , [ !Ref PubSubnetAz1, !Ref PubSubnetAz2, !Ref PubSubnetAz3 ] ]
-                          - !Join [ "," , [ !Ref PubSubnetAz1, !Ref PubSubnetAz2 ] ]
-                        - !Ref PubSubnetAz1
-                      - !Join [ "," , !Ref SubnetIds ]
-              BlockDeviceMappings:
-                    - DeviceName: !Ref DeviceName
-                      Ebs:
-                       VolumeSize: !Ref EbsVolumeSize
-                       VolumeType: !Ref EbsVolumeType
-              UserData:
-                    Fn::Base64: !Ref UserData
   ScorekeepService:
     DependsOn:
     - ScorekeepTaskDefinition
@@ -606,6 +562,7 @@ Resources:
     - ECSExecutionRole
     - ECSTaskRole
     - ScorekeepECSCluster
+    - EcsInstanceAsg
     Type: AWS::ECS::Service
     Properties:
       Cluster: scorekeep-cluster
@@ -616,7 +573,7 @@ Resources:
       LaunchType: EC2
       SchedulingStrategy: REPLICA
       ServiceName: scorekeep-service
-      TaskDefinition: scorekeep
+      TaskDefinition: !Ref ScorekeepTaskDefinition
   ScorekeepTargetGroup:
     DependsOn:
     - Vpc
@@ -628,9 +585,7 @@ Resources:
       Protocol: HTTP
       VpcId: !Ref Vpc
   ScorekeepLoadBalancer:
-    DependsOn:
-    - ScorekeepTargetGroup
-    - EcsInstanceAsg
+    DependsOn: EcsSecurityGroup
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
       Name: scorekeep-lb
@@ -652,7 +607,9 @@ Resources:
           Value: !Join [_, [!Ref 'AWS::StackName']]
       Type: application
   ScorekeepLoadBalancerListener:
-    DependsOn: ScorekeepLoadBalancer
+    DependsOn:
+    - ScorekeepLoadBalancer
+    - ScorekeepTargetGroup
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties: 
       DefaultActions:
