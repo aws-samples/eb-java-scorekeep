@@ -7,7 +7,7 @@ Description: >
 Parameters:
   Email:
     Type: String
-    Default: UPDATE_ME  # <- change to a valid "abc@def.xyz" email
+    Default: UPDATE_ME  # <- change to a valid "abc@def.xyz" email (without quotes)
   FrontendImageUri:
     Type: String
     Default: public.ecr.aws/z3x2s2f1/scorekeep-frontend:latest  #Placeholder
