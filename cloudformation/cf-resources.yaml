@@ -10,10 +10,10 @@ Parameters:
     Default: UPDATE_ME  # <- change to a valid "abc@def.xyz" email (without quotes)
   FrontendImageUri:
     Type: String
-    Default: public.ecr.aws/z3x2s2f1/scorekeep-frontend:latest  #Placeholder
+    Default: public.ecr.aws/xray/scorekeep-frontend:latest
   BackendImageUri:
     Type: String
-    Default: public.ecr.aws/z3x2s2f1/scorekeep-api:latest       #Placeholder
+    Default: public.ecr.aws/xray/scorekeep-api:latest
   EcsClusterName:
     Type: String
     Description: >
