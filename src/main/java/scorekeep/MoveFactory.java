@@ -11,6 +11,12 @@ import java.lang.reflect.InvocationTargetException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.amazonaws.xray.AWSXRay;
+import com.amazonaws.xray.AWSXRayRecorder;
+import com.amazonaws.xray.entities.Entity;
+import com.amazonaws.xray.entities.Segment;
+import com.amazonaws.xray.entities.Subsegment;
+
 public class MoveFactory {
   private static final Logger logger = LoggerFactory.getLogger(MoveFactory.class);
   private final HashMap<String, Move> allMoves = new HashMap<String, Move>(1);
@@ -19,6 +25,7 @@ public class MoveFactory {
   private final GameController gameController = new GameController();
   private final StateController stateController = new StateController();
   private final RulesFactory rulesFactory = new RulesFactory();
+  private final AWSXRayRecorder recorder = AWSXRay.getGlobalRecorder();
 
   public MoveFactory(){
   }
@@ -60,9 +67,14 @@ public class MoveFactory {
     State newState = new State(stateId, sessionId, gameId, newStateText, newTurn);
     // send notification on game end
     if ( newStateText.startsWith("A") || newStateText.startsWith("B")) {
+      Entity segment = recorder.getTraceEntity();
       Thread comm = new Thread() {
         public void run() {
-          Sns.sendNotification("Scorekeep game completed", "Winner: " + userId);
+          segment.run(() -> {
+            Subsegment subsegment = AWSXRay.beginSubsegment("## Send notification");
+            Sns.sendNotification("Scorekeep game completed", "Winner: " + userId);
+            AWSXRay.endSubsegment();
+          });
         }
       };
       comm.start();

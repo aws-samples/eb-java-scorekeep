@@ -2,21 +2,21 @@ Resources:
   UserTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: scorekeep-user
+      TableName: "scorekeep-user"
       KeySchema:
         HashKeyElement: {AttributeName: id, AttributeType: S}
       ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
   SessionTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: scorekeep-session
+      TableName: "scorekeep-session"
       KeySchema:
         HashKeyElement: {AttributeName: id, AttributeType: S}
       ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
   GameTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: scorekeep-game
+      TableName: "scorekeep-game"
       AttributeDefinitions:
         - AttributeName: "id"
           AttributeType: "S"
@@ -36,7 +36,7 @@ Resources:
   MoveTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: scorekeep-move
+      TableName: "scorekeep-move"
       AttributeDefinitions:
         - AttributeName: "id"
           AttributeType: "S"
@@ -56,7 +56,7 @@ Resources:
   StateTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: scorekeep-state
+      TableName: "scorekeep-state"
       AttributeDefinitions:
         - AttributeName: "id"
           AttributeType: "S"
@@ -73,3 +73,7 @@ Resources:
           ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
           Projection: { ProjectionType: ALL }
       ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
+  NotificationTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: "scorekeep-notifications"

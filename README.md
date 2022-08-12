@@ -1,11 +1,11 @@
 # Scorekeep
-Scorekeep is a RESTful web API implemented in Java that uses Spring to provide an HTTP interface for creating and managing game sessions and users. This project includes the Scorekeep API and a front-end web app that consumes it. The front end and API can run on the same server and domain or separately, with the API running in Elastic Beanstalk and the front end served statically by a CDN.
+Scorekeep is a RESTful web API implemented in Java that uses Spring to provide an HTTP interface for creating and managing game sessions and users. This project includes the Scorekeep API and a front-end web app that consumes it. The frontend and API can run on the same server and domain or separately, with the API deployed through Amazon Elastic Container Service (ECS) via the EC2 launch type along with the frontend that is served statically by a CDN.
 
-The `master` branch shows the use of Spring, Angular, nginx, the [AWS SDK for Java](http://aws.amazon.com/sdkforjava), [Amazon DynamoDB](http://aws.amazon.com/dynamodb), Gradle, CORS, and [AWS Elastic Beanstalk](http://aws.amazon.com/elasticbeanstalk) features that enable you to:
+The `xray-gettingstarted` branch shows the use of Spring, Angular, nginx, the [AWS SDK for Java](http://aws.amazon.com/sdkforjava), [Amazon DynamoDB](http://aws.amazon.com/dynamodb), Gradle, Docker, and [AWS ECS](http://aws.amazon.com/ecs) features that enable you to:
 
-- Run both components on the same [Amazon EC2](http://aws.amazon.com/ec2) instance.
-- Create required DynamoDB and [Amazon SNS](http://aws.amazon.com/sns) resources as part of the Elastic Beanstalk environment.
-- Build the API from source on instance during deployment.
+- Run both components in the same [Amazon ECS](http://aws.amazon.com/ecs) task definition on an EC2 instance within an ECS cluster
+- Create required ECS, DynamoDB, and [Amazon SNS](http://aws.amazon.com/sns) resources through Cloudformation
+- Build and use the Scorekeep API and Frontend container images.
 
 Other branches extend the application's functionality and show the use of other AWS services. See the readme in each branch for details about the integration and instructions for use.
 
@@ -23,229 +23,179 @@ Other branches extend the application's functionality and show the use of other 
 - [`xray-gettingstarted`](https://github.com/aws-samples/eb-java-scorekeep/tree/xray-gettingstarted) ([tutorial](https://docs.aws.amazon.com/xray/latest/devguide/xray-gettingstarted.html)) - Use the AWS X-Ray SDK for Java to instrument incoming requests and SDK clients (no additional configuration required).
 - [`xray-worker`](https://github.com/aws-samples/eb-java-scorekeep/tree/xray-worker) - Instrumented Python Lambda worker function from the `lambda-worker` branch.
 
-Use the procedures in the following sections to run the project on Elastic Beanstalk and configure it for local testing and development.
+Use the procedures in the following sections to run the project on ECS through Cloudformation or configure it for local testing and development.
 
 **Sections**
-- [Requirements](#requirements)
+- [Running the application on ECS via CloudFormation](#Running-the-application-on-ECS-via-CloudFormation)
+- [Repository Layout](#repository-layout)
 - [Setup](#setup)
-- [Deploy](#deploy)
-- [Test](#test)
-- [Configure notifications](#configure-notifications)
-- [Cleanup](#cleanup)
+- [Requirements](#Requirements)
+- [Running the project locally](#Running-the-project-locally)
+- [Building your own Docker Images of Scorekeep for ECS](#Building-your-own-Docker-Images-of-Scorekeep-for-ECS)
 - [How it works](#how-it-works)
-- [Running the project locally](#running-the-project-locally)
 - [Contributing](#contributing)
+
+# Running the application on ECS via CloudFormation
+
+Follow the [Getting started with AWS X-Ray](https://docs.aws.amazon.com/xray/latest/devguide/xray-gettingstarted.html) guide to run this application on Scorekeep on ECS via the cloudformation template included in this project (`cloudformation/cf-resources.yaml`). This guide uses public container images of this project that are hosted on ECR. If you would like to [modify the project and test out the changes on ECS](#Building-your-own-Docker-Images-of-Scorekeep-for-ECS), you will need to build and host your own Docker images of this project, and then replace the container image URLs in the cloudformation template with your new docker image URLs.  
+
+# Repository Layout
+The project contains two independent applications:
+
+- An HTML and JavaScript frontend in Angular 1.5 to be ran with Nginx
+- A Java backend that uses Spring to provide a public API
+
+The backend and frontend are both built using `docker` and `make`. Docker images are published to Amazon ECR.
+
+| Directory | Contents                                        | Build           | Package         | Publish        | Clean         |
+|-----------|-------------------------------------------------|-----------------|-----------------|----------------|---------------|
+| `/`       | Contains the Java Backend (aka `scorekeep-api`) | `make build`   | `make package`  | `make publish` | `make clean`   |
+| `/scorekeep-frontend` | Contains the Angular+Nginx frontend |  N/A            | `make package`  | `make publish`  |  N/A         |
+| `/cloudformation` | Contains the Cloudformation template for creating the dependant resources (i.e. DynamoDB, SNS, ECS, EC2, AutoScaling, ElasticLoadBalancingV2, and IAM) | N/A | N/A | `make stack` | `make clean` |
+| `/run-local-resources` | Contains the Cloudformation template for creating local dependent resources (i.e. DynamoDB and SNS) | N/A | N/A | N/A | N/A |
+
+# Setup
+Download or clone this repository.
+
+    $ git clone https://github.com/aws-samples/eb-java-scorekeep.git -b xray-gettingstarted
+    $ cd eb-java-scorekeep
 
 # Requirements
 
-To deploy the sample application, you need the following:
+To run the sample application locally, you will need the following:
 
-- User permissions - AWS Elastic Beanstalk, AWS CloudFormation, Amazon DynamoDB, Amazon SNS, IAM
+- AWS user with permissions - AWSCloudFormationFullAccess, AmazonDynamoDBFullAccess, AmazonSNSFullAccess, AWSXrayReadOnlyAccess
 - The Bash shell. For Linux and macOS, this is included by default. In Windows 10, you can install the [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10) to get a Windows-integrated version of Ubuntu and Bash.
-- [The AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html).
+- [The AWS CLI (v2.7.9+)](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html), with the AWS user configured here.
+- AWS_REGION and ACCOUNT_ID to be configured in aws.env in the root of the package
+- Docker
 
-To run and test the project API locally, you also need Java and Gradle.
+## Get permission to use AWS Cloudformation
+If you're using an IAM user with limited permissions, please, add permissions to your user account to get started.
 
-- [Java 8 runtime environment (SE JRE)](https://www.oracle.com/java/technologies/javase-downloads.html)
-- [Gradle 5](https://gradle.org/releases/)
-
-## Get permission to use Elastic Beanstalk
-If you're using an IAM user with limited permissions, good work! Add Elastic Beanstalk permissions to your user account to get started.
-
-**To add Elastic Beanstalk permissions to an IAM user**
+**To add permissions to an IAM user**
 
 1. Sign in to a user or role with administrator permissions.
 2. Open the [users page](https://console.aws.amazon.com/iam/home#/users) of the IAM console.
 3. Choose a user.
 4. Choose **Add permissions**.
-5. Add the  **AWSElasticBeanstalkFullAccess** managed policy.
+5. Add the following policies: **AWSCloudFormationFullAccess**, **AmazonDynamoDBFullAccess**, **AmazonSNSFullAccess**, **AWSXrayReadOnlyAccess**.
 
-The CloudFormation template for this project creates an IAM role that allows the Beanstalk environment to access its DynamoDB tables and SNS topic. If you don't have IAM permissions, check with your account owner about getting temporary access with an IAM role.
-
-# Setup
-Download or clone this repository.
-
-    $ git clone git@github.com:aws-samples/eb-java-scorekeep.git
-    $ cd eb-java-scorekeep
-
-To create a new bucket for deployment artifacts, run `1-create-bucket.sh`. Or, if you already have a bucket, create a file named `bucket-name.txt` that contains the name of your bucket.
-
-    eb-java-scorekeep$ ./1-create-bucket.sh
-    make_bucket: beanstalk-artifacts-a5e491dbb5b22e0d
-
-# Deploy
-To deploy the application, run `2-deploy.sh`.
-
-    eb-java-scorekeep$ ./2-deploy.sh
-    Uploading to 38403831f48ce35031975951e796a859  171897 / 171897.0  (100.00%)
-    Successfully packaged artifacts and wrote output template to file out.yml.
-    Waiting for changeset to be created..
-    Waiting for stack create/update to complete
-    Successfully created/updated stack - scorekeep
-
-This script uses AWS CloudFormation to deploy the Elastic Beanstalk environment and an IAM role. If the AWS CloudFormation stack that contains the resources already exists, the script updates it with any changes to the template or code.
-
-# Test
-To get the website's URL, run `3-open-website.sh`.
-
-    eb-java-scorekeep$ ./3-open-website.sh
-    http://awseb-e-p-AWSEBLoa-N0ZJXMPLF97Z-260056452.us-east-2.elb.amazonaws.com
-
-Use the website to create a session and play a game. The Elastic Beanstalk environment serves the website statically at the root path, and runs the API under `/api`. The website is stateless and calls the API to manage resources.
-
-To run the API locally, run `4-run-local.sh`. The API is a Spring application that accesses the AWS resources (tables and topic) in your Elastic Beanstalk environment. It uses the permissions in the AWS SDK credentials that you've configured for use with the AWS CLI.
-
-    eb-java-scorekeep$ ./4-run-local.sh
-    :compileJava UP-TO-DATE
-    :processResources UP-TO-DATE
-    :classes UP-TO-DATE
-    :findMainClass
-    :bootRun
-      .   ____          _            __ _ _
-     /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
-    ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
-     \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
-      '  |____| .__|_| |_|_| |_\__, | / / / /
-     =========|_|==============|___/=/_/_/_/
-     :: Spring Boot ::        (v1.4.0.RELEASE)
-    2020-04-09 17:42:34.242  INFO 2381 --- [           main] scorekeep.Application                    : Starting Application on localhost with PID 2381 (eb-java-scorekeep/build/classes/main started by user in eb-java-scorekeep)
-    2020-04-09 17:42:34.246  INFO 2381 --- [           main] scorekeep.Application                    : No active profile set, falling back to default profiles: default
-
-To test the API, run `5-test-local.sh` in another shell terminal.
-
-    eb-java-scorekeep$ ./5-test-local.sh
-
-This script uses cURL to send HTTP requests to the local API endpoint (`localhost:5000`).
-
-# Configure notifications
-The API uses SNS to send a notification email when a game ends. To enable notifications, configure your email address in an environment variable.
-
-**To enable notifications**
-
-1. Open the [Elastic Beanstalk console](https://console.aws.amazon.com/elasticbeanstalk/home#/environments).
-2. Choose the **BETA** environment.
-2. Choose **Configuration**.
-3. Next to **Software**, choose **Modify**.
-4. Under **Environment properties**, set **NOTIFICATION_EMAIL** to your email address.
-5. Check your email for a subscription confirmation.
-6. Complete a game to trigger a notification.
-
-# Cleanup
-To delete the application, run `6-cleanup.sh`.
-
-    eb-java-scorekeep$ ./6-cleanup.sh
-
-# How it works
-The project includes two independent components
-
-- An HTML and JavaScript front end in Angular 1.5 
-- A Java backend that uses Spring to provide a public API
-
-## Backend
-The API runs at paths under /api that provide access to user, session, game, state, and move resources stored as JSON documents in DynamoDB. The API is RESTful, so you can create resources by sending HTTP POST requests to the resource path, for example /api/session. See the [test script](https://github.com/aws-samples/eb-java-scorekeep/blob/master/bin/test-api.sh) for example requests with cURL.
-
-The [Buildfile](https://github.com/aws-samples/eb-java-scorekeep/blob/master/Buildfile) tells Elastic Beanstalk to run `./gradlew build` during deployment to create an executable JAR file. The [Procfile](https://github.com/aws-samples/eb-java-scorekeep/blob/master/Procfile) tells Elastic Beanstalk to run that JAR on port 5000.
-
-## Front end
-The front end is an Angular 1.5 web app that uses `$resource` objects to perform CRUD operations on resources defined by the API. Users first encounter the [main view](https://github.com/aws-samples/eb-java-scorekeep/blob/master/public/main.html) and [controller](https://github.com/aws-samples/eb-java-scorekeep/blob/master/public/app/mainController.js) and progress through session and game views at routes that include the IDs of resources that the user creates.
-
-The front end is served statically by the nginx proxy at the root path. The [nginx.conf](https://github.com/aws-samples/eb-java-scorekeep/blob/master/.ebextensions/nginx/nginx.conf) file in the source code overwrites the default configuration provided by the Elastic Beanstalk Java platform to serve the front end statically, and forward requests to paths starting with /api to the API running on port 5000.
+The CloudFormation template for this project creates resources that requires these policies. If you don't have IAM permissions, check with your account owner about getting temporary access with an IAM role.
 
 # Running the project locally
-You can run both the API and front end locally with Gradle and the Spring Boot CLI.
-To get started, clone this repository or extract the contents of the source bundle that you downloaded earlier.
+You can run both the API and front-end locally with Docker.
+Scripts are provided to create container images of the Frontend and API.
 
-## Run the Scorekeep API with Gradle
-The API requires DynamoDB tables to exist in AWS to run locally. These tables are created by [the application template](https://github.com/aws-samples/eb-java-scorekeep/blob/master/template.yml) when you deploy it. When you delete the application stack, the tables are deleted as well.
+## Requirements
 
-The application reads environment variables to get the region and table names for calls to DynamoDB. The application template sets these on the Elastic Beanstalk environment. When you run the application locally, the `4-run-local.sh` script reads the resource names from the CloudFormation stack and gets the region from the AWS CLI:
+The `make` scripts will use the AWS_REGION (ex. us-east-1) and ACCOUNT_ID (12 digit ID) that must be configured in aws.env in the root of the package, and the default credentials from the AWS CLI.
 
-    #!/bin/bash
-    set -eo pipefail
-    export AWS_REGION=$(aws configure get region)
-    export NOTIFICATION_TOPIC=$(aws cloudformation describe-stack-resource --stack-name scorekeep --logical-resource-id notificationTopic --query 'StackResourceDetail.PhysicalResourceId' --output text)
-    export GAME_TABLE=$(aws cloudformation describe-stack-resource --stack-name scorekeep --logical-resource-id gameTable --query 'StackResourceDetail.PhysicalResourceId' --output text)
-    ...
-    ./gradlew bootrun
+Please configure the aws.env file:
+1. Open the aws.env file in the root directory using a text editor
+2. Enter the region for AWS_REGION in which your user is configured to use
+3. Enter your AWS 12 digit ID for ACCOUNT_ID
 
-The application needs AWS credentials to communicate with DynamoDB. In Elastic Beanstalk, Scorekeep gets credentials from the instance profile, which is the IAM role that is attached to the EC2 instance that runs the code. When you run the application locally, the AWS SDK for Java can retrieve credentials from files in `~/.aws/` or environment variables.
+## Run the Scorekeep API with Docker
 
-Follow the instructions in the *AWS SDK for Java Developer Guide* to provide access keys to the application: [Set up AWS Credentials for Development](http://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/setup-credentials.html).
+The API requires DynamoDB tables and SNS topic to exist in AWS to run the API locally. If the Cloudformation resources from the [Getting Started Guide](https://docs.aws.amazon.com/xray/latest/devguide/xray-gettingstarted.html) is still running, there is no need to re-create the DynamoDB and SNS resources.
+Otherwise, you can use the Cloudformation template within the `run-local-resources/` directory. Within the `run-local-resources/` directory, run the following command to create the DynamoDB and SNS resources (note: this command will create the stack in the default region configured in the AWS CLI):
+
+    aws cloudformation create-stack --stack-name scorekeep-local --capabilities "CAPABILITY_NAMED_IAM" --template-body file://cf-resources-local.yaml
+
+[Click here to check if the CloudFormation stack has finished creating](https://console.aws.amazon.com/cloudformation)
+
+After the Cloudformation stack has finished creating, execute `make run-local` in the root directory to build and start the API container, listening on port 5000. You can use `docker ps` to find the container ID of the API, and use `docker attach <CONTAINER_ID>` to follow the log output of the container.
+
+The application needs AWS credentials to communicate with DynamoDB. In ECS, Scorekeep gets credentials from the task role. When you run the application locally, we will mount in ~/.aws/ to the container where the AWS SDK for Java will retrieve credentials. You can also configure your credentials as environment variables if you prefer.
+
+Check out the *AWS SDK for Java Developer Guide* for instructions on how to provide access keys to the application: [Set up AWS Credentials for Development](http://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/setup-credentials.html).
+
+### Test the API
+
+Note - The test script requires JQuery to be installed. If JQuery is not installed, you can use `brew` to install it:
+
+    brew install jq
 
 Use the test script to verify that the API works.
 
-    ~/eb-java-scorekeep$ ./bin/test-api.sh
+    ./bin/test-api.sh
 
-The script targets `localhost:5000`. However, you can point it at the API running on any host by modifying the API variable at the top of the file.
+The script targets `localhost:5000`. However, you can point it at the API running on any hostname or IP by modifying the API variable at the top of the file.
 
-## Run the front end and configure it for local testing
-Use the [Spring Boot CLI](http://docs.spring.io/spring-boot/docs/current/reference/html/getting-started-installing-spring-boot.html) to run the front end on port 8080.
+## Run the Scorekeep Frontend with Docker
 
-    ~/eb-java-scorekeep$ spring run app.groovy
+1. In the scorekeep-frontend/public/app/scorekeep.js file, comment out the `module.value('api', '/api/');` line and uncomment the `// module.value('api', 'http://localhost:5000/api/');` line. This will point the Frontend towards the API that is run locally.
 
-Open the app in a browser: [localhost:8080](http://localhost:8080)
+2. In the scorekeep-frontend/nginx.conf file, change the port that the server listens to from 80 to 8080.
 
-The app loads but can't hit the API, because it's trying to call paths relative to its own root, `localhost:8080`, but the API is running on `localhost:5000` (or in Elastic Beanstalk). To fix this, configure the app with the full URL of the API.
+3. Within the `scorekeep-frontend/` directory, execute `make run-local` to create and start the frontend container locally. You should be able to hit the frontend locally with a web browser or curl on [localhost:8080](http://localhost:8080)
 
-**To configure the web app with an absolute path to the API**
+## Run the X-Ray Daemon locally (Optional)
 
-1. Open [eb-java-scorekeep/public/app/scorekeep.js](https://github.com/aws-samples/eb-java-scorekeep/blob/master/public/app/scorekeep.js).
-2. Set the value of the api module to the full URL of the API.
-   * Use the domain name of your environment to test changes to the front end without running the backend locally.
+### Prerequisites
+Add the the `AWSXrayFullAccess` policy for the AWS user that is logged into the CLI to allow the X-Ray daemon to export trace data.
 
-            module.value('api', 'http://scorekeep.XXXXXXXX.elasticbeanstalk.com/api/');
+Add the following environment variable to the Dockerfile in the root folder to allow the Scorekeep API to send data to the X-Ray daemon on macOS and Windows:
 
-   * Use localhost:5000 to test both front end and backend changes when running both locally.
+`ENV AWS_XRAY_DAEMON_ADDRESS="host.docker.internal:2000"`
 
-            module.value('api', 'http://localhost:5000/api/');
+Stop the docker container that is running the API and re-run it with the modified Dockerfile.
 
-3. Refresh the app in your browser to load the updated script.
+[Follow this guide to run the X-Ray daemon locally.](https://docs.aws.amazon.com/xray/latest/devguide/xray-daemon-local.html) Once the daemon is running, the API will send segment data to the daemon, and the daemon will in turn send the data to the AWS X-Ray API. [Go to the X-Ray console to view the data on the service map!](https://console.aws.amazon.com/xray/home)
 
-## Configure the API for CORS
-The API includes a CORS (cross-origin resource sharing) filter that allows traffic from `localhost:8080`.
+## Local Clean-up
 
-```java
-  private static UrlBasedCorsConfigurationSource configurationSource() {
-    CorsConfiguration config = new CorsConfiguration();
-    config.setAllowCredentials(true);
-    // Modify allowed origins if you run the client at a different endpoint
-    config.addAllowedOrigin("http://localhost:8080");
-    config.addAllowedHeader("*");
-    config.addAllowedMethod("*");
-    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration("/**", config);
-    return source;
-  }
-```
+If you have created the Cloudformation stack with the template in the `run-local-resources/` directory, delete the `scorekeep-local` stack on the [CloudFormation Console](https://console.aws.amazon.com/cloudformation/home) by selecting the stack and clicking `delete`. Undo all configuration changes made in the [Frontend setup section](##Run-the-Scorekeep-Frontend-with-Docker).
 
-This lets requests originating from a front end hosted locally on port 8080 to send requests to the API hosted on a different local port (i.e., `localhost:5000`) or on Elastic Beanstalk. This enables you to work on the front end locally and see changes immediately, without needing to deploy the source to your environment. When you make changes to the HTML or CSS in the app, simply refresh the browser.
+To stop the docker containers of the Frontend and API:
+1. Use `docker ps` to find the container IDs of the scorekeep-api and scorekeep-frontend containers
+2. Use `docker stop <API-containerId> <Frontend-containerId>` to stop the containers.
+3. Use `docker images` to find the image IDs of the scorekeep-api, scorekeep-frontend, and gradle images
+4. Use `docker rmi <API-imageId> <Frontend-imageId> <gradle-imageId>` to remove the docker images.
 
-When you run both the API and front end in the same Elastic Beanstalk environment, CORS is not required because the scripts that contact the API and the API itself are hosted on the same domain. To run the front end on a different port locally, or even host it on a completely different domain, add an allowed origin to the filter to whitelist it in the API.
+# Building your own Docker Images of Scorekeep for ECS
 
-**To extend the CORS configuration to allow cross-origin requests from specific domains**
+AWS_REGION and ACCOUNT_ID to be configured in aws.env. Make sure to undo any configuration changes made that you have done if you [had setup the frontend for running locally](##Run-the-Scorekeep-Frontend-with-Docker), and delete the `scorekeep-local` stack on CloudFormation.
 
-1. Open [src/main/java/scorekeepSimpleCORSFilter.java](https://github.com/aws-samples/eb-java-scorekeep/blob/master/src/main/java/scorekeep/SimpleCORSFilter.java).
-2. Add an allowed origin with the URL serving the front end.
+If you would like to modify the project, you must build and host the docker images of scorekeep.
+To test your new images on ECS, you will need to upload the images to a container image repository, and replace the image repository urls in the parameter section of the Cloudformation template.
 
-        config.addAllowedOrigin("http://localhost:8080");
-        config.addAllowedOrigin("http://scorekeep.XXXXXXXX.elasticbeanstalk.com");
+Build your API container by executing `make package` in the root folder
 
-3. Save the files and commit your changes.
+Build your Frontend container by executing `make package` in the `scorekeep-frontend/` folder
 
-        ~/eb-java-scorekeep$ git commit -am "Update API domain"
+You can upload your images to AWS Elastic Container Registry (ECR). Your user will need the `AmazonEC2ContainerRegistryFullAccess` policy to access it. [See how to push a Docker image to ECR here](https://docs.aws.amazon.com/AmazonECR/latest/userguide/docker-push-ecr-image.html). Alternatively, you can also use the `make publish` command in the `root directory` or the `scorekeep-frontend/` directory to publish the Frontend and API images to a private ECR. You can obtain the URLs of the uploaded docker images on the [ECR console](https://console.aws.amazon.com/ecr/repositories).
 
-4. Deploy the change.
+## Using your own Docker Images of Scorekeep on ECS
+To use the scorekeep application with your own docker images on ECS in the [Getting Started Guide](https://docs.aws.amazon.com/xray/latest/devguide/xray-gettingstarted.html), replace the image repository URLs in the parameter section of the Cloudformation template (`cloudformation/cf-resources.yaml`) with your docker image repository URLs. With this modified template, follow the instructions in the [Getting Started Guide](https://docs.aws.amazon.com/xray/latest/devguide/xray-gettingstarted.html) to deploy your modified Scorekeep images on ECS.
 
-        ~/eb-java-scorekeep$ ./2-deploy.sh
+# How it works
+
+## Backend
+The Java application is built using the gradle Docker container so it does not rely on your local Java or Gradle setup. The output of the build process appears in the `build/` folder of the project. After you build the application you will want to package it into a docker container so it can be executed. The docker container packaging takes the JAR produced from the build step and adds it to a Java base image. It then configures the environment, ports, and entry point. The docker containers can be ran locally with valid AWS credentials, or ran on ECS.
+
+The API runs at paths under /api that provide access to user, session, game, state, and move resources stored as JSON documents in DynamoDB. The API is RESTful, so you can create resources by sending HTTP POST requests to the resource path, for example /api/session. See the [test script](https://github.com/aws-samples/eb-java-scorekeep/blob/xray-gettingstarted/bin/test-api.sh) for example requests with cURL.
+
+The Cloudformation template creates a DynamoDB table for each resource type and an SNS topic for the API to work.
+
+## Frontend
+The frontend is an Angular 1.5 web app that uses `$resource` objects to perform CRUD operations on resources defined by the API. Users first encounter the [main view](https://github.com/aws-samples/eb-java-scorekeep/blob/xray-gettingstarted/scorekeep-frontend/public/main.html) and [controller](https://github.com/awslabs/eb-java-scorekeep/blob/fargate/scorekeep-frontend/public/app/mainController.js) and progress through session and game views at routes that include the IDs of resources that the user creates.
+
+The frontend is served statically by an Nginx container. The [nginx.conf](https://github.com/aws-samples/eb-java-scorekeep/blob/xray-gettingstarted/scorekeep-frontend/nginx.conf) file in the source code sets up Nginx to serve the frontend html pages from root, and forward requests starting with /api to the API backend running on port 5000. 
+
+## X-Ray Daemon
+The X-Ray daemon listens and gathers raw segment data on port 2000, and sends it towards the AWS X-Ray API.
+
+When running Scorekeep on ECS, the X-Ray daemon runs in a container that is deployed alongside the Scorekeep application. Check out the [AWS X-Ray Developer Guide](https://docs.aws.amazon.com/xray/latest/devguide/xray-daemon.html) for more details about the X-Ray Daemon.
 
 # Contributing
-
 This sample application could be better with your help!
 
 - Add a new game!
-  - Implement game logic in the game class. See [TicTacToe.java](https://github.com/aws-samples/eb-java-scorekeep/blob/master/src/main/java/scorekeep/TicTacToe.java).
-  - Add the class to [RulesFactory.java](https://github.com/aws-samples/eb-java-scorekeep/blob/master/src/main/java/scorekeep/RulesFactory.java).
-- Create your own client front end!
+  - Implement game logic in the game class. See [TicTacToe.java](https://github.com/aws-samples/eb-java-scorekeep/blob/xray-gettingstarted/src/main/java/scorekeep/TicTacToe.java).
+  - Add the class to [RulesFactory.java](https://github.com/aws-samples/eb-java-scorekeep/blob/xray-gettingstarted/src/main/java/scorekeep/RulesFactory.java).
+- Create your own client frontend!
   - Web frameworks - Angular 2, React, ember, etc.
   - Mobile app
   - Desktop application

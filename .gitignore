@@ -1,12 +1,9 @@
 .gradle/*
 build/*
 *.DS_Store
-# Elastic Beanstalk Files
-.elasticbeanstalk/*
-!.elasticbeanstalk/*.cfg.yml
-!.elasticbeanstalk/*.global.yml
 *.zip
-bucket-name.txt
+*.sh
 !bin/*.sh
 lib
-out.yml
+.elasticbeanstalk/*
+

@@ -1,0 +1,624 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  AWS CloudFormation template to create a new VPC
+  or use an existing VPC for ECS deployment
+  in Create Cluster Wizard. Requires exactly 1
+  Instance Types for a Spot Request.
+Parameters:
+  Email:
+    Type: String
+    Default: UPDATE_ME  # <- change to a valid "abc@def.xyz" email (without quotes)
+  FrontendImageUri:
+    Type: String
+    Default: public.ecr.aws/xray/scorekeep-frontend:latest
+  BackendImageUri:
+    Type: String
+    Default: public.ecr.aws/xray/scorekeep-api:latest
+  EcsClusterName:
+    Type: String
+    Description: >
+      Specifies the ECS Cluster Name with which the resources would be
+      associated
+    Default: scorekeep-cluster
+  EcsAmiId:
+    Description: AMI ID
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id
+  EcsInstanceTypeT2:
+    Type: CommaDelimitedList
+    Description: >
+      Specifies the EC2 instance type for your container instances.
+      Defaults to t2.micro.
+    Default: t2.micro
+    ConstraintDescription: must be a valid EC2 instance type.
+  EcsInstanceTypeT3:
+    Type: CommaDelimitedList
+    Description: >
+      Specifies the EC2 instance type for your container instances.
+      Defaults to t3.micro.
+    Default: t3.micro
+    ConstraintDescription: must be a valid EC2 instance type.
+  KeyName:
+    Type: String
+    Description: >
+      Optional - Specifies the name of an existing Amazon EC2 key pair
+      to enable SSH access to the EC2 instances in your cluster.
+    Default: ''
+  VpcId:
+    Type: String
+    Description: >
+      Optional - Specifies the ID of an existing VPC in which to launch
+      your container instances. If you specify a VPC ID, you must specify a list of
+      existing subnets in that VPC. If you do not specify a VPC ID, a new VPC is created
+      with atleast 1 subnet.
+    Default: ''
+    ConstraintDescription: >
+      VPC Id must begin with 'vpc-' or leave blank to have a
+      new VPC created
+  SubnetIds:
+    Type: CommaDelimitedList
+    Description: >
+      Optional - Specifies the Comma separated list of existing VPC Subnet
+      Ids where ECS instances will run
+    Default: ''
+  SecurityGroupId:
+    Type: String
+    Description: >
+      Optional - Specifies the Security Group Id of an existing Security
+      Group. Leave blank to have a new Security Group created
+    Default: ''
+  VpcCidr:
+    Type: String
+    Description: Optional - Specifies the CIDR Block of VPC
+    Default: '10.173.0.0/16'
+  SubnetCidr1:
+    Type: String
+    Description: Specifies the CIDR Block of Subnet 1
+    Default: '10.173.0.0/24'
+  SubnetCidr2:
+    Type: String
+    Description: Specifies the CIDR Block of Subnet 2
+    Default: '10.173.1.0/24'
+  SubnetCidr3:
+    Type: String
+    Description: Specifies the CIDR Block of Subnet 3
+    Default: ''
+  AsgMaxSize:
+    Type: Number
+    Description: >
+      Specifies the number of instances to launch and register to the cluster.
+      Defaults to 1.
+    Default: '1'
+  IamRoleInstanceProfile:
+    Type: String
+    Description: >
+      Specifies the Name or the Amazon Resource Name (ARN) of the instance
+      profile associated with the IAM role for the instance
+    Default: ScorekeepInstanceProfile
+  SecurityIngressFromPort:
+    Type: Number
+    Description: >
+      Optional - Specifies the Start of Security Group port to open on
+      ECS instances - defaults to port 0
+    Default: '80'
+  SecurityIngressToPort:
+    Type: Number
+    Description: >
+      Optional - Specifies the End of Security Group port to open on ECS
+      instances - defaults to port 65535
+    Default: '80'
+  SecurityIngressCidrIp:
+    Type: String
+    Description: >
+      Optional - Specifies the CIDR/IP range for Security Ports - defaults
+      to 0.0.0.0/0
+    Default: 0.0.0.0/0
+  EcsEndpoint:
+    Type: String
+    Description: >
+      Optional - Specifies the ECS Endpoint for the ECS Agent to connect to
+    Default: ''
+  RootEbsVolumeSize:
+    Type: Number
+    Description: >
+      Optional - Specifies the Size in GBs of the root EBS volume
+    Default: 30
+  EbsVolumeSize:
+    Type: Number
+    Description: >
+      Optional - Specifies the Size in GBs of the data storage EBS volume used by the Docker in the AL1 ECS-optimized AMI
+    Default: 22
+  EbsVolumeType:
+    Type: String
+    Description: Optional - Specifies the Type of (Amazon EBS) volume
+    Default: 'gp2'
+    AllowedValues:
+      - ''
+      - standard
+      - io1
+      - gp2
+      - sc1
+      - st1
+    ConstraintDescription: Must be a valid EC2 volume type.
+  RootDeviceName:
+    Type: String
+    Description: Optional - Specifies the device mapping for the root EBS volume.
+    Default: /dev/xvda
+  DeviceName:
+    Type: String
+    Description: Optional - Specifies the device mapping for the EBS volume used for data storage. Only applicable to AL1.
+    Default: /dev/xvdcz
+  UseSpot:
+    Type: String
+    Default: 'false'
+  IamSpotFleetRoleArn:
+    Type: String
+    Default: ''
+  SpotPrice:
+    Type: String
+    Default: ''
+  SpotAllocationStrategy:
+    Type: String
+    Default: 'diversified'
+    AllowedValues:
+      - 'lowestPrice'
+      - 'diversified'
+  UserData:
+    Type: String
+    Default: |
+      #!/bin/bash
+      echo ECS_CLUSTER=scorekeep-cluster >> /etc/ecs/ecs.config;echo ECS_BACKEND_HOST= >> /etc/ecs/ecs.config;
+  IsWindows:
+    Type: String
+    Default: 'false'
+  ConfigureRootVolume:
+    Type: String
+    Description: Optional - Specifies if there should be customization of the root volume
+    Default: 'true'
+  ConfigureDataVolume:
+    Type: String
+    Description: Optional - Specifies if there should be customization of the data volume
+    Default: 'false'
+  AutoAssignPublicIp:
+    Type: String
+    Default: 'INHERIT'
+Conditions:
+  UseT2MicroInstance:
+    !And
+    - !Not
+      - !Equals [!Sub '${AWS::Region}', 'eu-south-1']
+    - !Not
+      - !Equals [!Sub '${AWS::Region}', 'ap-east-1']
+    - !Not
+      - !Equals [!Sub '${AWS::Region}', 'af-south-1']
+    - !Not
+      - !Equals [!Sub '${AWS::Region}', 'ap-southeast-3']
+    - !Not
+      - !Equals [!Sub '${AWS::Region}', 'me-south-1']
+    - !Not
+      - !Equals [!Sub '${AWS::Region}', 'eu-north-1']
+    - !Not
+      - !Equals [!Sub '${AWS::Region}', 'cn-north-1']
+    - !Not
+      - !Equals [!Sub '${AWS::Region}', 'us-gov-east-1']
+    - !Not
+      - !Equals [!Sub '${AWS::Region}', 'us-gov-west-1']
+  CreateEC2LCWithKeyPair:
+    !Not [!Equals [!Ref KeyName, '']]
+  SetEndpointToECSAgent:
+    !Not [!Equals [!Ref EcsEndpoint, '']]
+  CreateNewSecurityGroup:
+    !Equals [!Ref SecurityGroupId, '']
+  CreateNewVpc:
+    !Equals [!Ref VpcId, '']
+  CreateSubnet1: !And
+    - !Not [!Equals [!Ref SubnetCidr1, '']]
+    - !Condition CreateNewVpc
+  CreateSubnet2: !And
+    - !Not [!Equals [!Ref SubnetCidr2, '']]
+    - !Condition CreateSubnet1
+  CreateSubnet3: !And
+    - !Not [!Equals [!Ref SubnetCidr3, '']]
+    - !Condition CreateSubnet2
+  CreateWithSpot: !Equals [!Ref UseSpot, 'true']
+  CreateWithASG: !Not [!Condition CreateWithSpot]
+  CreateWithSpotPrice: !Not [!Equals [!Ref SpotPrice, '']]
+  IsConfiguringRootVolume: !Equals [!Ref ConfigureRootVolume, 'true']
+  IsConfiguringDataVolume: !Equals [!Ref ConfigureDataVolume, 'true']
+  IsInheritPublicIp: !Equals [!Ref AutoAssignPublicIp, 'INHERIT']
+Resources:
+  ScorekeepTaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties: 
+      ContainerDefinitions: 
+      - Cpu: '256'
+        Image: !Ref FrontendImageUri
+        MemoryReservation: '256'
+        Name: scorekeep-frontend
+        PortMappings: 
+          - ContainerPort: '80'
+      - Cpu: '512'
+        Environment: 
+          - Name: AWS_REGION
+            Value: !Sub ${AWS::Region}
+          - Name: NOTIFICATION_TOPIC
+            Value: !Sub arn:aws:sns:${AWS::Region}:${AWS::AccountId}:scorekeep-notifications
+          - Name: NOTIFICATION_EMAIL
+            Value: !Ref Email
+        Image: !Ref BackendImageUri
+        MemoryReservation: '512'
+        Name: scorekeep-api
+        PortMappings: 
+          - ContainerPort: '5000'
+      - Cpu: '256'
+        Essential: true
+        Image: amazon/aws-xray-daemon
+        MemoryReservation: '128'
+        Name: xray-daemon
+        PortMappings: 
+          - ContainerPort: '2000'
+            HostPort: '2000'
+            Protocol: udp
+      Cpu: '1024'
+      ExecutionRoleArn: !Ref ECSExecutionRole
+      Family: scorekeep
+      Memory: '900'
+      NetworkMode: host
+      RequiresCompatibilities: 
+        - EC2
+      TaskRoleArn: scorekeepRole
+  UserTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: "scorekeep-user"
+      KeySchema:
+        HashKeyElement: {AttributeName: id, AttributeType: S}
+      ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
+  SessionTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: "scorekeep-session"
+      KeySchema:
+        HashKeyElement: {AttributeName: id, AttributeType: S}
+      ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
+  GameTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: "scorekeep-game"
+      AttributeDefinitions:
+        - AttributeName: "id"
+          AttributeType: "S"
+        - AttributeName: "session"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "id"
+          KeyType: "HASH"
+      GlobalSecondaryIndexes:
+        - IndexName: "session-index"
+          KeySchema:
+            - AttributeName: "session"
+              KeyType: "HASH"
+          ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
+          Projection: { ProjectionType: ALL }
+      ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
+  MoveTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: "scorekeep-move"
+      AttributeDefinitions:
+        - AttributeName: "id"
+          AttributeType: "S"
+        - AttributeName: "game"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "id"
+          KeyType: "HASH"
+      GlobalSecondaryIndexes:
+        - IndexName: "game-index"
+          KeySchema:
+            - AttributeName: "game"
+              KeyType: "HASH"
+          ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
+          Projection: { ProjectionType: ALL }
+      ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
+  StateTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: "scorekeep-state"
+      AttributeDefinitions:
+        - AttributeName: "id"
+          AttributeType: "S"
+        - AttributeName: "game"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "id"
+          KeyType: "HASH"
+      GlobalSecondaryIndexes:
+        - IndexName: "game-index"
+          KeySchema:
+            - AttributeName: "game"
+              KeyType: "HASH"
+          ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
+          Projection: { ProjectionType: ALL }
+      ProvisionedThroughput: {ReadCapacityUnits: 2, WriteCapacityUnits: 2}
+  NotificationTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: "scorekeep-notifications"
+  ECSExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "ecs-tasks.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+      RoleName: "scorekeepExecutionRole"
+  ECSTaskRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "ecs-tasks.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
+        - "arn:aws:iam::aws:policy/AmazonSNSFullAccess"
+        - "arn:aws:iam::aws:policy/AWSXrayFullAccess"
+      RoleName: "scorekeepRole"
+  ScorekeepECSRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: ScorekeepECSRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Action: "sts:AssumeRole"
+          Principal:
+            Service: ["ec2.amazonaws.com"]
+          Effect: "Allow"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role
+  ScorekeepInstanceProfile:
+    DependsOn: ScorekeepECSRole
+    Type: AWS::IAM::InstanceProfile
+    Properties: 
+      InstanceProfileName: !Ref IamRoleInstanceProfile
+      Roles: 
+        - ScorekeepECSRole
+  ScorekeepECSCluster:
+    Type: AWS::ECS::Cluster
+    Properties: 
+      ClusterName: !Ref EcsClusterName
+  Vpc:
+    Condition: CreateSubnet1
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VpcCidr
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: !Join [_, [!Ref 'AWS::StackName']]
+  PubSubnetAz1:
+    Condition: CreateSubnet1
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref Vpc
+      CidrBlock: !Ref SubnetCidr1
+      AvailabilityZone: !Select [ 0, Fn::GetAZs: '' ]
+      MapPublicIpOnLaunch: true
+  PubSubnetAz2:
+    Condition: CreateSubnet2
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref Vpc
+      CidrBlock: !Ref SubnetCidr2
+      AvailabilityZone: !Select [ 1, Fn::GetAZs: '' ]
+      MapPublicIpOnLaunch: true
+  PubSubnetAz3:
+    Condition: CreateSubnet3
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref Vpc
+      CidrBlock: !Ref SubnetCidr3
+      AvailabilityZone: !Select [ 2, Fn::GetAZs: '' ]
+      MapPublicIpOnLaunch: true
+  InternetGateway:
+    Condition: CreateSubnet1
+    Type: AWS::EC2::InternetGateway
+  AttachGateway:
+    Condition: CreateSubnet1
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref Vpc
+      InternetGatewayId: !Ref InternetGateway
+  RouteViaIgw:
+    Condition: CreateSubnet1
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref Vpc
+  PublicRouteViaIgw:
+    Condition: CreateSubnet1
+    Type: AWS::EC2::Route
+    DependsOn: AttachGateway
+    Properties:
+      RouteTableId: !Ref RouteViaIgw
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+  PubSubnet1RouteTableAssociation:
+    Condition: CreateSubnet1
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PubSubnetAz1
+      RouteTableId: !Ref RouteViaIgw
+  PubSubnet2RouteTableAssociation:
+    Condition: CreateSubnet2
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PubSubnetAz2
+      RouteTableId: !Ref RouteViaIgw
+  PubSubnet3RouteTableAssociation:
+    Condition: CreateSubnet3
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PubSubnetAz3
+      RouteTableId: !Ref RouteViaIgw
+  EcsSecurityGroup:
+    Condition: CreateNewSecurityGroup
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: ECS Allowed Ports
+      VpcId: !If [ CreateSubnet1, !Ref Vpc, !Ref VpcId ]
+      SecurityGroupIngress:
+       - IpProtocol: 'tcp'
+         FromPort: '80'
+         ToPort: '80'
+         CidrIp: 0.0.0.0/0
+  EcsInstanceLc:
+    DependsOn:
+    - ScorekeepECSCluster
+    - ScorekeepInstanceProfile
+    Type: AWS::AutoScaling::LaunchConfiguration
+    Condition: CreateWithASG
+    Properties:
+      ImageId: !Ref EcsAmiId
+      InstanceType: !Select [ 0, !If [ UseT2MicroInstance, !Ref EcsInstanceTypeT2, !Ref EcsInstanceTypeT3 ] ]
+      AssociatePublicIpAddress: !If [ IsInheritPublicIp, !Ref "AWS::NoValue", !Ref AutoAssignPublicIp ]
+      IamInstanceProfile: !Ref IamRoleInstanceProfile
+      KeyName: !If [ CreateEC2LCWithKeyPair, !Ref KeyName, !Ref "AWS::NoValue" ]
+      SecurityGroups: [ !If [ CreateNewSecurityGroup, !Ref EcsSecurityGroup, !Ref SecurityGroupId ] ]
+      BlockDeviceMappings:
+        - !If
+          - IsConfiguringRootVolume
+          - DeviceName: !Ref RootDeviceName
+            Ebs:
+              VolumeSize: !Ref RootEbsVolumeSize
+              VolumeType: !Ref EbsVolumeType
+          - !Ref AWS::NoValue
+        - !If
+          - IsConfiguringDataVolume
+          - DeviceName: !Ref DeviceName
+            Ebs:
+              VolumeSize: !Ref EbsVolumeSize
+              VolumeType: !Ref EbsVolumeType
+          - !Ref AWS::NoValue
+      UserData:
+        Fn::Base64: !Ref UserData
+  EcsInstanceAsg:
+    DependsOn:
+    - ScorekeepTargetGroup
+    - EcsInstanceLc
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Condition: CreateWithASG
+    Properties:
+      VPCZoneIdentifier: !If
+        - CreateSubnet1
+        - !If
+          - CreateSubnet2
+          - !If
+            - CreateSubnet3
+            - [ !Sub "${PubSubnetAz1}, ${PubSubnetAz2}, ${PubSubnetAz3}" ]
+            - [ !Sub "${PubSubnetAz1}, ${PubSubnetAz2}" ]
+          - [ !Sub "${PubSubnetAz1}" ]
+        - !Ref SubnetIds
+      LaunchConfigurationName: !Ref EcsInstanceLc
+      MinSize: '0'
+      MaxSize: !Ref AsgMaxSize
+      DesiredCapacity: !Ref AsgMaxSize
+      Tags:
+        -
+          Key: Name
+          Value: !Sub "ECS Instance - ${AWS::StackName}"
+          PropagateAtLaunch: true
+        -
+          Key: Description
+          Value: "This instance is the part of the Auto Scaling group which was created through ECS Console"
+          PropagateAtLaunch: true
+      TargetGroupARNs:
+      - !Ref ScorekeepTargetGroup
+  ScorekeepService:
+    DependsOn:
+    - ScorekeepTaskDefinition
+    - UserTable
+    - SessionTable
+    - GameTable
+    - MoveTable
+    - StateTable
+    - NotificationTopic
+    - ECSExecutionRole
+    - ECSTaskRole
+    - ScorekeepECSCluster
+    - EcsInstanceAsg
+    Type: AWS::ECS::Service
+    Properties:
+      Cluster: scorekeep-cluster
+      DeploymentConfiguration:   
+        MaximumPercent: 100
+        MinimumHealthyPercent: 0
+      DesiredCount: 1
+      LaunchType: EC2
+      SchedulingStrategy: REPLICA
+      ServiceName: scorekeep-service
+      TaskDefinition: !Ref ScorekeepTaskDefinition
+  ScorekeepTargetGroup:
+    DependsOn:
+    - Vpc
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: ScorekeepTargetGroup
+      TargetType: instance
+      Port: 80
+      Protocol: HTTP
+      VpcId: !Ref Vpc
+  ScorekeepLoadBalancer:
+    DependsOn: EcsSecurityGroup
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: scorekeep-lb
+      Scheme: internet-facing
+      SecurityGroups: 
+        - !Ref EcsSecurityGroup
+      Subnets: !If
+              - CreateSubnet1
+              - !If
+                - CreateSubnet2
+                - !If
+                  - CreateSubnet3
+                  - [ !Ref PubSubnetAz1, !Ref PubSubnetAz2, !Ref PubSubnetAz3 ]
+                  - [ !Ref PubSubnetAz1, !Ref PubSubnetAz2 ]
+                - [ !Ref PubSubnetAz1 ]
+              - !Ref SubnetIds
+      Tags:
+        - Key: Name
+          Value: !Join [_, [!Ref 'AWS::StackName']]
+      Type: application
+  ScorekeepLoadBalancerListener:
+    DependsOn:
+    - ScorekeepLoadBalancer
+    - ScorekeepTargetGroup
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties: 
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref ScorekeepTargetGroup
+      LoadBalancerArn: !Ref ScorekeepLoadBalancer
+      Port: 80
+      Protocol: HTTP
+Outputs:
+  LoadBalancerUrl:
+    Description: The URL of the ALB
+    Value: !GetAtt ScorekeepLoadBalancer.DNSName
