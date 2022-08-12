@@ -3,6 +3,7 @@ package scorekeep;
 import com.amazonaws.xray.AWSXRay;
 import com.amazonaws.xray.AWSXRayRecorderBuilder;
 import com.amazonaws.xray.javax.servlet.AWSXRayServletFilter;
+import com.amazonaws.xray.plugins.ECSPlugin;
 import com.amazonaws.xray.plugins.EC2Plugin;
 import com.amazonaws.xray.strategy.sampling.LocalizedSamplingStrategy;
 import org.springframework.context.annotation.Bean;
@@ -30,7 +31,7 @@ public class WebConfig {
   }
 
   static {
-    AWSXRayRecorderBuilder builder = AWSXRayRecorderBuilder.standard().withPlugin(new EC2Plugin());
+    AWSXRayRecorderBuilder builder = AWSXRayRecorderBuilder.standard().withPlugin(new ECSPlugin()).withPlugin(new EC2Plugin());
 
     URL ruleFile = WebConfig.class.getResource("/sampling-rules.json");
     builder.withSamplingStrategy(new LocalizedSamplingStrategy(ruleFile));
