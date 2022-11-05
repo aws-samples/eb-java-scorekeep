@@ -184,25 +184,26 @@ Parameters:
     Default: 'INHERIT'
 Conditions:
   UseT2MicroInstance:
-    !And
-    - !Not
-      - !Equals [!Sub '${AWS::Region}', 'eu-south-1']
-    - !Not
-      - !Equals [!Sub '${AWS::Region}', 'ap-east-1']
-    - !Not
-      - !Equals [!Sub '${AWS::Region}', 'af-south-1']
-    - !Not
-      - !Equals [!Sub '${AWS::Region}', 'ap-southeast-3']
-    - !Not
-      - !Equals [!Sub '${AWS::Region}', 'me-south-1']
-    - !Not
-      - !Equals [!Sub '${AWS::Region}', 'eu-north-1']
-    - !Not
-      - !Equals [!Sub '${AWS::Region}', 'cn-north-1']
-    - !Not
-      - !Equals [!Sub '${AWS::Region}', 'us-gov-east-1']
-    - !Not
-      - !Equals [!Sub '${AWS::Region}', 'us-gov-west-1']
+    !Or
+    - !Or
+      - !Equals [!Sub '${AWS::Region}', 'us-east-1']
+      - !Equals [!Sub '${AWS::Region}', 'us-east-2']
+      - !Equals [!Sub '${AWS::Region}', 'us-west-1']
+      - !Equals [!Sub '${AWS::Region}', 'us-west-2']
+      - !Equals [!Sub '${AWS::Region}', 'ap-south-1']
+      - !Equals [!Sub '${AWS::Region}', 'ap-northeast-3']
+      - !Equals [!Sub '${AWS::Region}', 'ap-northeast-2']
+      - !Equals [!Sub '${AWS::Region}', 'ap-southeast-1']
+      - !Equals [!Sub '${AWS::Region}', 'ap-southeast-2']
+      - !Equals [!Sub '${AWS::Region}', 'ap-northeast-1']
+    - !Or
+      - !Equals [!Sub '${AWS::Region}', 'ca-central-1']
+      - !Equals [!Sub '${AWS::Region}', 'eu-central-1']
+      - !Equals [!Sub '${AWS::Region}', 'eu-west-1']
+      - !Equals [!Sub '${AWS::Region}', 'eu-west-2']
+      - !Equals [!Sub '${AWS::Region}', 'eu-west-3']
+      - !Equals [!Sub '${AWS::Region}', 'sa-east-1']
+      - !Equals [!Sub '${AWS::Region}', 'cn-northwest-1']
   CreateEC2LCWithKeyPair:
     !Not [!Equals [!Ref KeyName, '']]
   SetEndpointToECSAgent:
