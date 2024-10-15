@@ -608,6 +608,79 @@ Resources:
       LoadBalancerArn: !Ref ScorekeepLoadBalancer
       Port: 80
       Protocol: HTTP
+
+  # CustomAsgDestroyer is a Custom resource that force destroys the EcsInstanceAsg ASG.
+  # This is necessary because deleting a CloudFormation Stack with a AWS::ECS::Service resource does not
+  # drain or deregister that resource's associated EC2 instances which comes from the EcsInstanceAsg ASG.
+  # This would block the AWS::ECS::Service resource from deleting, blocking the deletion of the Stack.
+  # To unblock this, the custom resource destroys the ASG before the AWS::ECS::Service resource is deleted.
+  #
+  # See: https://github.com/aws/aws-cdk/issues/14732
+  CustomAsgDestroyerFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        ZipFile: |
+          const { AutoScalingClient, DeleteAutoScalingGroupCommand } = require("@aws-sdk/client-auto-scaling");
+          const response = require('cfn-response');
+
+          exports.handler = async function(event, context) {
+            console.log(event);
+
+            if (event.RequestType !== "Delete") {
+              await response.send(event, context, response.SUCCESS);
+              return;
+            }
+
+            const autoscaling = new AutoScalingClient({ region: event.ResourceProperties.Region });
+
+            const input = {
+              AutoScalingGroupName: event.ResourceProperties.AutoScalingGroupName,
+              ForceDelete: true
+            };
+            const command = new DeleteAutoScalingGroupCommand(input);
+            const deleteResponse = await autoscaling.send(command);
+            console.log(deleteResponse);
+
+            await response.send(event, context, response.SUCCESS);
+          };
+      Handler: index.handler
+      Runtime: nodejs20.x
+      Timeout: 30
+      Role: !GetAtt CustomAsgDestroyerRole.Arn
+  CustomAsgDestroyerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        # https://docs.aws.amazon.com/aws-managed-policy/latest/reference/AWSLambdaBasicExecutionRole.html
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: allow-to-delete-autoscaling-group
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: autoscaling:DeleteAutoScalingGroup
+                Resource: !Sub arn:aws:autoscaling:${AWS::Region}:${AWS::AccountId}:autoScalingGroup:*:autoScalingGroupName/${EcsInstanceAsg}
+  CustomAsgDestroyer:
+    Type: Custom::AsgDestroyer
+    DependsOn:
+      - ScorekeepService
+      - CustomAsgDestroyerFunction
+      - CustomAsgDestroyerRole
+    Properties:
+      ServiceToken: !GetAtt CustomAsgDestroyerFunction.Arn
+      Region: !Ref "AWS::Region"
+      AutoScalingGroupName: !Ref EcsInstanceAsg
 Outputs:
   LoadBalancerUrl:
     Description: The URL of the ALB
