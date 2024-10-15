@@ -401,6 +401,7 @@ Resources:
       Roles: 
         - ScorekeepECSRole
   ScorekeepECSCluster:
+    DependsOn: AttachGateway
     Type: AWS::ECS::Cluster
     Properties: 
       ClusterName: !Ref EcsClusterName
@@ -479,6 +480,7 @@ Resources:
       SubnetId: !Ref PubSubnetAz3
       RouteTableId: !Ref RouteViaIgw
   EcsSecurityGroup:
+    DependsOn: AttachGateway
     Condition: CreateNewSecurityGroup
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -489,40 +491,25 @@ Resources:
          FromPort: '80'
          ToPort: '80'
          CidrIp: 0.0.0.0/0
-  EcsInstanceLc:
+  ECSLaunchTemplate:
     DependsOn:
     - ScorekeepECSCluster
     - ScorekeepInstanceProfile
-    Type: AWS::AutoScaling::LaunchConfiguration
+    Type: AWS::EC2::LaunchTemplate
     Condition: CreateWithASG
     Properties:
-      ImageId: !Ref EcsAmiId
-      InstanceType: !Select [ 0, !If [ UseT2MicroInstance, !Ref EcsInstanceTypeT2, !Ref EcsInstanceTypeT3 ] ]
-      AssociatePublicIpAddress: !If [ IsInheritPublicIp, !Ref "AWS::NoValue", !Ref AutoAssignPublicIp ]
-      IamInstanceProfile: !Ref IamRoleInstanceProfile
-      KeyName: !If [ CreateEC2LCWithKeyPair, !Ref KeyName, !Ref "AWS::NoValue" ]
-      SecurityGroups: [ !If [ CreateNewSecurityGroup, !Ref EcsSecurityGroup, !Ref SecurityGroupId ] ]
-      BlockDeviceMappings:
-        - !If
-          - IsConfiguringRootVolume
-          - DeviceName: !Ref RootDeviceName
-            Ebs:
-              VolumeSize: !Ref RootEbsVolumeSize
-              VolumeType: !Ref EbsVolumeType
-          - !Ref AWS::NoValue
-        - !If
-          - IsConfiguringDataVolume
-          - DeviceName: !Ref DeviceName
-            Ebs:
-              VolumeSize: !Ref EbsVolumeSize
-              VolumeType: !Ref EbsVolumeType
-          - !Ref AWS::NoValue
-      UserData:
-        Fn::Base64: !Ref UserData
+      LaunchTemplateData:
+        ImageId: !Ref EcsAmiId
+        SecurityGroupIds: [ !If [ CreateNewSecurityGroup, !Ref EcsSecurityGroup, !Ref SecurityGroupId ] ]
+        InstanceType:  !Select [ 0, !If [ UseT2MicroInstance, !Ref EcsInstanceTypeT2, !Ref EcsInstanceTypeT3 ] ]
+        IamInstanceProfile:
+          Name: !Ref IamRoleInstanceProfile
+        UserData:
+          Fn::Base64: !Ref UserData
   EcsInstanceAsg:
     DependsOn:
     - ScorekeepTargetGroup
-    - EcsInstanceLc
+    - ECSLaunchTemplate
     Type: AWS::AutoScaling::AutoScalingGroup
     Condition: CreateWithASG
     Properties:
@@ -536,7 +523,9 @@ Resources:
             - [ !Sub "${PubSubnetAz1}, ${PubSubnetAz2}" ]
           - [ !Sub "${PubSubnetAz1}" ]
         - !Ref SubnetIds
-      LaunchConfigurationName: !Ref EcsInstanceLc
+      LaunchTemplate:
+        LaunchTemplateId: !Ref ECSLaunchTemplate
+        Version: !GetAtt ECSLaunchTemplate.DefaultVersionNumber
       MinSize: '0'
       MaxSize: !Ref AsgMaxSize
       DesiredCapacity: !Ref AsgMaxSize
